@@ -1,0 +1,93 @@
+{
+  "title": "Panel",
+  "metrics": {
+    "active_parcels": "Parcelas activas",
+    "certificates_issued": "Certificados emitidos",
+    "open_alerts": "Alertas abiertas"
+  },
+  "map": { "title": "Mapa de parcelas", "recent": "Parcelas recientes" },
+  "treasury": {
+    "title": "Tesorería",
+    "balance": "Saldo disponible",
+    "copy_address": "Copiar dirección de la tesorería",
+    "deposit_hint": "Deposita USDC por la red Solana desde tu wallet o exchange.",
+    "wrong_network": "Solo se aceptan USDC por la red Solana.",
+    "history": "Movimientos",
+    "type_deposit": "Depósito",
+    "type_debit_cert": "Certificación",
+    "type_debit_manifest": "Manifiesto"
+  },
+  "topology": {
+    "title": "Fincas y parcelas",
+    "new_parcel": "Nueva parcela",
+    "draw_hint": "Dibuja el polígono de la parcela en el mapa.",
+    "crop": "Cultivo",
+    "select_crop": "Selecciona el cultivo",
+    "area": "Área",
+    "sensor_gate": "Esta parcela requiere {{n}} sensores para su área.",
+    "invalid_polygon": "El polígono no es válido. Revisa los vértices."
+  },
+  "farmers": {
+    "title": "Agricultores de la unidad",
+    "create": "Crear agricultor",
+    "link": "Vincular a finca",
+    "reassign": "Esta finca ya tiene un agricultor. ¿Reasignar?"
+  },
+  "shipments": {
+    "title": "Embarques",
+    "new": "Nuevo embarque",
+    "select_parcels": "Selecciona las parcelas",
+    "crop_mismatch": "Todas las parcelas del embarque deben ser del mismo cultivo.",
+    "parcel_red": "Una parcela tiene una anomalía y no puede certificarse.",
+    "cost_preview": "Costo estimado",
+    "cost_new": "{{n}} certificados nuevos",
+    "cost_manifest": "Tarifa de manifiesto",
+    "generate": "Generar certificado",
+    "awaiting_approval": "Listo para aprobación. Se avisó a quien puede emitir.",
+    "state_draft": "Borrador",
+    "state_ready": "Listo para aprobación",
+    "state_processing": "Procesando",
+    "state_issued": "Emitido",
+    "state_failed": "Falló",
+    "download_geojson": "Descargar GeoJSON para TRACES NT"
+  },
+  "certificates": {
+    "title": "Certificados",
+    "detail": "Detalle del certificado",
+    "revoke": "Revocar",
+    "revoke_confirm": "Revocar es irreversible. La parcela no entra a embarques hasta re-certificar. Indica el motivo.",
+    "revoke_reason": "Motivo de la revocación"
+  },
+  "team": {
+    "title": "Equipo y sub-roles",
+    "members": "Miembros",
+    "subroles": "Sub-roles",
+    "new_subrole": "Crear sub-rol",
+    "subrole_name": "Nombre del sub-rol",
+    "privileges": "Privilegios",
+    "sensitive_confirm": "Este sub-rol podrá debitar la tesorería. ¿Confirmas?",
+    "invite": "Invitar miembro",
+    "already_member": "Esta persona ya pertenece a la unidad. Cambia su sub-rol.",
+    "last_admin": "La unidad no puede quedarse sin administración. Asigna el privilegio a otro miembro primero.",
+    "subrole_in_use": "Este sub-rol está asignado a miembros. Reasígnalos antes de eliminarlo.",
+    "applies_next_session": "El cambio aplica en la siguiente sesión del miembro."
+  },
+  "onchain": {
+    "certify_title": "Generando certificado EUDR",
+    "keep_open": "No cierres esta ventana",
+    "background": "Puedes seguir en segundo plano",
+    "step_of": "paso {{current}} de {{total}}",
+    "step_validate": "Validando prueba química",
+    "step_satellite": "Anclando evidencia satelital",
+    "step_arweave": "Subiendo GeoJSON a Arweave",
+    "step_mint": "Emitiendo certificados y cobrando",
+    "step_manifest": "Registrando manifiesto de embarque",
+    "step_newplanting_confirm": "Cerrando el ciclo anterior",
+    "step_newplanting_chain": "Registrando en cadena",
+    "step_revoke_record": "Registrando la revocación",
+    "step_revoke_chain": "Confirmando en cadena",
+    "success": "Certificado emitido",
+    "insufficient_funds": "Fondos insuficientes en la tesorería.",
+    "go_treasury": "Ir a Tesorería"
+  }
+}

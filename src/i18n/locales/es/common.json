@@ -1,0 +1,46 @@
+{
+  "brand": "GroundTruth",
+  "tagline": "Prueba física del terreno, verificable ante cualquier auditor",
+  "nav": {
+    "map": "Mapa",
+    "parcels": "Parcelas",
+    "shipments": "Embarques",
+    "treasury": "Tesorería",
+    "certificates": "Certificados",
+    "farmers": "Agricultores",
+    "team": "Equipo",
+    "settings": "Configuración",
+    "verify": "Verificar",
+    "login": "Iniciar sesión",
+    "logout": "Cerrar sesión",
+    "demo": "Solicitar demo"
+  },
+  "actions": {
+    "cancel": "Cancelar",
+    "confirm": "Confirmar",
+    "save": "Guardar",
+    "retry": "Reintentar",
+    "copy": "Copiar",
+    "copied": "Copiado",
+    "back": "Volver",
+    "close": "Cerrar",
+    "continue": "Continuar"
+  },
+  "status": {
+    "conforme": "Conforme",
+    "alerta": "Alerta",
+    "revocado": "Revocado",
+    "pendiente": "Pendiente",
+    "vigente": "Vigente",
+    "sustituido": "Sustituido",
+    "expirado": "Expirado",
+    "verificado": "Verificado"
+  },
+  "soilcore": {
+    "label": "Núcleo de verificación",
+    "stages": "telemetría · satélite · tesorería · certificado"
+  },
+  "language": "Idioma",
+  "loading": "Cargando…",
+  "context_switch": "Cambiar contexto"
+}

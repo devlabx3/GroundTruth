@@ -1,0 +1,23 @@
+{
+  "home_title": "Mis cultivos",
+  "alerts": {
+    "title": "Alertas",
+    "empty": "Tus cultivos están en orden.",
+    "offline": "Sin conexión en vivo. Reintentando…",
+    "detail": "{{variable}}: {{valor}} (umbral {{umbral}})"
+  },
+  "parcels": {
+    "title": "Mis parcelas",
+    "empty": "Aún no tienes parcelas registradas. Tu operador las configura.",
+    "cycle_active": "Ciclo activo",
+    "history": "Historial de ciclos"
+  },
+  "new_planting": {
+    "action": "Declarar nueva siembra",
+    "confirm_title": "Declarar nueva siembra",
+    "confirm_body": "Esto cierra el ciclo actual de esta parcela. El próximo despacho volverá a certificar y a cobrar. ¿Continuar?",
+    "success": "Nueva siembra registrada. Se avisó a tu operador.",
+    "in_progress": "Hay una certificación en proceso para esta parcela. Intenta más tarde.",
+    "duplicate": "Ya declaraste una siembra recientemente. Contacta a tu operador si fue un error."
+  }
+}

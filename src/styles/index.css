@@ -1,0 +1,53 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: light;
+  }
+
+  html {
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    @apply bg-porcelain text-ink font-sans;
+    margin: 0;
+  }
+
+  h1, h2, h3 {
+    @apply font-display font-normal text-ink;
+    letter-spacing: -0.01em;
+  }
+
+  /* Datos técnicos siempre en mono (hashes, PDA, coordenadas, pH/EC) */
+  code, kbd, samp, .data {
+    @apply font-mono;
+  }
+
+  /* Foco visible en todo elemento interactivo — quality floor */
+  :where(a, button, input, select, textarea, [tabindex]):focus-visible {
+    outline: 2px solid theme('colors.emerald.DEFAULT');
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  /* Eyebrow: la única mayúscula sostenida permitida (§3) */
+  .eyebrow {
+    @apply font-sans text-[11px] uppercase tracking-[0.14em] text-graphite;
+  }
+}
+
+@layer utilities {
+  /* Respeta reduce-motion en toda la app */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "session_expired": "Tu sesión expiró. Inicia sesión de nuevo.",
+  "no_access_section": "No tienes acceso a esta sección.",
+  "no_privilege": "Tu rol no permite esta acción. Solicítala a un administrador de tu unidad.",
+  "offline": "Sin conexión. Revisa tu internet.",
+  "timeout": "La operación tardó demasiado. Reintenta.",
+  "server": "Algo salió mal de nuestro lado. Intenta de nuevo en unos minutos.",
+  "realtime_down": "Sin actualización en vivo. Reintentando…",
+  "not_found": "No encontramos lo que buscabas.",
+  "credentials_invalid": "Correo o contraseña incorrectos.",
+  "wrong_surface": "Esta cuenta usa la app del agricultor.",
+  "account_inactive": "Tu cuenta está inactiva. Contacta a tu administrador.",
+  "user_exists": "Ya existe una cuenta con este correo.",
+  "cert_not_found": "No existe un certificado con ese identificador.",
+  "rate_limited": "Demasiadas consultas. Intenta de nuevo en un momento.",
+  "incident": "Código de incidencia: {{id}}"
+}
