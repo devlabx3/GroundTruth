@@ -1,0 +1,32 @@
+{
+  "title": "Zertifikatsprüfer",
+  "subtitle": "Prüfe die Gültigkeit eines EUDR-Zertifikats ohne Konto.",
+  "tabs": {
+    "number": "Zertifikatsnummer",
+    "asset": "cNFT-ID",
+    "document": "PDF-Dokument hochladen"
+  },
+  "input": {
+    "number_placeholder": "GT-2026-00342",
+    "asset_placeholder": "Asset-Adresse (base58)",
+    "search": "Suchen",
+    "drop": "Ziehe das Zertifikats-PDF hierher oder klicke zum Auswählen",
+    "checking": "Dokument-Hash wird berechnet…"
+  },
+  "result": {
+    "crop": "Kultur",
+    "region": "Land / Region",
+    "cycle": "Zyklus",
+    "issued": "Ausgestellt",
+    "valid_until": "Gültig bis",
+    "hash_pdf": "PDF-Hash",
+    "hash_image": "Hash des Bildes",
+    "geojson": "GeoJSON auf Arweave",
+    "explorer": "Im Solana-Explorer ansehen",
+    "doc_match": "Dokument verifiziert: Es stimmt mit dem On-Chain-Eintrag überein.",
+    "doc_mismatch": "Dieses Dokument stimmt nicht mit dem On-Chain-Zertifikat überein. Es könnte verändert worden sein.",
+    "revoked_notice": "Dieses Zertifikat wurde am {{fecha}} widerrufen. Es ist nicht für den Versand gültig.",
+    "issued_on": "Ausgestellt"
+  },
+  "privacy_note": "Aus Datenschutzgründen werden der Name des Landwirts und das genaue Parzellenpolygon nicht angezeigt."
+}

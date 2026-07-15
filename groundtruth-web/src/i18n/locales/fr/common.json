@@ -1,0 +1,116 @@
+{
+  "brand": "GroundTruth",
+  "tagline": "Preuve physique du terrain, vérifiable par tout auditeur",
+  "nav": {
+    "map": "Carte",
+    "parcels": "Parcelles",
+    "shipments": "Expéditions",
+    "treasury": "Trésorerie",
+    "certificates": "Certificats",
+    "farmers": "Agriculteurs",
+    "team": "Équipe",
+    "settings": "Paramètres",
+    "verify": "Vérifier",
+    "login": "Se connecter",
+    "logout": "Se déconnecter",
+    "demo": "Demander une démo"
+  },
+  "actions": {
+    "cancel": "Annuler",
+    "confirm": "Confirmer",
+    "save": "Enregistrer",
+    "retry": "Réessayer",
+    "copy": "Copier",
+    "copied": "Copié",
+    "back": "Retour",
+    "close": "Fermer",
+    "continue": "Continuer",
+    "delete": "Supprimer",
+    "add": "Ajouter"
+  },
+  "status": {
+    "conforme": "Conforme",
+    "alerta": "Alerte",
+    "revocado": "Révoqué",
+    "pendiente": "En attente",
+    "vigente": "Valide",
+    "sustituido": "Remplacé",
+    "expirado": "Expiré",
+    "verificado": "Vérifié"
+  },
+  "fields": {
+    "name": "Nom",
+    "email": "E-mail",
+    "date": "Date",
+    "amount": "Montant",
+    "type": "Type",
+    "state": "Statut",
+    "crop": "Culture"
+  },
+  "crops": {
+    "cafe": "Café",
+    "cacao": "Cacao",
+    "aguacate": "Avocat"
+  },
+  "units": {
+    "ha": "ha"
+  },
+  "cycle": {
+    "ongoing": "en cours"
+  },
+  "hash": {
+    "match": "Correspond",
+    "mismatch": "Ne correspond pas",
+    "pdf": "Hash du PDF",
+    "img": "Hash de l'image satellite"
+  },
+  "explorer": "Voir sur l'explorateur",
+  "context": {
+    "choose": "Comment veux-tu entrer ?",
+    "farmer": "En tant qu'agriculteur",
+    "farmer_desc": "Alertes et parcelles de tes exploitations (DApp lite)",
+    "operator_desc": "Tableau de bord de l'unité d'affaires"
+  },
+  "privileges": {
+    "unidad": {
+      "configurar": "Configurer l'unité"
+    },
+    "equipo": {
+      "gestionar": "Gérer l'équipe et les sous-rôles"
+    },
+    "agricultores": {
+      "gestionar": "Gérer les agriculteurs"
+    },
+    "topologia": {
+      "gestionar": "Gérer les exploitations et parcelles"
+    },
+    "telemetria": {
+      "ver": "Voir la télémétrie"
+    },
+    "tesoreria": {
+      "ver": "Voir la trésorerie"
+    },
+    "embarques": {
+      "preparar": "Préparer les expéditions"
+    },
+    "certificados": {
+      "emitir": "Émettre des certificats",
+      "revocar": "Révoquer des certificats",
+      "ver": "Voir les certificats"
+    }
+  },
+  "soilcore": {
+    "label": "Noyau de vérification",
+    "stages": "télémétrie · satellite · trésorerie · certificat"
+  },
+  "language": "Langue",
+  "loading": "Chargement…",
+  "context_switch": "Changer de contexte",
+  "realtime": {
+    "live": "En direct",
+    "down": "Pas de mise à jour en direct. Nouvelle tentative…"
+  },
+  "footer": {
+    "regulation": "Règlement (UE) 2023/1115 (EUDR)"
+  }
+}

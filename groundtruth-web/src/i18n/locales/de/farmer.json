@@ -1,0 +1,32 @@
+{
+  "home_title": "Meine Kulturen",
+  "nav": {
+    "alerts": "Warnungen",
+    "parcels": "Meine Parzellen",
+    "profile": "Profil"
+  },
+  "alerts": {
+    "title": "Warnungen",
+    "empty": "Deine Kulturen sind in Ordnung.",
+    "live": "Live-Aktualisierung",
+    "offline": "Keine Live-Aktualisierung. Neuer Versuch…",
+    "detail": "{{variable}}: {{valor}} (Schwellenwert {{umbral}})"
+  },
+  "parcels": {
+    "title": "Meine Parzellen",
+    "empty": "Du hast noch keine registrierten Parzellen. Dein Betreiber richtet sie ein.",
+    "cycle_active": "Aktiver Zyklus",
+    "history": "Zyklushistorie"
+  },
+  "new_planting": {
+    "action": "Neue Aussaat melden",
+    "confirm_title": "Neue Aussaat melden",
+    "confirm_body": "Dies schließt den aktuellen Zyklus dieser Parzelle ab. Die nächste Lieferung wird erneut zertifiziert und berechnet. Fortfahren?",
+    "success": "Neue Aussaat registriert. Dein Betreiber wurde benachrichtigt.",
+    "in_progress": "Für diese Parzelle läuft eine Zertifizierung. Versuche es später.",
+    "duplicate": "Du hast kürzlich bereits eine Aussaat gemeldet. Kontaktiere deinen Betreiber, falls das ein Fehler war."
+  },
+  "profile": {
+    "title": "Einstellungen"
+  }
+}

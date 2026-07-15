@@ -1,0 +1,160 @@
+{
+  "nav": {
+    "panel": "Panel global",
+    "units": "Unidades",
+    "privileges": "Privilegios",
+    "users": "Usuarios",
+    "params": "Parámetros",
+    "simulator": "Simulador IoT",
+    "supervision": "Supervisión",
+    "saga": "Saga",
+    "certificates": "Certificados",
+    "integrations": "Integraciones",
+    "finances": "Finanzas"
+  },
+  "home": {
+    "title": "Panel global",
+    "metrics": {
+      "units": "Unidades activas",
+      "certs_30d": "Certificados (30 días)",
+      "pending_sagas": "Sagas pendientes",
+      "open_alerts": "Alertas abiertas"
+    },
+    "search_placeholder": "Buscar parcela, unidad o cultivo…",
+    "search_empty": "Sin resultados para esa búsqueda."
+  },
+  "units": {
+    "title": "Unidades de negocio",
+    "unit": "Unidad",
+    "new": "Alta de unidad",
+    "empty": "Aún no hay unidades registradas.",
+    "country": "País",
+    "balance": "Saldo",
+    "state": {
+      "activa": "Activa",
+      "suspendida": "Suspendida",
+      "pendiente": "Pendiente on-chain"
+    },
+    "admin_email": "Correo del administrador de la unidad",
+    "treasury_address": "Treasury PDA de la unidad",
+    "members": "Miembros (solo lectura)",
+    "members_empty": "Esta unidad no tiene miembros.",
+    "subrole": "Sub-rol",
+    "suspend": "Suspender unidad",
+    "suspend_confirm": "La unidad no podrá operar ni emitir certificados mientras esté suspendida. Su tesorería queda intacta. ¿Confirmas?",
+    "suspended_notice": "Esta unidad está suspendida. No puede operar ni emitir certificados.",
+    "admin_name": "Nombre del administrador de la unidad",
+    "reactivate": "Reactivar unidad",
+    "treasury_pending": "Sin tesorería todavía: se creará on-chain cuando exista el programa.",
+    "pending_notice": "Unidad pendiente on-chain: aún no tiene tesorería, así que no puede emitir certificados.",
+    "treasury_pending_notice": "La unidad se creará con su administrador. Su tesorería (Treasury PDA) se crea on-chain y quedará pendiente hasta entonces: no podrá certificar."
+  },
+  "onchain": {
+    "step_seed_admin": "Sembrando el administrador de la unidad",
+    "step_create_unit": "Creando la unidad y su sub-rol de dirección"
+  },
+  "privileges_page": {
+    "title": "Catálogo de privilegios",
+    "key": "Clave",
+    "sensitive": "Sensible",
+    "add": "Agregar privilegio",
+    "empty": "El catálogo está vacío.",
+    "deprecate": "Deprecar",
+    "deprecate_impact": "Este privilegio está en {{n}} sub-roles. Al deprecarlo dejará de poder asignarse; los sub-roles existentes lo conservan hasta que se editen.",
+    "state": {
+      "activo": "Activo",
+      "deprecado": "Deprecado"
+    },
+    "in_subroles": "En sub-roles"
+  },
+  "users": {
+    "title": "Usuarios y membresías",
+    "create": "Crear usuario",
+    "memberships": "Membresías",
+    "search_placeholder": "Buscar por nombre o correo…",
+    "empty": "Sin usuarios para esa búsqueda.",
+    "deactivate": "Desactivar",
+    "deactivate_confirm": "{{name}} no podrá iniciar sesión. La acción queda auditada. ¿Confirmas?",
+    "state": {
+      "activa": "Activa",
+      "inactiva": "Inactiva"
+    },
+    "no_membership": "Sin membresía"
+  },
+  "params": {
+    "title": "Parámetros del sistema",
+    "saved": "Parámetros guardados. El cambio queda versionado.",
+    "who": "Quién",
+    "audit": "Bitácora de cambios",
+    "audit_empty": "Sin cambios registrados.",
+    "section_pricing": "Tarifas (USDC)",
+    "section_thresholds": "Umbrales por cultivo (provisionales, a calibrar en terreno)",
+    "cert_fee": "Tarifa por certificación",
+    "manifest_fee": "Tarifa por manifiesto",
+    "ha_per_sensor": "Hectáreas por sensor",
+    "ph_min": "pH mín",
+    "ph_max": "pH máx",
+    "humidity_min": "Humedad mín (%)",
+    "humidity_max": "Humedad máx (%)",
+    "section_sensors": "Cobertura de sensores",
+    "validity_days": "Vigencia (días)",
+    "changes": "Cambios"
+  },
+  "simulator": {
+    "title": "Simulador IoT",
+    "node": "Nodo",
+    "profile": "Perfil",
+    "profile_healthy": "Sano",
+    "profile_degraded": "Degradado",
+    "on": "Emitiendo",
+    "off": "Apagado",
+    "empty": "No hay nodos simulados.",
+    "generate": "Generar lecturas",
+    "hours": "Horas de telemetría",
+    "last_reading": "Última lectura",
+    "generated_ok": "Lecturas generadas dentro de umbral: la parcela queda conforme.",
+    "generated_alert": "Lecturas fuera de umbral: la parcela pasa a alerta y el agricultor recibe el aviso."
+  },
+  "supervision": {
+    "title": "Supervisión global",
+    "all_units": "Todas las unidades",
+    "all_crops": "Todos los cultivos",
+    "all_states": "Todos los estados",
+    "certified": "Certificada"
+  },
+  "saga": {
+    "title": "Auditoría del saga",
+    "empty": "No hay certificaciones pendientes ni fallidas.",
+    "failed_step": "Paso fallido",
+    "reason": "Motivo",
+    "attempts": "Intentos"
+  },
+  "certificates": {
+    "title": "Revocación global",
+    "empty": "No hay certificados en la plataforma."
+  },
+  "integrations": {
+    "title": "Salud de integraciones",
+    "badge": "integraciones",
+    "state": {
+      "ok": "Operativa",
+      "warn": "Degradada",
+      "down": "Caída",
+      "no_configurado": "No configurada"
+    }
+  },
+  "finances": {
+    "title": "Finanzas de plataforma",
+    "income_onchain": "Ingresos en cadena",
+    "income_onchain_hint": "Acumulado en la cuenta de la plataforma",
+    "collected": "Cobrado (histórico)",
+    "collected_cert": "por certificación",
+    "collected_manifest": "por manifiesto",
+    "gas": "Gas del backend (SOL)",
+    "gas_low": "Fondo de gas bajo: recarga SOL o la certificación dejará de firmar.",
+    "operators_funds": "Fondos de operadores",
+    "certs_issued": "Certificados emitidos",
+    "manifests_issued": "Manifiestos emitidos",
+    "no_chain": "Solana no configurada — sin datos on-chain"
+  }
+}

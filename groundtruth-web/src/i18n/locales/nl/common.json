@@ -1,0 +1,116 @@
+{
+  "brand": "GroundTruth",
+  "tagline": "Fysiek bewijs van de bodem, verifieerbaar door elke auditor",
+  "nav": {
+    "map": "Kaart",
+    "parcels": "Percelen",
+    "shipments": "Zendingen",
+    "treasury": "Treasury",
+    "certificates": "Certificaten",
+    "farmers": "Boeren",
+    "team": "Team",
+    "settings": "Instellingen",
+    "verify": "Verifiëren",
+    "login": "Inloggen",
+    "logout": "Uitloggen",
+    "demo": "Demo aanvragen"
+  },
+  "actions": {
+    "cancel": "Annuleren",
+    "confirm": "Bevestigen",
+    "save": "Opslaan",
+    "retry": "Opnieuw proberen",
+    "copy": "Kopiëren",
+    "copied": "Gekopieerd",
+    "back": "Terug",
+    "close": "Sluiten",
+    "continue": "Doorgaan",
+    "delete": "Verwijderen",
+    "add": "Toevoegen"
+  },
+  "status": {
+    "conforme": "Conform",
+    "alerta": "Waarschuwing",
+    "revocado": "Ingetrokken",
+    "pendiente": "In afwachting",
+    "vigente": "Geldig",
+    "sustituido": "Vervangen",
+    "expirado": "Verlopen",
+    "verificado": "Geverifieerd"
+  },
+  "fields": {
+    "name": "Naam",
+    "email": "E-mail",
+    "date": "Datum",
+    "amount": "Bedrag",
+    "type": "Type",
+    "state": "Status",
+    "crop": "Gewas"
+  },
+  "crops": {
+    "cafe": "Koffie",
+    "cacao": "Cacao",
+    "aguacate": "Avocado"
+  },
+  "units": {
+    "ha": "ha"
+  },
+  "cycle": {
+    "ongoing": "lopend"
+  },
+  "hash": {
+    "match": "Komt overeen",
+    "mismatch": "Komt niet overeen",
+    "pdf": "PDF-hash",
+    "img": "Hash van satellietbeeld"
+  },
+  "explorer": "Bekijk in explorer",
+  "context": {
+    "choose": "Hoe wil je binnenkomen?",
+    "farmer": "Als boer",
+    "farmer_desc": "Waarschuwingen en percelen van je boerderijen (DApp lite)",
+    "operator_desc": "Dashboard van de bedrijfseenheid"
+  },
+  "privileges": {
+    "unidad": {
+      "configurar": "Eenheid configureren"
+    },
+    "equipo": {
+      "gestionar": "Team en subrollen beheren"
+    },
+    "agricultores": {
+      "gestionar": "Boeren beheren"
+    },
+    "topologia": {
+      "gestionar": "Boerderijen en percelen beheren"
+    },
+    "telemetria": {
+      "ver": "Telemetrie bekijken"
+    },
+    "tesoreria": {
+      "ver": "Treasury bekijken"
+    },
+    "embarques": {
+      "preparar": "Zendingen voorbereiden"
+    },
+    "certificados": {
+      "emitir": "Certificaten uitgeven",
+      "revocar": "Certificaten intrekken",
+      "ver": "Certificaten bekijken"
+    }
+  },
+  "soilcore": {
+    "label": "Verificatiekern",
+    "stages": "telemetrie · satelliet · treasury · certificaat"
+  },
+  "language": "Taal",
+  "loading": "Laden…",
+  "context_switch": "Context wisselen",
+  "realtime": {
+    "live": "Live",
+    "down": "Geen live-updates. Opnieuw proberen…"
+  },
+  "footer": {
+    "regulation": "Verordening (EU) 2023/1115 (EUDR)"
+  }
+}

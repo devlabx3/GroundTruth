@@ -1,0 +1,160 @@
+{
+  "nav": {
+    "panel": "Global panel",
+    "units": "Units",
+    "privileges": "Privileges",
+    "users": "Users",
+    "params": "Parameters",
+    "simulator": "IoT simulator",
+    "supervision": "Supervision",
+    "saga": "Saga",
+    "certificates": "Certificates",
+    "integrations": "Integrations",
+    "finances": "Finances"
+  },
+  "home": {
+    "title": "Global panel",
+    "metrics": {
+      "units": "Active units",
+      "certs_30d": "Certificates (30 days)",
+      "pending_sagas": "Pending sagas",
+      "open_alerts": "Open alerts"
+    },
+    "search_placeholder": "Search parcel, unit or crop…",
+    "search_empty": "No results for that search."
+  },
+  "units": {
+    "title": "Business units",
+    "unit": "Unit",
+    "new": "Register unit",
+    "empty": "No units registered yet.",
+    "country": "Country",
+    "balance": "Balance",
+    "state": {
+      "activa": "Active",
+      "suspendida": "Suspended",
+      "pendiente": "Pending on-chain"
+    },
+    "admin_email": "Unit administrator's email",
+    "treasury_address": "Unit's Treasury PDA",
+    "members": "Members (read-only)",
+    "members_empty": "This unit has no members.",
+    "subrole": "Sub-role",
+    "suspend": "Suspend unit",
+    "suspend_confirm": "The unit won't be able to operate or issue certificates while suspended. Its treasury remains intact. Confirm?",
+    "suspended_notice": "This unit is suspended. It cannot operate or issue certificates.",
+    "admin_name": "Unit administrator's name",
+    "reactivate": "Reactivate unit",
+    "treasury_pending": "No treasury yet: it will be created on-chain once the program exists.",
+    "pending_notice": "Unit pending on-chain: it has no treasury yet, so it cannot issue certificates.",
+    "treasury_pending_notice": "The unit will be created with its administrator. Its treasury (Treasury PDA) is created on-chain and stays pending until then: it will not be able to certify."
+  },
+  "onchain": {
+    "step_seed_admin": "Seeding the unit administrator",
+    "step_create_unit": "Creating the unit and its management sub-role"
+  },
+  "privileges_page": {
+    "title": "Privilege catalog",
+    "key": "Key",
+    "sensitive": "Sensitive",
+    "add": "Add privilege",
+    "empty": "The catalog is empty.",
+    "deprecate": "Deprecate",
+    "deprecate_impact": "This privilege is in {{n}} sub-roles. Once deprecated it can no longer be assigned; existing sub-roles keep it until edited.",
+    "state": {
+      "activo": "Active",
+      "deprecado": "Deprecated"
+    },
+    "in_subroles": "In sub-roles"
+  },
+  "users": {
+    "title": "Users and memberships",
+    "create": "Create user",
+    "memberships": "Memberships",
+    "search_placeholder": "Search by name or email…",
+    "empty": "No users for that search.",
+    "deactivate": "Deactivate",
+    "deactivate_confirm": "{{name}} won't be able to sign in. The action is audited. Confirm?",
+    "state": {
+      "activa": "Active",
+      "inactiva": "Inactive"
+    },
+    "no_membership": "No membership"
+  },
+  "params": {
+    "title": "System parameters",
+    "saved": "Parameters saved. The change is versioned.",
+    "who": "Who",
+    "audit": "Change log",
+    "audit_empty": "No changes recorded.",
+    "section_pricing": "Fees (USDC)",
+    "section_thresholds": "Thresholds per crop (provisional, to calibrate in the field)",
+    "cert_fee": "Fee per certification",
+    "manifest_fee": "Fee per manifest",
+    "ha_per_sensor": "Hectares per sensor",
+    "ph_min": "pH min",
+    "ph_max": "pH max",
+    "humidity_min": "Humidity min (%)",
+    "humidity_max": "Humidity max (%)",
+    "section_sensors": "Sensor coverage",
+    "validity_days": "Validity (days)",
+    "changes": "Changes"
+  },
+  "simulator": {
+    "title": "IoT simulator",
+    "node": "Node",
+    "profile": "Profile",
+    "profile_healthy": "Healthy",
+    "profile_degraded": "Degraded",
+    "on": "Emitting",
+    "off": "Off",
+    "empty": "There are no simulated nodes.",
+    "generate": "Generate readings",
+    "hours": "Hours of telemetry",
+    "last_reading": "Last reading",
+    "generated_ok": "Readings generated within thresholds: the plot is compliant.",
+    "generated_alert": "Readings out of range: the plot moves to alert and the farmer is notified."
+  },
+  "supervision": {
+    "title": "Global supervision",
+    "all_units": "All units",
+    "all_crops": "All crops",
+    "all_states": "All statuses",
+    "certified": "Certified"
+  },
+  "saga": {
+    "title": "Saga audit",
+    "empty": "No pending or failed certifications.",
+    "failed_step": "Failed step",
+    "reason": "Reason",
+    "attempts": "Attempts"
+  },
+  "certificates": {
+    "title": "Global revocation",
+    "empty": "There are no certificates on the platform."
+  },
+  "integrations": {
+    "title": "Integration health",
+    "badge": "integrations",
+    "state": {
+      "ok": "Operational",
+      "warn": "Degraded",
+      "down": "Down",
+      "no_configurado": "Not configured"
+    }
+  },
+  "finances": {
+    "title": "Platform finances",
+    "income_onchain": "On-chain income",
+    "income_onchain_hint": "Accrued in the platform account",
+    "collected": "Collected (historical)",
+    "collected_cert": "from certification",
+    "collected_manifest": "from manifest",
+    "gas": "Backend gas (SOL)",
+    "gas_low": "Gas fund low: top up SOL or certification will stop signing.",
+    "operators_funds": "Operator funds",
+    "certs_issued": "Certificates issued",
+    "manifests_issued": "Manifests issued",
+    "no_chain": "Solana not configured — no on-chain data"
+  }
+}

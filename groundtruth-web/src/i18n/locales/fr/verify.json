@@ -1,0 +1,32 @@
+{
+  "title": "Vérificateur de certificats",
+  "subtitle": "Vérifie la validité d'un certificat EUDR sans avoir besoin d'un compte.",
+  "tabs": {
+    "number": "Numéro de certificat",
+    "asset": "ID du cNFT",
+    "document": "Téléverser un document PDF"
+  },
+  "input": {
+    "number_placeholder": "GT-2026-00342",
+    "asset_placeholder": "Adresse de l'actif (base58)",
+    "search": "Rechercher",
+    "drop": "Glisse le PDF du certificat ici ou clique pour le sélectionner",
+    "checking": "Calcul du hash du document…"
+  },
+  "result": {
+    "crop": "Culture",
+    "region": "Pays / région",
+    "cycle": "Cycle",
+    "issued": "Émis",
+    "valid_until": "Valide jusqu'au",
+    "hash_pdf": "Hash du PDF",
+    "hash_image": "Empreinte de l’image",
+    "geojson": "GeoJSON sur Arweave",
+    "explorer": "Voir sur l'explorateur Solana",
+    "doc_match": "Document vérifié : il correspond à l'enregistrement on-chain.",
+    "doc_mismatch": "Ce document ne correspond pas au certificat on-chain. Il pourrait avoir été altéré.",
+    "revoked_notice": "Ce certificat a été révoqué le {{fecha}}. Il n'est pas valide pour l'expédition.",
+    "issued_on": "Émis le"
+  },
+  "privacy_note": "Par respect de la vie privée, le nom de l'agriculteur et le polygone exact de la parcelle ne sont pas affichés."
+}

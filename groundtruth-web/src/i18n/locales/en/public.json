@@ -1,0 +1,57 @@
+{
+  "hero": {
+    "eyebrow": "EUDR certification · Solana",
+    "title": "Physical proof of the land, verifiable by any auditor",
+    "subtitle": "We certify agro-climatic data for coffee, cocoa and avocado with in-ground sensors and satellite evidence, anchored on-chain for EUDR compliance.",
+    "cta_primary": "Request a demo",
+    "cta_secondary": "Verify a certificate"
+  },
+  "how": {
+    "eyebrow": "How it works",
+    "title": "Two independent proofs, one certificate",
+    "step_chemical": "Chemical proof",
+    "step_chemical_desc": "In-ground sensors continuously measure pH, conductivity, humidity and temperature at two depths.",
+    "step_satellite": "Satellite evidence",
+    "step_satellite_desc": "A satellite image of the parcel is retained and anchored by its hash, reproducible before an auditor.",
+    "step_certificate": "On-chain certificate",
+    "step_certificate_desc": "At dispatch, a certificate is issued per parcel and cycle, with its GeoJSON for TRACES NT."
+  },
+  "value": {
+    "eyebrow": "Why GroundTruth",
+    "title": "Frictionless verification is the product",
+    "point_traceable": "Every certificate is checked in seconds, without asking anyone for anything.",
+    "point_hybrid": "Hybrid proof: what the soil measures and what the satellite sees, together.",
+    "point_eudr": "A deliverable ready for EU customs: GeoJSON for TRACES NT."
+  },
+  "login": {
+    "email": "Email",
+    "password": "Password",
+    "demo_hint": "Mock mode: no backend yet. Enter with a demo profile.",
+    "demo_roles": {
+      "operator": "Management of Coop. Sierra Verde · also a farmer",
+      "logistics": "Logistics sub-role · no issuing privilege",
+      "farmer": "Farmer · DApp lite",
+      "admin": "GroundTruth Admin · full control"
+    },
+    "dev_hint": "Quick sign-in (development only)",
+    "dev_roles": {
+      "operator": "Operator",
+      "logistics": "Logistics",
+      "farmer": "Farmer",
+      "admin": "Admin"
+    }
+  },
+  "contact": {
+    "title": "Request a demo",
+    "name": "Name",
+    "email": "Email",
+    "org": "Organization",
+    "message": "What do you export and to which markets?",
+    "submit": "Send request",
+    "success": "We received your request. We'll write to you soon."
+  },
+  "footer": {
+    "rights": "GroundTruth",
+    "eudr_note": "Compliance with Regulation (EU) 2023/1115 (EUDR)."
+  }
+}

@@ -1,0 +1,160 @@
+{
+  "nav": {
+    "panel": "Globaal paneel",
+    "units": "Eenheden",
+    "privileges": "Privileges",
+    "users": "Gebruikers",
+    "params": "Parameters",
+    "simulator": "IoT-simulator",
+    "supervision": "Toezicht",
+    "saga": "Saga",
+    "certificates": "Certificaten",
+    "integrations": "Integraties",
+    "finances": "Financiën"
+  },
+  "home": {
+    "title": "Globaal paneel",
+    "metrics": {
+      "units": "Actieve eenheden",
+      "certs_30d": "Certificaten (30 dagen)",
+      "pending_sagas": "Openstaande saga's",
+      "open_alerts": "Open waarschuwingen"
+    },
+    "search_placeholder": "Zoek perceel, eenheid of gewas…",
+    "search_empty": "Geen resultaten voor deze zoekopdracht."
+  },
+  "units": {
+    "title": "Bedrijfseenheden",
+    "unit": "Eenheid",
+    "new": "Eenheid registreren",
+    "empty": "Nog geen eenheden geregistreerd.",
+    "country": "Land",
+    "balance": "Saldo",
+    "state": {
+      "activa": "Actief",
+      "suspendida": "Geschorst",
+      "pendiente": "On-chain in afwachting"
+    },
+    "admin_email": "E-mail van de eenheidsbeheerder",
+    "treasury_address": "Treasury PDA van de eenheid",
+    "members": "Leden (alleen-lezen)",
+    "members_empty": "Deze eenheid heeft geen leden.",
+    "subrole": "Subrol",
+    "suspend": "Eenheid schorsen",
+    "suspend_confirm": "De eenheid kan tijdens de schorsing niet opereren of certificaten uitgeven. De treasury blijft intact. Bevestig je?",
+    "suspended_notice": "Deze eenheid is geschorst. Ze kan niet opereren of certificaten uitgeven.",
+    "admin_name": "Naam van de beheerder van de eenheid",
+    "reactivate": "Eenheid heractiveren",
+    "treasury_pending": "Nog geen treasury: die wordt on-chain aangemaakt zodra het programma bestaat.",
+    "pending_notice": "Eenheid in afwachting on-chain: ze heeft nog geen treasury en kan dus geen certificaten uitgeven.",
+    "treasury_pending_notice": "De eenheid wordt met haar beheerder aangemaakt. Haar treasury (Treasury PDA) ontstaat on-chain en blijft tot dan in afwachting: certificeren is nog niet mogelijk."
+  },
+  "onchain": {
+    "step_seed_admin": "Eenheidsbeheerder aanmaken",
+    "step_create_unit": "De eenheid en haar directie-subrol worden aangemaakt"
+  },
+  "privileges_page": {
+    "title": "Privilegecatalogus",
+    "key": "Sleutel",
+    "sensitive": "Gevoelig",
+    "add": "Privilege toevoegen",
+    "empty": "De catalogus is leeg.",
+    "deprecate": "Uitfaseren",
+    "deprecate_impact": "Dit privilege zit in {{n}} subrollen. Na uitfasering kan het niet meer worden toegewezen; bestaande subrollen behouden het tot ze worden bewerkt.",
+    "state": {
+      "activo": "Actief",
+      "deprecado": "Uitgefaseerd"
+    },
+    "in_subroles": "In subrollen"
+  },
+  "users": {
+    "title": "Gebruikers en lidmaatschappen",
+    "create": "Gebruiker aanmaken",
+    "memberships": "Lidmaatschappen",
+    "search_placeholder": "Zoek op naam of e-mail…",
+    "empty": "Geen gebruikers voor deze zoekopdracht.",
+    "deactivate": "Deactiveren",
+    "deactivate_confirm": "{{name}} kan niet meer inloggen. De actie wordt geauditeerd. Bevestig je?",
+    "state": {
+      "activa": "Actief",
+      "inactiva": "Inactief"
+    },
+    "no_membership": "Geen lidmaatschap"
+  },
+  "params": {
+    "title": "Systeemparameters",
+    "saved": "Parameters opgeslagen. De wijziging wordt geversioneerd.",
+    "who": "Wie",
+    "audit": "Wijzigingslogboek",
+    "audit_empty": "Geen wijzigingen geregistreerd.",
+    "section_pricing": "Tarieven (USDC)",
+    "section_thresholds": "Drempels per gewas (voorlopig, in het veld te kalibreren)",
+    "cert_fee": "Tarief per certificering",
+    "manifest_fee": "Tarief per manifest",
+    "ha_per_sensor": "Hectare per sensor",
+    "ph_min": "pH min",
+    "ph_max": "pH max",
+    "humidity_min": "Vochtigheid min (%)",
+    "humidity_max": "Vochtigheid max (%)",
+    "section_sensors": "Sensordekking",
+    "validity_days": "Geldigheid (dagen)",
+    "changes": "Wijzigingen"
+  },
+  "simulator": {
+    "title": "IoT-simulator",
+    "node": "Node",
+    "profile": "Profiel",
+    "profile_healthy": "Gezond",
+    "profile_degraded": "Verslechterd",
+    "on": "Zendt uit",
+    "off": "Uit",
+    "empty": "Er zijn geen gesimuleerde nodes.",
+    "generate": "Metingen genereren",
+    "hours": "Uren telemetrie",
+    "last_reading": "Laatste meting",
+    "generated_ok": "Metingen binnen de drempels: het perceel is conform.",
+    "generated_alert": "Metingen buiten de drempels: het perceel gaat naar alarm en de boer krijgt bericht."
+  },
+  "supervision": {
+    "title": "Globaal toezicht",
+    "all_units": "Alle eenheden",
+    "all_crops": "Alle gewassen",
+    "all_states": "Alle statussen",
+    "certified": "Gecertificeerd"
+  },
+  "saga": {
+    "title": "Saga-audit",
+    "empty": "Geen openstaande of mislukte certificeringen.",
+    "failed_step": "Mislukte stap",
+    "reason": "Reden",
+    "attempts": "Pogingen"
+  },
+  "certificates": {
+    "title": "Globale intrekking",
+    "empty": "Er zijn geen certificaten op het platform."
+  },
+  "integrations": {
+    "title": "Integratiestatus",
+    "badge": "integraties",
+    "state": {
+      "ok": "Operationeel",
+      "warn": "Verslechterd",
+      "down": "Uitgevallen",
+      "no_configurado": "Niet geconfigureerd"
+    }
+  },
+  "finances": {
+    "title": "Platformfinanciën",
+    "income_onchain": "On-chain inkomsten",
+    "income_onchain_hint": "Opgebouwd op de platformrekening",
+    "collected": "Geïnd (historisch)",
+    "collected_cert": "uit certificering",
+    "collected_manifest": "uit manifest",
+    "gas": "Backend-gas (SOL)",
+    "gas_low": "Gasfonds laag: laad SOL bij of de certificering stopt met ondertekenen.",
+    "operators_funds": "Middelen van operators",
+    "certs_issued": "Uitgegeven certificaten",
+    "manifests_issued": "Uitgegeven manifesten",
+    "no_chain": "Solana niet geconfigureerd — geen on-chain gegevens"
+  }
+}

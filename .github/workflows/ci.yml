@@ -1,0 +1,102 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+# Qué corre aquí y qué NO:
+#
+# Corre todo lo que es determinista y sin infraestructura: typecheck, lint, tests
+# unitarios, builds y la compilación del programa Anchor.
+#
+# NO corre lo que necesita una BD real o un validador de Solana (los tests de
+# integración y el e2e del programa). No es pereza: un CI que falla de forma
+# intermitente por infraestructura se acaba ignorando, y un CI ignorado no protege
+# nada. Esos siguen siendo comandos locales, documentados en cada README.
+
+jobs:
+  web:
+    name: Frontend
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: groundtruth-web
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: groundtruth-web/pnpm-lock.yaml
+
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm lint
+      # Paso propio (aunque `build` también lo corra): así un fallo de tipos se
+      # distingue de un fallo de empaquetado sin abrir el log.
+      - run: pnpm typecheck
+      # Incluye la paridad de los 7 diccionarios: una clave sin traducir
+      # deja media interfaz en otro idioma.
+      - run: pnpm test
+      - run: pnpm build
+
+  api:
+    name: Backend
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: groundtruth-api
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: groundtruth-api/pnpm-lock.yaml
+
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm typecheck
+      - run: pnpm test
+      - run: pnpm build
+
+  program:
+    name: Programa Anchor
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: groundtruth-program
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Cachear cargo y platform-tools
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            ~/.cache/solana
+            groundtruth-program/target
+          key: solana-${{ hashFiles('groundtruth-program/Cargo.lock') }}
+
+      - name: Instalar la CLI de Solana
+        run: |
+          sh -c "$(curl -sSfL https://release.anza.xyz/v3.1.13/install)"
+          echo "$HOME/.local/share/solana/install/active_release/bin" >> "$GITHUB_PATH"
+
+      - run: cargo fmt --check
+
+      # `-D warnings` con dos excepciones acotadas: `unexpected_cfgs` y
+      # `deprecated` los produce la MACRO de Anchor (`#[program]` expande a un
+      # `realloc` obsoleto), no nuestro código. Silenciarlos por completo taparía
+      # avisos reales; acotarlos a esas dos clases deja el resto en rojo.
+      - run: cargo clippy -- -D warnings -A unexpected_cfgs -A deprecated
+      # Compila a SBF: garantiza que el programa sigue siendo desplegable.
+      # El e2e (9 garantías) necesita un validador con Bubblegum clonado de
+      # mainnet: se corre en local (ver groundtruth-program/README.md).
+      - run: cargo build-sbf

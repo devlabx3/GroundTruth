@@ -1,0 +1,23 @@
+[workspace]
+
+[package]
+name = "groundtruth-client"
+version = "0.1.0"
+edition = "2021"
+
+# Suite de pruebas de integración: habla con un validador real por RPC y ejerce
+# las garantías del programa (idempotencia, atomicidad, aislamiento, techos).
+[[bin]]
+name = "e2e"
+path = "src/main.rs"
+
+[dependencies]
+groundtruth = { path = "../programs/groundtruth", features = ["no-entrypoint"] }
+anchor-lang = "0.31.1"
+anchor-spl = "0.31.1"
+solana-client = "2.3"
+solana-sdk = "2.3"
+spl-token = { version = "7.0", features = ["no-entrypoint"] }
+spl-associated-token-account = { version = "6.0", features = ["no-entrypoint"] }
+mpl-bubblegum = "2.0.0"
+spl-account-compression = "1.0.0"

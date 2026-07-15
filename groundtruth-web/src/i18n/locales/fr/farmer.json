@@ -1,0 +1,32 @@
+{
+  "home_title": "Mes cultures",
+  "nav": {
+    "alerts": "Alertes",
+    "parcels": "Mes parcelles",
+    "profile": "Profil"
+  },
+  "alerts": {
+    "title": "Alertes",
+    "empty": "Tes cultures sont en ordre.",
+    "live": "Mise à jour en direct",
+    "offline": "Mise à jour en direct indisponible. Nouvelle tentative…",
+    "detail": "{{variable}} : {{valor}} (seuil {{umbral}})"
+  },
+  "parcels": {
+    "title": "Mes parcelles",
+    "empty": "Tu n'as pas encore de parcelles enregistrées. Ton opérateur les configure.",
+    "cycle_active": "Cycle actif",
+    "history": "Historique des cycles"
+  },
+  "new_planting": {
+    "action": "Déclarer un nouveau semis",
+    "confirm_title": "Déclarer un nouveau semis",
+    "confirm_body": "Ceci clôture le cycle actuel de cette parcelle. La prochaine expédition certifiera et facturera à nouveau. Continuer ?",
+    "success": "Nouveau semis enregistré. Ton opérateur a été prévenu.",
+    "in_progress": "Une certification est en cours pour cette parcelle. Réessaie plus tard.",
+    "duplicate": "Tu as déjà déclaré un semis récemment. Contacte ton opérateur si c'était une erreur."
+  },
+  "profile": {
+    "title": "Préférences"
+  }
+}

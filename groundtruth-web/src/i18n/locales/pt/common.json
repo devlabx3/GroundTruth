@@ -1,0 +1,116 @@
+{
+  "brand": "GroundTruth",
+  "tagline": "Prova física do terreno, verificável por qualquer auditor",
+  "nav": {
+    "map": "Mapa",
+    "parcels": "Parcelas",
+    "shipments": "Embarques",
+    "treasury": "Tesouraria",
+    "certificates": "Certificados",
+    "farmers": "Agricultores",
+    "team": "Equipe",
+    "settings": "Configurações",
+    "verify": "Verificar",
+    "login": "Entrar",
+    "logout": "Sair",
+    "demo": "Solicitar demo"
+  },
+  "actions": {
+    "cancel": "Cancelar",
+    "confirm": "Confirmar",
+    "save": "Salvar",
+    "retry": "Tentar novamente",
+    "copy": "Copiar",
+    "copied": "Copiado",
+    "back": "Voltar",
+    "close": "Fechar",
+    "continue": "Continuar",
+    "delete": "Excluir",
+    "add": "Adicionar"
+  },
+  "status": {
+    "conforme": "Conforme",
+    "alerta": "Alerta",
+    "revocado": "Revogado",
+    "pendiente": "Pendente",
+    "vigente": "Vigente",
+    "sustituido": "Substituído",
+    "expirado": "Expirado",
+    "verificado": "Verificado"
+  },
+  "fields": {
+    "name": "Nome",
+    "email": "E-mail",
+    "date": "Data",
+    "amount": "Valor",
+    "type": "Tipo",
+    "state": "Estado",
+    "crop": "Cultivo"
+  },
+  "crops": {
+    "cafe": "Café",
+    "cacao": "Cacau",
+    "aguacate": "Abacate"
+  },
+  "units": {
+    "ha": "ha"
+  },
+  "cycle": {
+    "ongoing": "em andamento"
+  },
+  "hash": {
+    "match": "Confere",
+    "mismatch": "Não confere",
+    "pdf": "Hash do PDF",
+    "img": "Hash da imagem de satélite"
+  },
+  "explorer": "Ver no explorer",
+  "context": {
+    "choose": "Como você quer entrar?",
+    "farmer": "Como agricultor",
+    "farmer_desc": "Alertas e parcelas das suas fazendas (DApp lite)",
+    "operator_desc": "Painel da unidade de negócio"
+  },
+  "privileges": {
+    "unidad": {
+      "configurar": "Configurar a unidade"
+    },
+    "equipo": {
+      "gestionar": "Gerenciar equipe e subfunções"
+    },
+    "agricultores": {
+      "gestionar": "Gerenciar agricultores"
+    },
+    "topologia": {
+      "gestionar": "Gerenciar fazendas e parcelas"
+    },
+    "telemetria": {
+      "ver": "Ver telemetria"
+    },
+    "tesoreria": {
+      "ver": "Ver tesouraria"
+    },
+    "embarques": {
+      "preparar": "Preparar embarques"
+    },
+    "certificados": {
+      "emitir": "Emitir certificados",
+      "revocar": "Revogar certificados",
+      "ver": "Ver certificados"
+    }
+  },
+  "soilcore": {
+    "label": "Núcleo de verificação",
+    "stages": "telemetria · satélite · tesouraria · certificado"
+  },
+  "language": "Idioma",
+  "loading": "Carregando…",
+  "context_switch": "Trocar contexto",
+  "realtime": {
+    "live": "Ao vivo",
+    "down": "Sem atualização ao vivo. A tentar novamente…"
+  },
+  "footer": {
+    "regulation": "Regulamento (UE) 2023/1115 (EUDR)"
+  }
+}

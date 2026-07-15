@@ -1,0 +1,32 @@
+{
+  "home_title": "My crops",
+  "nav": {
+    "alerts": "Alerts",
+    "parcels": "My parcels",
+    "profile": "Profile"
+  },
+  "alerts": {
+    "title": "Alerts",
+    "empty": "Your crops are in order.",
+    "live": "Live updates",
+    "offline": "Live updates unavailable. Retrying…",
+    "detail": "{{variable}}: {{valor}} (threshold {{umbral}})"
+  },
+  "parcels": {
+    "title": "My parcels",
+    "empty": "You have no parcels registered yet. Your operator sets them up.",
+    "cycle_active": "Active cycle",
+    "history": "Cycle history"
+  },
+  "new_planting": {
+    "action": "Declare new planting",
+    "confirm_title": "Declare new planting",
+    "confirm_body": "This closes the current cycle of this parcel. The next dispatch will certify and charge again. Continue?",
+    "success": "New planting registered. Your operator was notified.",
+    "in_progress": "A certification is in progress for this parcel. Try again later.",
+    "duplicate": "You already declared a planting recently. Contact your operator if this was a mistake."
+  },
+  "profile": {
+    "title": "Preferences"
+  }
+}

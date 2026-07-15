@@ -1,0 +1,160 @@
+{
+  "nav": {
+    "panel": "Pannello globale",
+    "units": "Unità",
+    "privileges": "Privilegi",
+    "users": "Utenti",
+    "params": "Parametri",
+    "simulator": "Simulatore IoT",
+    "supervision": "Supervisione",
+    "saga": "Saga",
+    "certificates": "Certificati",
+    "integrations": "Integrazioni",
+    "finances": "Finanze"
+  },
+  "home": {
+    "title": "Pannello globale",
+    "metrics": {
+      "units": "Unità attive",
+      "certs_30d": "Certificati (30 giorni)",
+      "pending_sagas": "Saga in sospeso",
+      "open_alerts": "Allerte aperte"
+    },
+    "search_placeholder": "Cerca particella, unità o coltura…",
+    "search_empty": "Nessun risultato per questa ricerca."
+  },
+  "units": {
+    "title": "Unità di business",
+    "unit": "Unità",
+    "new": "Registra unità",
+    "empty": "Ancora nessuna unità registrata.",
+    "country": "Paese",
+    "balance": "Saldo",
+    "state": {
+      "activa": "Attiva",
+      "suspendida": "Sospesa",
+      "pendiente": "In attesa on-chain"
+    },
+    "admin_email": "Email dell'amministratore dell'unità",
+    "treasury_address": "Treasury PDA dell'unità",
+    "members": "Membri (sola lettura)",
+    "members_empty": "Questa unità non ha membri.",
+    "subrole": "Sotto-ruolo",
+    "suspend": "Sospendi unità",
+    "suspend_confirm": "L'unità non potrà operare né emettere certificati mentre è sospesa. La sua treasury resta intatta. Confermi?",
+    "suspended_notice": "Questa unità è sospesa. Non può operare né emettere certificati.",
+    "admin_name": "Nome dell'amministratore dell'unità",
+    "reactivate": "Riattiva l'unità",
+    "treasury_pending": "Nessuna tesoreria ancora: sarà creata on-chain quando esisterà il programma.",
+    "pending_notice": "Unità in attesa on-chain: non ha ancora una tesoreria, quindi non può emettere certificati.",
+    "treasury_pending_notice": "L'unità sarà creata con il suo amministratore. La sua tesoreria (Treasury PDA) si crea on-chain e resterà in attesa fino ad allora: non potrà certificare."
+  },
+  "onchain": {
+    "step_seed_admin": "Creazione dell'amministratore dell'unità",
+    "step_create_unit": "Creazione dell'unità e del suo sotto-ruolo di direzione"
+  },
+  "privileges_page": {
+    "title": "Catalogo dei privilegi",
+    "key": "Chiave",
+    "sensitive": "Sensibile",
+    "add": "Aggiungi privilegio",
+    "empty": "Il catalogo è vuoto.",
+    "deprecate": "Depreca",
+    "deprecate_impact": "Questo privilegio è in {{n}} sotto-ruoli. Una volta deprecato non potrà più essere assegnato; i sotto-ruoli esistenti lo conservano finché non vengono modificati.",
+    "state": {
+      "activo": "Attivo",
+      "deprecado": "Deprecato"
+    },
+    "in_subroles": "Nei sotto-ruoli"
+  },
+  "users": {
+    "title": "Utenti e membership",
+    "create": "Crea utente",
+    "memberships": "Membership",
+    "search_placeholder": "Cerca per nome o email…",
+    "empty": "Nessun utente per questa ricerca.",
+    "deactivate": "Disattiva",
+    "deactivate_confirm": "{{name}} non potrà più accedere. L'azione viene auditata. Confermi?",
+    "state": {
+      "activa": "Attiva",
+      "inactiva": "Inattiva"
+    },
+    "no_membership": "Senza appartenenza"
+  },
+  "params": {
+    "title": "Parametri di sistema",
+    "saved": "Parametri salvati. La modifica è versionata.",
+    "who": "Chi",
+    "audit": "Registro delle modifiche",
+    "audit_empty": "Nessuna modifica registrata.",
+    "section_pricing": "Tariffe (USDC)",
+    "section_thresholds": "Soglie per coltura (provvisorie, da calibrare sul campo)",
+    "cert_fee": "Tariffa per certificazione",
+    "manifest_fee": "Tariffa per manifesto",
+    "ha_per_sensor": "Ettari per sensore",
+    "ph_min": "pH min",
+    "ph_max": "pH max",
+    "humidity_min": "Umidità min (%)",
+    "humidity_max": "Umidità max (%)",
+    "section_sensors": "Copertura dei sensori",
+    "validity_days": "Validità (giorni)",
+    "changes": "Modifiche"
+  },
+  "simulator": {
+    "title": "Simulatore IoT",
+    "node": "Nodo",
+    "profile": "Profilo",
+    "profile_healthy": "Sano",
+    "profile_degraded": "Degradato",
+    "on": "In emissione",
+    "off": "Spento",
+    "empty": "Non ci sono nodi simulati.",
+    "generate": "Genera letture",
+    "hours": "Ore di telemetria",
+    "last_reading": "Ultima lettura",
+    "generated_ok": "Letture generate entro le soglie: la particella è conforme.",
+    "generated_alert": "Letture fuori soglia: la particella passa in allerta e l'agricoltore riceve l'avviso."
+  },
+  "supervision": {
+    "title": "Supervisione globale",
+    "all_units": "Tutte le unità",
+    "all_crops": "Tutte le colture",
+    "all_states": "Tutti gli stati",
+    "certified": "Certificata"
+  },
+  "saga": {
+    "title": "Audit del saga",
+    "empty": "Nessuna certificazione in sospeso o fallita.",
+    "failed_step": "Passo fallito",
+    "reason": "Motivo",
+    "attempts": "Tentativi"
+  },
+  "certificates": {
+    "title": "Revoca globale",
+    "empty": "Non ci sono certificati sulla piattaforma."
+  },
+  "integrations": {
+    "title": "Stato delle integrazioni",
+    "badge": "integrazioni",
+    "state": {
+      "ok": "Operativa",
+      "warn": "Degradata",
+      "down": "Non disponibile",
+      "no_configurado": "Non configurata"
+    }
+  },
+  "finances": {
+    "title": "Finanze della piattaforma",
+    "income_onchain": "Ricavi on-chain",
+    "income_onchain_hint": "Accumulati sul conto della piattaforma",
+    "collected": "Incassato (storico)",
+    "collected_cert": "da certificazione",
+    "collected_manifest": "da manifesto",
+    "gas": "Gas del backend (SOL)",
+    "gas_low": "Fondo gas basso: ricarica SOL o la certificazione smetterà di firmare.",
+    "operators_funds": "Fondi degli operatori",
+    "certs_issued": "Certificati emessi",
+    "manifests_issued": "Manifesti emessi",
+    "no_chain": "Solana non configurato — nessun dato on-chain"
+  }
+}

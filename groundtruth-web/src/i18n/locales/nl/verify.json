@@ -1,0 +1,32 @@
+{
+  "title": "Certificaatverificatie",
+  "subtitle": "Controleer de geldigheid van een EUDR-certificaat zonder account.",
+  "tabs": {
+    "number": "Certificaatnummer",
+    "asset": "cNFT-ID",
+    "document": "PDF-document uploaden"
+  },
+  "input": {
+    "number_placeholder": "GT-2026-00342",
+    "asset_placeholder": "Asset-adres (base58)",
+    "search": "Zoeken",
+    "drop": "Sleep de certificaat-PDF hierheen of klik om te selecteren",
+    "checking": "Documenthash wordt berekend…"
+  },
+  "result": {
+    "crop": "Gewas",
+    "region": "Land / regio",
+    "cycle": "Cyclus",
+    "issued": "Uitgegeven",
+    "valid_until": "Geldig tot",
+    "hash_pdf": "PDF-hash",
+    "hash_image": "Hash van de afbeelding",
+    "geojson": "GeoJSON op Arweave",
+    "explorer": "Bekijk in Solana-explorer",
+    "doc_match": "Document geverifieerd: het komt overeen met het on-chain record.",
+    "doc_mismatch": "Dit document komt niet overeen met het on-chain certificaat. Het kan gewijzigd zijn.",
+    "revoked_notice": "Dit certificaat is ingetrokken op {{fecha}}. Het is niet geldig voor verzending.",
+    "issued_on": "Uitgegeven"
+  },
+  "privacy_note": "Om privacyredenen worden de naam van de boer en de exacte perceelpolygoon niet getoond."
+}

@@ -1,0 +1,57 @@
+{
+  "hero": {
+    "eyebrow": "EUDR-Zertifizierung · Solana",
+    "title": "Physischer Nachweis des Bodens, überprüfbar durch jeden Auditor",
+    "subtitle": "Wir zertifizieren agroklimatische Daten für Kaffee, Kakao und Avocado mit Bodensensoren und Satellitennachweisen, on-chain verankert für die EUDR-Konformität.",
+    "cta_primary": "Demo anfragen",
+    "cta_secondary": "Zertifikat prüfen"
+  },
+  "how": {
+    "eyebrow": "So funktioniert es",
+    "title": "Zwei unabhängige Nachweise, ein Zertifikat",
+    "step_chemical": "Chemischer Nachweis",
+    "step_chemical_desc": "Bodensensoren messen kontinuierlich pH, Leitfähigkeit, Feuchtigkeit und Temperatur in zwei Tiefen.",
+    "step_satellite": "Satellitennachweis",
+    "step_satellite_desc": "Ein Satellitenbild der Parzelle wird aufbewahrt und über seinen Hash verankert, reproduzierbar vor einem Auditor.",
+    "step_certificate": "On-Chain-Zertifikat",
+    "step_certificate_desc": "Beim Versand wird pro Parzelle und Zyklus ein Zertifikat ausgestellt, mit GeoJSON für TRACES NT."
+  },
+  "value": {
+    "eyebrow": "Warum GroundTruth",
+    "title": "Reibungslose Verifizierung ist das Produkt",
+    "point_traceable": "Jedes Zertifikat wird in Sekunden geprüft, ohne jemanden um etwas zu bitten.",
+    "point_hybrid": "Hybrider Nachweis: was der Boden misst und was der Satellit sieht, zusammen.",
+    "point_eudr": "Ein Ergebnis, bereit für den EU-Zoll: GeoJSON für TRACES NT."
+  },
+  "login": {
+    "email": "E-Mail",
+    "password": "Passwort",
+    "demo_hint": "Mock-Modus: noch kein Backend. Melde dich mit einem Demo-Profil an.",
+    "demo_roles": {
+      "operator": "Leitung der Coop. Sierra Verde · auch Landwirtin",
+      "logistics": "Unterrolle Logistik · ohne Ausstellungsprivileg",
+      "farmer": "Landwirt · DApp lite",
+      "admin": "GroundTruth-Admin · volle Kontrolle"
+    },
+    "dev_hint": "Schnellanmeldung (nur Entwicklung)",
+    "dev_roles": {
+      "operator": "Betreiberin",
+      "logistics": "Logistik",
+      "farmer": "Landwirt",
+      "admin": "Admin"
+    }
+  },
+  "contact": {
+    "title": "Demo anfragen",
+    "name": "Name",
+    "email": "E-Mail",
+    "org": "Organisation",
+    "message": "Was exportierst du und in welche Märkte?",
+    "submit": "Anfrage senden",
+    "success": "Wir haben deine Anfrage erhalten. Wir melden uns bald."
+  },
+  "footer": {
+    "rights": "GroundTruth",
+    "eudr_note": "Konformität mit der Verordnung (EU) 2023/1115 (EUDR)."
+  }
+}

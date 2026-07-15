@@ -41,32 +41,60 @@ Barra vertical de 4 segmentos (telemetría → satélite → tesorería → cert
 
 ## 5. Stack de frontend (cerrado)
 
-Vite + React 18 · Tailwind CSS (tokens de este documento) · shadcn/ui · Leaflet + react-leaflet · Recharts · Solana Wallet Adapter · @solana/web3.js + cliente Anchor por IDL · **@phosphor-icons/react** · **Zustand** (estado de UI/sesión) · **Axios** (HTTP hacia NestJS) · **TanStack Query** (cache/invalidación sobre Axios) · Supabase JS (solo Auth, Storage, Realtime) · React Hook Form + Zod.
+**Vite 6 + React 18** · Tailwind CSS (tokens de este documento) · Leaflet + **react-leaflet ^4.x** · Recharts · **@phosphor-icons/react** · **Zustand** (estado de UI/sesión) · **Axios** (HTTP hacia NestJS) · **TanStack Query** (cache/invalidación sobre Axios) · Supabase JS (solo Auth) · React Hook Form + Zod · **Vitest + Testing Library**.
 
-**Regla de datos:** TanStack Query es la única fuente de datos de servidor; Zustand solo guarda estado efímero de interacción. Prohibido duplicar dato de servidor en Zustand. Supabase JS nunca consulta tablas de negocio directamente (eso es de NestJS): solo Auth, Storage y Realtime.
+> **`react-leaflet` debe quedarse en `^4.x`:** la v5 exige React 19 y el stack está cerrado en React 18.
+
+**Regla de datos:** TanStack Query es la única fuente de datos de servidor; Zustand solo guarda estado efímero de interacción. Prohibido duplicar dato de servidor en Zustand. Supabase JS **nunca consulta tablas de negocio** (eso es de NestJS).
+
+### Correcciones respecto a la versión anterior de este documento
+
+| Decía | Realidad |
+| --- | --- |
+| **shadcn/ui** | **No se usa.** Los componentes (`Button`, `Card`, `Dialog`, `Table`, `Select`…) son **propios**, con la paleta cerrada de la §2. Ventaja concreta: los colores viven en el `variant`, nunca en el `className` — y hay un test que lo vigila, porque un `className` con `bg-`/`text-` ya produjo un **botón invisible** (texto esmeralda sobre fondo esmeralda). |
+| **Solana Wallet Adapter** · **@solana/web3.js** · **cliente Anchor por IDL** | **No están en el frontend, y no deben estar.** El frontend **no firma transacciones ni conecta wallets**: toda la interacción con la cadena la hace el backend (que sí usa `@solana/web3.js` y `@coral-xyz/anchor`). El operador deposita USDC **desde su propia wallet, fuera de la aplicación**. Menos superficie de ataque y ninguna llave en el navegador. |
+| Supabase JS para **Storage y Realtime** | **Auth** y **Realtime**. El Storage lo maneja el backend (con `service_role`). El Realtime ✅ está implementado, pero **como campana, no como cartero**: el cliente se suscribe, **ignora el payload** del evento y solo invalida su caché para volver a pedir el dato **por NestJS**. La regla se mantiene intacta: **ningún dato de negocio se lee directamente de Postgres**. |
 
 ## 6. Internacionalización (regla de arquitectura)
 
 > **Regla i18n:** ninguna cadena visible al usuario se escribe en el código. Todo texto vive en diccionarios desde el primer commit, con español como idioma por defecto y único diccionario completo del MVP. Agregar un idioma = agregar un archivo; cero cambios de código. Si una pantalla funciona en español, funciona idéntica en cualquier idioma futuro.
 
-Implementación: `react-i18next` + ICU. Diccionarios por namespace (`common`, `dashboard`, `certificates`, `farmer`, `verify`). Claves semánticas (`certificates.status.revoked`), nunca el texto como clave. Fechas/números/moneda vía `Intl`. Layout tolerante a +35% de expansión (alemán). No se traducen: hashes, IDs, PDAs, coordenadas, unidades científicas, contenido del GeoJSON.
+Implementación: `react-i18next` + ICU. Diccionarios por namespace: **`common`, `dashboard`, `admin`, `farmer`, `public`, `verify`, `errors`**. Claves semánticas (`certificates.status.revoked`), nunca el texto como clave. Fechas/números/moneda vía `Intl`. Layout tolerante a +35% de expansión (alemán). No se traducen: hashes, IDs, PDAs, coordenadas, unidades científicas, contenido del GeoJSON.
 
-**Idiomas:** es (MVP, default) → en (Fase 1) → de, nl, it, fr (Fase 2) → pt (Fase 3). Justificación: operadores LATAM (es); auditores/lingua franca (en); Alemania 34% importación café UE (de); Países Bajos 50% cacao UE (nl); Italia 21% café (it); Francia + instituciones UE + Valonia (fr); Brasil/Portugal (pt).
+**Idiomas: los 7 están completos** (es, en, de, nl, it, fr, pt), no por fases. Justificación de la selección: operadores LATAM (es); auditores/lingua franca (en); Alemania 34% importación café UE (de); Países Bajos 50% cacao UE (nl); Italia 21% café (it); Francia + instituciones UE (fr); Brasil/Portugal (pt).
+
+> **La regla i18n está protegida por tests.** Uno verifica la **paridad exacta de claves** entre los 7 diccionarios; otro verifica que **las interpolaciones `{{n}}` sobrevivan a la traducción** — perder un `{{n}}` deja *"Necesitas sensores"* en vez de *"Necesitas 6 sensores"*. Ambos fallan si alguien rompe la regla.
+>
+> El namespace **`errors`** es un contrato con el backend: cada `messageKey` que devuelve la API tiene ahí su traducción, y **un test del backend lo verifica** — si alguien renombra una clave, la UI le enseñaría `insufficient_funds` en crudo a un agricultor.
 
 SEO multi-idioma: rutas con prefijo de locale (`/es/…`, `/en/…`), `hreflang`, metadatos y sitemap por idioma.
 
-## 7. Componente: Modal de progreso de transacción por pasos (`OnchainProgressModal`)
+## 7. Componente: Modal de progreso por pasos (`OnchainProgressModal`)
 
-Componente reutilizable para **toda acción con efecto on-chain**. Descompone la operación (saga) en pasos nombrados en lenguaje de negocio y muestra el estado de cada uno en vivo. Sustituye cualquier spinner genérico en operaciones que cruzan servicios o esperan confirmación de red.
+Componente reutilizable para **toda operación larga que cruza servicios**. Descompone la saga en pasos nombrados en lenguaje de negocio y muestra el estado de cada uno en vivo. Sustituye cualquier spinner genérico.
 
 ### 7.1 Cuándo se usa
 
-| Acción | Rol | Pasos |
-| --- | --- | --- |
-| Generar certificado de embarque | Operador | 5 (validar química → anclar satélite → subir Arweave → emitir+cobrar → registrar manifiesto) |
-| Declarar nueva siembra | Agricultor | 2 (confirmar cierre de ciclo → registrar en cadena) |
-| Revocar certificado | Operador / Admin | 2 (registrar revocación → confirmar en cadena) |
-| Alta de unidad (crear Treasury) | Admin | 2 (crear Treasury PDA → sembrar administrador) |
+| Acción | Rol | Pasos | ¿Toca la cadena? |
+| --- | --- | --- | --- |
+| Generar certificado de embarque | Operador | 5 (validar química → anclar satélite → subir Arweave → emitir+cobrar → registrar manifiesto) | **Sí** |
+| Alta de unidad | Admin | 2 (crear la unidad y su sub-rol de dirección → sembrar al administrador) | No |
+| Declarar nueva siembra | Agricultor | 2 (cerrar el ciclo anterior → abrir el nuevo) | No |
+| Revocar certificado | Operador / Admin | 2 (registrar la revocación → anotar en la auditoría) | No |
+
+> ### ⚠️ Un paso NUNCA puede afirmar algo que no ocurre
+>
+> La versión anterior de este documento decía que "declarar nueva siembra" y "revocar
+> certificado" tenían un paso **"registrar / confirmar en cadena"**. Se implementó así, y **la
+> interfaz estaba mintiendo**: ninguna de esas dos acciones toca la cadena, **y no es un
+> descuido — es el diseño**. El cNFT es inmutable, así que el estado del certificado vive
+> off-chain (Arquitectura §2.3): **la revocación nunca será on-chain.**
+>
+> Los pasos se renombraron para describir lo que de verdad pasa. Un modal que finge una
+> escritura en blockchain destruye exactamente la confianza que este producto vende.
+>
+> **El alta de unidad tampoco crea la Treasury PDA** (decía que sí): la unidad nace
+> `PENDIENTE_ONCHAIN` y su tesorería se crea aparte, con `init_operator_treasury`.
 
 Es **un solo componente** parametrizado por una lista de pasos; no se crea una pantalla por acción.
 
@@ -74,7 +102,7 @@ Es **un solo componente** parametrizado por una lista de pasos; no se crea una p
 
 - **Cabecera esmeralda** con el núcleo de suelo (segmentos que se pintan oro conforme avanzan los pasos) + título de la acción + subtítulo con contexto ("Embarque de 3 parcelas · no cierres esta ventana").
 - **Lista de pasos**, cada uno con: icono de estado + título (lenguaje de negocio) + subtítulo (dato técnico en `IBM Plex Mono` cuando aplica: hash, monto, tx).
-- **Pie** con contador (`paso N de M`), red (`devnet`) y aviso de segundo plano.
+- **Pie** con contador (`paso N de M`) y aviso de segundo plano. *(La red — `devnet` — no se muestra: pendiente.)*
 
 ### 7.3 Estados por paso
 
@@ -88,7 +116,7 @@ Es **un solo componente** parametrizado por una lista de pasos; no se crea una p
 ### 7.4 Reglas de comportamiento (obligatorias)
 
 1. **No se cierra mientras haya un paso activo:** ni con click fuera, ni con Escape, ni con botón X. Evita que el usuario crea que canceló algo que sigue corriendo on-chain.
-2. **Ejecución en segundo plano:** como la saga es asíncrona e idempotente, el usuario puede minimizar/cerrar tras la fase de firma; el proceso continúa y el modal es **recuperable desde el historial** (embarque en estado `PENDIENTE`). El texto "puedes seguir en segundo plano" solo aparece cuando ya es seguro cerrar.
+2. **Ejecución en segundo plano:** como la saga es asíncrona e idempotente, el proceso continúa aunque el usuario cierre. 🔜 **Pendiente:** el modal **todavía no es recuperable** desde la vista del operador (si se cierra a media saga, no hay forma de volver a verlo). Hoy la red de seguridad es el **Admin**, que ve la cola del saga (`FAILED`/`CERT_PENDING`) y puede reintentar. El reintento **reconcilia en vez de duplicar**.
 3. **Un paso fallido no borra el progreso:** los pasos completados permanecen en check; el reintento retoma desde el paso fallido (idempotencia por `certificate_id` / `CertificateRecord`). Nunca se ofrece un reintento que pueda duplicar cobro o mint.
 4. **Estado final éxito:** todos los pasos en check, el núcleo de suelo completa su 4.º segmento en oro, y se muestran las acciones siguientes (p. ej. "Descargar GeoJSON para TRACES NT" + enlace al explorer).
 5. **Estado final error:** el modal permanece abierto con el paso fallido en lacre, su motivo en lenguaje claro, y la acción correctiva (reintentar, o ir a Tesorería si es fondos insuficientes).
@@ -103,4 +131,4 @@ Es **un solo componente** parametrizado por una lista de pasos; no se crea una p
 
 **Fotografía (solo superficies del Visitante):** documental/editorial, luz natural, sin poses de banco de imágenes genérico — nunca "stock corporativo" reconocible.
 
-Especificación completa (inventario de piezas, ubicaciones exactas, dirección fotográfica y notas de producción) en `GroundTruth-Elementos-Graficos-y-Fotografia.md`.
+La especificación completa (inventario de piezas, ubicaciones exactas, dirección fotográfica y notas de producción) **no se versiona**: vive junto al arte fuente, fuera del repo (`../design-assets/`).

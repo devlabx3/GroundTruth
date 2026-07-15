@@ -1,0 +1,43 @@
+{
+  "name": "groundtruth-api",
+  "version": "0.1.0",
+  "private": true,
+  "description": "GroundTruth — orquestador NestJS: REST de comandos, webhook Helius, saga de certificación.",
+  "scripts": {
+    "build": "nest build",
+    "start": "nest start",
+    "dev": "nest start --watch",
+    "start:prod": "node dist/main.js",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:integration": "vitest run --config vitest.integration.config.ts"
+  },
+  "dependencies": {
+    "@coral-xyz/anchor": "^0.32.1",
+    "@irys/upload": "^0.0.15",
+    "@irys/upload-solana": "^0.1.8",
+    "@nestjs/common": "^11.0.0",
+    "@nestjs/config": "^4.0.0",
+    "@nestjs/core": "^11.0.0",
+    "@nestjs/platform-express": "^11.0.0",
+    "@solana/spl-token": "^0.4.15",
+    "@solana/web3.js": "^1.98.4",
+    "jose": "^5.9.0",
+    "pdfkit": "^0.19.1",
+    "pg": "^8.13.0",
+    "reflect-metadata": "^0.2.2",
+    "rxjs": "^7.8.1",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@nestjs/cli": "^11.0.0",
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.0.0",
+    "@types/pdfkit": "^0.17.6",
+    "@types/pg": "^8.11.0",
+    "typescript": "^5.6.0",
+    "vitest": "^4.1.10"
+  },
+  "comment_decisiones": "Sin ORM: consultas SQL explicitas sobre pg (el esquema ya vive en supabase/migrations y es la fuente de verdad). Validacion con zod (mismo vocabulario que el frontend). Supabase JS no se usa aqui: el backend habla Postgres directo con el rol de servicio."
+}

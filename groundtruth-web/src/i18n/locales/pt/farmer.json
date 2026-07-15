@@ -1,0 +1,32 @@
+{
+  "home_title": "Meus cultivos",
+  "nav": {
+    "alerts": "Alertas",
+    "parcels": "Minhas parcelas",
+    "profile": "Perfil"
+  },
+  "alerts": {
+    "title": "Alertas",
+    "empty": "Seus cultivos estão em ordem.",
+    "live": "Atualização ao vivo",
+    "offline": "Sem atualização ao vivo. Tentando novamente…",
+    "detail": "{{variable}}: {{valor}} (limite {{umbral}})"
+  },
+  "parcels": {
+    "title": "Minhas parcelas",
+    "empty": "Você ainda não tem parcelas registradas. Seu operador as configura.",
+    "cycle_active": "Ciclo ativo",
+    "history": "Histórico de ciclos"
+  },
+  "new_planting": {
+    "action": "Declarar novo plantio",
+    "confirm_title": "Declarar novo plantio",
+    "confirm_body": "Isto encerra o ciclo atual desta parcela. O próximo despacho voltará a certificar e a cobrar. Continuar?",
+    "success": "Novo plantio registrado. Seu operador foi avisado.",
+    "in_progress": "Há uma certificação em andamento para esta parcela. Tente mais tarde.",
+    "duplicate": "Você já declarou um plantio recentemente. Contate seu operador se foi um erro."
+  },
+  "profile": {
+    "title": "Preferências"
+  }
+}

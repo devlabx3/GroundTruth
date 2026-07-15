@@ -1,0 +1,6 @@
+{
+  "extends": "./tsconfig.json",
+  // Los tests no viajan al artefacto de producción: `nest build` los estaba
+  // compilando dentro de dist/.
+  "exclude": ["node_modules", "dist", "test", "**/*.spec.ts"]
+}

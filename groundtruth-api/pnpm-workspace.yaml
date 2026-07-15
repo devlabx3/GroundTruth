@@ -1,0 +1,17 @@
+# Ajustes de pnpm a nivel de proyecto (pnpm 11 ya NO lee estos de package.json).
+#
+# allowBuilds: decisión explícita sobre qué dependencias pueden ejecutar scripts de
+# build (postinstall, node-gyp, etc.). pnpm 11 los bloquea por defecto y, si no hay
+# decisión, el chequeo previo a `pnpm dev` falla con ERR_PNPM_IGNORED_BUILDS. pnpm
+# generó este archivo con placeholders "set this to true or false"; aquí va la decisión.
+#
+# Estas 5 son aceleradores nativos TRANSITIVOS de Solana/crypto (ninguna es dependencia
+# directa), todas con fallback en JS puro. El backend NO las necesita compiladas
+# (Solana firma con ed25519/sha256, no con secp256k1/keccak), así que van en `false`
+# = "no compilar". Si algún día se quisiera el binario nativo, cambiar a `true`.
+allowBuilds:
+  bigint-buffer: false
+  bufferutil: false
+  keccak: false
+  secp256k1: false
+  utf-8-validate: false

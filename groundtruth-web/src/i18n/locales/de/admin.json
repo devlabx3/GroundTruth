@@ -1,0 +1,160 @@
+{
+  "nav": {
+    "panel": "Globales Panel",
+    "units": "Einheiten",
+    "privileges": "Privilegien",
+    "users": "Benutzer",
+    "params": "Parameter",
+    "simulator": "IoT-Simulator",
+    "supervision": "Aufsicht",
+    "saga": "Saga",
+    "certificates": "Zertifikate",
+    "integrations": "Integrationen",
+    "finances": "Finanzen"
+  },
+  "home": {
+    "title": "Globales Panel",
+    "metrics": {
+      "units": "Aktive Einheiten",
+      "certs_30d": "Zertifikate (30 Tage)",
+      "pending_sagas": "Ausstehende Sagas",
+      "open_alerts": "Offene Warnungen"
+    },
+    "search_placeholder": "Parzelle, Einheit oder Kultur suchen…",
+    "search_empty": "Keine Ergebnisse für diese Suche."
+  },
+  "units": {
+    "title": "Geschäftseinheiten",
+    "unit": "Einheit",
+    "new": "Einheit anlegen",
+    "empty": "Noch keine Einheiten registriert.",
+    "country": "Land",
+    "balance": "Guthaben",
+    "state": {
+      "activa": "Aktiv",
+      "suspendida": "Ausgesetzt",
+      "pendiente": "On-Chain ausstehend"
+    },
+    "admin_email": "E-Mail des Einheitsadministrators",
+    "treasury_address": "Treasury PDA der Einheit",
+    "members": "Mitglieder (nur Lesezugriff)",
+    "members_empty": "Diese Einheit hat keine Mitglieder.",
+    "subrole": "Unterrolle",
+    "suspend": "Einheit aussetzen",
+    "suspend_confirm": "Die Einheit kann während der Aussetzung weder operieren noch Zertifikate ausstellen. Ihre Treasury bleibt unberührt. Bestätigst du?",
+    "suspended_notice": "Diese Einheit ist ausgesetzt. Sie kann weder operieren noch Zertifikate ausstellen.",
+    "admin_name": "Name der Einheitsadministration",
+    "reactivate": "Einheit reaktivieren",
+    "treasury_pending": "Noch keine Treasury: Sie wird on-chain erstellt, sobald das Programm existiert.",
+    "pending_notice": "Einheit on-chain ausstehend: Sie hat noch keine Treasury und kann daher keine Zertifikate ausstellen.",
+    "treasury_pending_notice": "Die Einheit wird mit ihrer Administration angelegt. Ihre Treasury (Treasury PDA) entsteht on-chain und bleibt bis dahin ausstehend: Sie kann nicht zertifizieren."
+  },
+  "onchain": {
+    "step_seed_admin": "Einheitsadministrator wird angelegt",
+    "step_create_unit": "Einheit und ihre Leitungs-Unterrolle werden angelegt"
+  },
+  "privileges_page": {
+    "title": "Privilegienkatalog",
+    "key": "Schlüssel",
+    "sensitive": "Sensibel",
+    "add": "Privileg hinzufügen",
+    "empty": "Der Katalog ist leer.",
+    "deprecate": "Veralten lassen",
+    "deprecate_impact": "Dieses Privileg ist in {{n}} Unterrollen. Nach dem Veralten kann es nicht mehr zugewiesen werden; bestehende Unterrollen behalten es bis zur Bearbeitung.",
+    "state": {
+      "activo": "Aktiv",
+      "deprecado": "Veraltet"
+    },
+    "in_subroles": "In Unterrollen"
+  },
+  "users": {
+    "title": "Benutzer und Mitgliedschaften",
+    "create": "Benutzer anlegen",
+    "memberships": "Mitgliedschaften",
+    "search_placeholder": "Nach Name oder E-Mail suchen…",
+    "empty": "Keine Benutzer für diese Suche.",
+    "deactivate": "Deaktivieren",
+    "deactivate_confirm": "{{name}} kann sich nicht mehr anmelden. Die Aktion wird auditiert. Bestätigst du?",
+    "state": {
+      "activa": "Aktiv",
+      "inactiva": "Inaktiv"
+    },
+    "no_membership": "Keine Mitgliedschaft"
+  },
+  "params": {
+    "title": "Systemparameter",
+    "saved": "Parameter gespeichert. Die Änderung wird versioniert.",
+    "who": "Wer",
+    "audit": "Änderungsprotokoll",
+    "audit_empty": "Keine Änderungen erfasst.",
+    "section_pricing": "Gebühren (USDC)",
+    "section_thresholds": "Schwellenwerte pro Kultur (vorläufig, im Feld zu kalibrieren)",
+    "cert_fee": "Gebühr pro Zertifizierung",
+    "manifest_fee": "Gebühr pro Manifest",
+    "ha_per_sensor": "Hektar pro Sensor",
+    "ph_min": "pH min",
+    "ph_max": "pH max",
+    "humidity_min": "Feuchtigkeit min (%)",
+    "humidity_max": "Feuchtigkeit max (%)",
+    "section_sensors": "Sensorabdeckung",
+    "validity_days": "Gültigkeit (Tage)",
+    "changes": "Änderungen"
+  },
+  "simulator": {
+    "title": "IoT-Simulator",
+    "node": "Knoten",
+    "profile": "Profil",
+    "profile_healthy": "Gesund",
+    "profile_degraded": "Beeinträchtigt",
+    "on": "Sendet",
+    "off": "Aus",
+    "empty": "Keine simulierten Knoten vorhanden.",
+    "generate": "Messwerte erzeugen",
+    "hours": "Stunden Telemetrie",
+    "last_reading": "Letzter Messwert",
+    "generated_ok": "Messwerte innerhalb der Grenzwerte: Die Parzelle ist konform.",
+    "generated_alert": "Messwerte außerhalb der Grenzwerte: Die Parzelle geht in Alarm und die Landwirtin wird benachrichtigt."
+  },
+  "supervision": {
+    "title": "Globale Aufsicht",
+    "all_units": "Alle Einheiten",
+    "all_crops": "Alle Kulturen",
+    "all_states": "Alle Status",
+    "certified": "Zertifiziert"
+  },
+  "saga": {
+    "title": "Saga-Audit",
+    "empty": "Keine ausstehenden oder fehlgeschlagenen Zertifizierungen.",
+    "failed_step": "Fehlgeschlagener Schritt",
+    "reason": "Grund",
+    "attempts": "Versuche"
+  },
+  "certificates": {
+    "title": "Globaler Widerruf",
+    "empty": "Es gibt keine Zertifikate auf der Plattform."
+  },
+  "integrations": {
+    "title": "Integrationsstatus",
+    "badge": "Integrationen",
+    "state": {
+      "ok": "Betriebsbereit",
+      "warn": "Beeinträchtigt",
+      "down": "Ausgefallen",
+      "no_configurado": "Nicht konfiguriert"
+    }
+  },
+  "finances": {
+    "title": "Plattform-Finanzen",
+    "income_onchain": "On-Chain-Einnahmen",
+    "income_onchain_hint": "Angesammelt auf dem Plattformkonto",
+    "collected": "Eingenommen (historisch)",
+    "collected_cert": "aus Zertifizierung",
+    "collected_manifest": "aus Manifest",
+    "gas": "Backend-Gas (SOL)",
+    "gas_low": "Gas-Guthaben niedrig: SOL aufladen, sonst signiert die Zertifizierung nicht mehr.",
+    "operators_funds": "Mittel der Betreiber",
+    "certs_issued": "Ausgestellte Zertifikate",
+    "manifests_issued": "Ausgestellte Manifeste",
+    "no_chain": "Solana nicht konfiguriert — keine On-Chain-Daten"
+  }
+}

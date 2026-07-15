@@ -1,0 +1,160 @@
+{
+  "nav": {
+    "panel": "Panneau global",
+    "units": "Unités",
+    "privileges": "Privilèges",
+    "users": "Utilisateurs",
+    "params": "Paramètres",
+    "simulator": "Simulateur IoT",
+    "supervision": "Supervision",
+    "saga": "Saga",
+    "certificates": "Certificats",
+    "integrations": "Intégrations",
+    "finances": "Finances"
+  },
+  "home": {
+    "title": "Panneau global",
+    "metrics": {
+      "units": "Unités actives",
+      "certs_30d": "Certificats (30 jours)",
+      "pending_sagas": "Sagas en attente",
+      "open_alerts": "Alertes ouvertes"
+    },
+    "search_placeholder": "Rechercher une parcelle, une unité ou une culture…",
+    "search_empty": "Aucun résultat pour cette recherche."
+  },
+  "units": {
+    "title": "Unités d'affaires",
+    "unit": "Unité",
+    "new": "Créer une unité",
+    "empty": "Pas encore d'unités enregistrées.",
+    "country": "Pays",
+    "balance": "Solde",
+    "state": {
+      "activa": "Active",
+      "suspendida": "Suspendue",
+      "pendiente": "En attente on-chain"
+    },
+    "admin_email": "E-mail de l'administrateur de l'unité",
+    "treasury_address": "Treasury PDA de l'unité",
+    "members": "Membres (lecture seule)",
+    "members_empty": "Cette unité n'a pas de membres.",
+    "subrole": "Sous-rôle",
+    "suspend": "Suspendre l'unité",
+    "suspend_confirm": "L'unité ne pourra ni opérer ni émettre de certificats pendant la suspension. Sa trésorerie reste intacte. Confirmes-tu ?",
+    "suspended_notice": "Cette unité est suspendue. Elle ne peut ni opérer ni émettre de certificats.",
+    "admin_name": "Nom de l'administrateur de l'unité",
+    "reactivate": "Réactiver l'unité",
+    "treasury_pending": "Pas encore de trésorerie : elle sera créée on-chain lorsque le programme existera.",
+    "pending_notice": "Unité en attente on-chain : elle n'a pas encore de trésorerie et ne peut donc pas émettre de certificats.",
+    "treasury_pending_notice": "L'unité sera créée avec son administrateur. Sa trésorerie (Treasury PDA) se crée on-chain et restera en attente jusque-là : elle ne pourra pas certifier."
+  },
+  "onchain": {
+    "step_seed_admin": "Création de l'administrateur de l'unité",
+    "step_create_unit": "Création de l'unité et de son sous-rôle de direction"
+  },
+  "privileges_page": {
+    "title": "Catalogue des privilèges",
+    "key": "Clé",
+    "sensitive": "Sensible",
+    "add": "Ajouter un privilège",
+    "empty": "Le catalogue est vide.",
+    "deprecate": "Déprécier",
+    "deprecate_impact": "Ce privilège est dans {{n}} sous-rôles. Une fois déprécié, il ne pourra plus être assigné ; les sous-rôles existants le conservent jusqu'à leur modification.",
+    "state": {
+      "activo": "Actif",
+      "deprecado": "Déprécié"
+    },
+    "in_subroles": "Dans les sous-rôles"
+  },
+  "users": {
+    "title": "Utilisateurs et adhésions",
+    "create": "Créer un utilisateur",
+    "memberships": "Adhésions",
+    "search_placeholder": "Rechercher par nom ou e-mail…",
+    "empty": "Aucun utilisateur pour cette recherche.",
+    "deactivate": "Désactiver",
+    "deactivate_confirm": "{{name}} ne pourra plus se connecter. L'action est auditée. Confirmes-tu ?",
+    "state": {
+      "activa": "Actif",
+      "inactiva": "Inactif"
+    },
+    "no_membership": "Sans adhésion"
+  },
+  "params": {
+    "title": "Paramètres du système",
+    "saved": "Paramètres enregistrés. Le changement est versionné.",
+    "who": "Qui",
+    "audit": "Journal des modifications",
+    "audit_empty": "Aucune modification enregistrée.",
+    "section_pricing": "Tarifs (USDC)",
+    "section_thresholds": "Seuils par culture (provisoires, à calibrer sur le terrain)",
+    "cert_fee": "Tarif par certification",
+    "manifest_fee": "Tarif par manifeste",
+    "ha_per_sensor": "Hectares par capteur",
+    "ph_min": "pH min",
+    "ph_max": "pH max",
+    "humidity_min": "Humidité min (%)",
+    "humidity_max": "Humidité max (%)",
+    "section_sensors": "Couverture des capteurs",
+    "validity_days": "Validité (jours)",
+    "changes": "Modifications"
+  },
+  "simulator": {
+    "title": "Simulateur IoT",
+    "node": "Nœud",
+    "profile": "Profil",
+    "profile_healthy": "Sain",
+    "profile_degraded": "Dégradé",
+    "on": "En émission",
+    "off": "Éteint",
+    "empty": "Il n'y a pas de nœuds simulés.",
+    "generate": "Générer des relevés",
+    "hours": "Heures de télémétrie",
+    "last_reading": "Dernier relevé",
+    "generated_ok": "Relevés générés dans les seuils : la parcelle est conforme.",
+    "generated_alert": "Relevés hors seuils : la parcelle passe en alerte et l'agriculteur est prévenu."
+  },
+  "supervision": {
+    "title": "Supervision globale",
+    "all_units": "Toutes les unités",
+    "all_crops": "Toutes les cultures",
+    "all_states": "Tous les statuts",
+    "certified": "Certifiée"
+  },
+  "saga": {
+    "title": "Audit du saga",
+    "empty": "Aucune certification en attente ou échouée.",
+    "failed_step": "Étape échouée",
+    "reason": "Motif",
+    "attempts": "Tentatives"
+  },
+  "certificates": {
+    "title": "Révocation globale",
+    "empty": "Il n'y a pas de certificats sur la plateforme."
+  },
+  "integrations": {
+    "title": "État des intégrations",
+    "badge": "intégrations",
+    "state": {
+      "ok": "Opérationnelle",
+      "warn": "Dégradée",
+      "down": "Hors service",
+      "no_configurado": "Non configurée"
+    }
+  },
+  "finances": {
+    "title": "Finances de la plateforme",
+    "income_onchain": "Revenus on-chain",
+    "income_onchain_hint": "Cumulés sur le compte de la plateforme",
+    "collected": "Encaissé (historique)",
+    "collected_cert": "par certification",
+    "collected_manifest": "par manifeste",
+    "gas": "Gas du backend (SOL)",
+    "gas_low": "Fonds de gas bas : rechargez du SOL sinon la certification cessera de signer.",
+    "operators_funds": "Fonds des opérateurs",
+    "certs_issued": "Certificats émis",
+    "manifests_issued": "Manifestes émis",
+    "no_chain": "Solana non configuré — aucune donnée on-chain"
+  }
+}

@@ -1,0 +1,116 @@
+{
+  "brand": "GroundTruth",
+  "tagline": "Physical proof of the land, verifiable by any auditor",
+  "nav": {
+    "map": "Map",
+    "parcels": "Parcels",
+    "shipments": "Shipments",
+    "treasury": "Treasury",
+    "certificates": "Certificates",
+    "farmers": "Farmers",
+    "team": "Team",
+    "settings": "Settings",
+    "verify": "Verify",
+    "login": "Sign in",
+    "logout": "Sign out",
+    "demo": "Request a demo"
+  },
+  "actions": {
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "save": "Save",
+    "retry": "Retry",
+    "copy": "Copy",
+    "copied": "Copied",
+    "back": "Back",
+    "close": "Close",
+    "continue": "Continue",
+    "delete": "Delete",
+    "add": "Add"
+  },
+  "status": {
+    "conforme": "Compliant",
+    "alerta": "Alert",
+    "revocado": "Revoked",
+    "pendiente": "Pending",
+    "vigente": "Valid",
+    "sustituido": "Superseded",
+    "expirado": "Expired",
+    "verificado": "Verified"
+  },
+  "fields": {
+    "name": "Name",
+    "email": "Email",
+    "date": "Date",
+    "amount": "Amount",
+    "type": "Type",
+    "state": "Status",
+    "crop": "Crop"
+  },
+  "crops": {
+    "cafe": "Coffee",
+    "cacao": "Cocoa",
+    "aguacate": "Avocado"
+  },
+  "units": {
+    "ha": "ha"
+  },
+  "cycle": {
+    "ongoing": "ongoing"
+  },
+  "hash": {
+    "match": "Match",
+    "mismatch": "Mismatch",
+    "pdf": "PDF hash",
+    "img": "Satellite image hash"
+  },
+  "explorer": "View on explorer",
+  "context": {
+    "choose": "How do you want to enter?",
+    "farmer": "As a farmer",
+    "farmer_desc": "Alerts and parcels of your farms (DApp lite)",
+    "operator_desc": "Business unit dashboard"
+  },
+  "privileges": {
+    "unidad": {
+      "configurar": "Configure the unit"
+    },
+    "equipo": {
+      "gestionar": "Manage team and sub-roles"
+    },
+    "agricultores": {
+      "gestionar": "Manage farmers"
+    },
+    "topologia": {
+      "gestionar": "Manage farms and parcels"
+    },
+    "telemetria": {
+      "ver": "View telemetry"
+    },
+    "tesoreria": {
+      "ver": "View treasury"
+    },
+    "embarques": {
+      "preparar": "Prepare shipments"
+    },
+    "certificados": {
+      "emitir": "Issue certificates",
+      "revocar": "Revoke certificates",
+      "ver": "View certificates"
+    }
+  },
+  "soilcore": {
+    "label": "Verification core",
+    "stages": "telemetry · satellite · treasury · certificate"
+  },
+  "language": "Language",
+  "loading": "Loading…",
+  "context_switch": "Switch context",
+  "realtime": {
+    "live": "Live",
+    "down": "No live updates. Retrying…"
+  },
+  "footer": {
+    "regulation": "Regulation (EU) 2023/1115 (EUDR)"
+  }
+}

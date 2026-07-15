@@ -1,0 +1,32 @@
+{
+  "home_title": "Le mie colture",
+  "nav": {
+    "alerts": "Allerte",
+    "parcels": "Le mie particelle",
+    "profile": "Profilo"
+  },
+  "alerts": {
+    "title": "Allerte",
+    "empty": "Le tue colture sono in ordine.",
+    "live": "Aggiornamento in tempo reale",
+    "offline": "Aggiornamenti in tempo reale non disponibili. Nuovo tentativo…",
+    "detail": "{{variable}}: {{valor}} (soglia {{umbral}})"
+  },
+  "parcels": {
+    "title": "Le mie particelle",
+    "empty": "Non hai ancora particelle registrate. Le configura il tuo operatore.",
+    "cycle_active": "Ciclo attivo",
+    "history": "Storico dei cicli"
+  },
+  "new_planting": {
+    "action": "Dichiarare nuova semina",
+    "confirm_title": "Dichiarare nuova semina",
+    "confirm_body": "Questo chiude il ciclo attuale di questa particella. La prossima spedizione tornerà a certificare e ad addebitare. Continuare?",
+    "success": "Nuova semina registrata. Il tuo operatore è stato avvisato.",
+    "in_progress": "C'è una certificazione in corso per questa particella. Riprova più tardi.",
+    "duplicate": "Hai già dichiarato una semina di recente. Contatta il tuo operatore se è stato un errore."
+  },
+  "profile": {
+    "title": "Preferenze"
+  }
+}

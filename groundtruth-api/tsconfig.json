@@ -1,0 +1,35 @@
+{
+  "compilerOptions": {
+    "module": "nodenext",
+    "target": "ES2022",
+    "moduleResolution": "nodenext",
+    "outDir": "./dist",
+    // Explícito a propósito: sin él, TS infiere el directorio raíz del conjunto de
+    // ficheros incluidos, y basta con añadir uno fuera de src/ para que la forma de
+    // dist/ cambie sola (dist/main.js pasaría a dist/src/main.js y `start:prod` se
+    // rompería). TS 6 ya lo exige explícito.
+    "rootDir": "./src",
+    // Sin `baseUrl` (deprecado, deja de funcionar en TS 7): desde TS 5 los `paths`
+    // se resuelven relativos a este fichero, que es lo que queremos de todos modos.
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ]
+    },
+    "strict": true,
+    "esModuleInterop": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "sourceMap": true,
+    "incremental": true,
+    // La caché incremental vive DENTRO de dist/. Si no, `rm -rf dist && nest build`
+    // no emite nada y sale con código 0: tsc mira la caché, cree que ya está todo
+    // compilado y se calla. Un build vacío que se declara exitoso.
+    "tsBuildInfoFile": "./dist/.tsbuildinfo"
+  },
+  "include": [
+    "src/**/*"
+  ]
+}

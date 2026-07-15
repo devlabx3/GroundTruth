@@ -1,7 +1,53 @@
-node_modules
-dist
-dist-ssr
-*.local
+# --- Dependencias y artefactos de build ---
+node_modules/
+dist/
+dist-ssr/
+build/
+target/          # Rust: groundtruth-program/target pesa GB
+
+# --- Secretos ---
+# Ni las claves de Supabase, ni el token de Management API, ni la keypair
+# custodial del backend (F5, hoy en texto plano) pueden acabar en el repo.
+# Lo único versionado son las PLANTILLAS (.env.example), sin valores reales.
 .env
-.env.*.local
+.env.*
+!.env.example
+groundtruth-api/.env
+groundtruth-web/.env
+supabase/.env.local
+*.local
+
+keys/            # keypair del programa Anchor: es su identidad; si se filtra,
+*-keypair.json   # cualquiera puede publicar una actualización del programa
+*.pem
+
+# --- Assets pesados ---
+# El arte fuente (62 MB) vive fuera del control de versiones a propósito.
+design-assets/
+
+# --- Cuaderno de trabajo ---
+# Estado y pendientes: documento vivo, no documentación pública del proyecto.
+docs/ROADMAP.md
+
+# --- Dirección de arte ---
+# Especificación de ilustración y fotografía: acompaña al arte fuente, que vive
+# fuera del repo (design-assets/). No es documentación técnica del sistema.
+docs/diseno/GroundTruth-Elementos-Graficos-y-Fotografia.md
+
+# --- Documentos ofimáticos ---
+# Los binarios de Office no versionan bien (no hay diff legible). La fuente de
+# verdad de diseño son los .md de docs/.
+*.docx
+*.doc
+*.xlsx
+*.pptx
+
+# --- Ruido del sistema ---
 .DS_Store
+*.log
+.vscode/
+.idea/
+
+# --- Ledger de validadores locales ---
+test-ledger/
+.anchor/

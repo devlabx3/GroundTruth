@@ -1,0 +1,32 @@
+{
+  "title": "Verificatore di certificati",
+  "subtitle": "Controlla la validità di un certificato EUDR senza bisogno di un account.",
+  "tabs": {
+    "number": "Numero del certificato",
+    "asset": "ID del cNFT",
+    "document": "Carica documento PDF"
+  },
+  "input": {
+    "number_placeholder": "GT-2026-00342",
+    "asset_placeholder": "Indirizzo dell'asset (base58)",
+    "search": "Cerca",
+    "drop": "Trascina qui il PDF del certificato o clicca per selezionarlo",
+    "checking": "Calcolo dell'hash del documento…"
+  },
+  "result": {
+    "crop": "Coltura",
+    "region": "Paese / regione",
+    "cycle": "Ciclo",
+    "issued": "Emesso",
+    "valid_until": "Valido fino al",
+    "hash_pdf": "Hash del PDF",
+    "hash_image": "Hash dell’immagine",
+    "geojson": "GeoJSON su Arweave",
+    "explorer": "Vedi nell'explorer di Solana",
+    "doc_match": "Documento verificato: corrisponde al registro on-chain.",
+    "doc_mismatch": "Questo documento non corrisponde al certificato on-chain. Potrebbe essere stato alterato.",
+    "revoked_notice": "Questo certificato è stato revocato il {{fecha}}. Non è valido per la spedizione.",
+    "issued_on": "Emesso"
+  },
+  "privacy_note": "Per privacy, non vengono mostrati il nome dell'agricoltore né il poligono esatto della particella."
+}

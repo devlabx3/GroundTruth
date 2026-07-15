@@ -1,0 +1,32 @@
+{
+  "home_title": "Mijn gewassen",
+  "nav": {
+    "alerts": "Waarschuwingen",
+    "parcels": "Mijn percelen",
+    "profile": "Profiel"
+  },
+  "alerts": {
+    "title": "Waarschuwingen",
+    "empty": "Je gewassen zijn in orde.",
+    "live": "Live-updates",
+    "offline": "Geen live-updates. Opnieuw proberen…",
+    "detail": "{{variable}}: {{valor}} (drempel {{umbral}})"
+  },
+  "parcels": {
+    "title": "Mijn percelen",
+    "empty": "Je hebt nog geen geregistreerde percelen. Je operator stelt ze in.",
+    "cycle_active": "Actieve cyclus",
+    "history": "Cyclusgeschiedenis"
+  },
+  "new_planting": {
+    "action": "Nieuwe aanplant melden",
+    "confirm_title": "Nieuwe aanplant melden",
+    "confirm_body": "Dit sluit de huidige cyclus van dit perceel af. De volgende verzending wordt opnieuw gecertificeerd en in rekening gebracht. Doorgaan?",
+    "success": "Nieuwe aanplant geregistreerd. Je operator is op de hoogte gebracht.",
+    "in_progress": "Er loopt een certificering voor dit perceel. Probeer het later.",
+    "duplicate": "Je hebt onlangs al een aanplant gemeld. Neem contact op met je operator als dit een vergissing was."
+  },
+  "profile": {
+    "title": "Voorkeuren"
+  }
+}

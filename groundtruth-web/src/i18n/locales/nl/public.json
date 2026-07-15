@@ -1,0 +1,57 @@
+{
+  "hero": {
+    "eyebrow": "EUDR-certificering · Solana",
+    "title": "Fysiek bewijs van de bodem, verifieerbaar door elke auditor",
+    "subtitle": "Wij certificeren agroklimatische gegevens van koffie, cacao en avocado met bodemsensoren en satellietbewijs, on-chain verankerd voor EUDR-naleving.",
+    "cta_primary": "Demo aanvragen",
+    "cta_secondary": "Certificaat verifiëren"
+  },
+  "how": {
+    "eyebrow": "Hoe het werkt",
+    "title": "Twee onafhankelijke bewijzen, één certificaat",
+    "step_chemical": "Chemisch bewijs",
+    "step_chemical_desc": "Bodemsensoren meten continu pH, geleidbaarheid, vochtigheid en temperatuur op twee dieptes.",
+    "step_satellite": "Satellietbewijs",
+    "step_satellite_desc": "Een satellietbeeld van het perceel wordt bewaard en verankerd via zijn hash, reproduceerbaar voor een auditor.",
+    "step_certificate": "On-chain certificaat",
+    "step_certificate_desc": "Bij verzending wordt per perceel en cyclus een certificaat uitgegeven, met GeoJSON voor TRACES NT."
+  },
+  "value": {
+    "eyebrow": "Waarom GroundTruth",
+    "title": "Frictieloze verificatie is het product",
+    "point_traceable": "Elk certificaat wordt in seconden gecontroleerd, zonder iemand iets te vragen.",
+    "point_hybrid": "Hybride bewijs: wat de bodem meet en wat de satelliet ziet, samen.",
+    "point_eudr": "Een resultaat klaar voor de EU-douane: GeoJSON voor TRACES NT."
+  },
+  "login": {
+    "email": "E-mail",
+    "password": "Wachtwoord",
+    "demo_hint": "Mock-modus: nog geen backend. Log in met een demoprofiel.",
+    "demo_roles": {
+      "operator": "Directie van Coop. Sierra Verde · ook boerin",
+      "logistics": "Subrol Logistiek · zonder uitgifteprivilege",
+      "farmer": "Boer · DApp lite",
+      "admin": "GroundTruth-admin · volledige controle"
+    },
+    "dev_hint": "Snel inloggen (alleen ontwikkeling)",
+    "dev_roles": {
+      "operator": "Operator",
+      "logistics": "Logistiek",
+      "farmer": "Boer",
+      "admin": "Beheerder"
+    }
+  },
+  "contact": {
+    "title": "Demo aanvragen",
+    "name": "Naam",
+    "email": "E-mail",
+    "org": "Organisatie",
+    "message": "Wat exporteer je en naar welke markten?",
+    "submit": "Aanvraag versturen",
+    "success": "We hebben je aanvraag ontvangen. We schrijven je snel."
+  },
+  "footer": {
+    "rights": "GroundTruth",
+    "eudr_note": "Naleving van Verordening (EU) 2023/1115 (EUDR)."
+  }
+}

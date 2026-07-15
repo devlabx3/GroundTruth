@@ -1,0 +1,45 @@
+[toolchain]
+anchor_version = "0.31.1"
+# Anchor instala por defecto las platform-tools de Solana 2.1.0, cuyo Rust es 1.79
+# y no entiende `edition2024` — varias dependencias transitivas ya la exigen. Con
+# la 3.1.13 (la que ya usábamos con `cargo build-sbf`) el Rust es lo bastante nuevo.
+solana_version = "3.1.13"
+
+[features]
+resolution = true
+skip-lint = false
+
+[programs.localnet]
+groundtruth = "GQ7rQxCBvpfHMPkApAjQ2TjMxpGMhifK72tpi5ChnzMH"
+
+[programs.devnet]
+groundtruth = "GQ7rQxCBvpfHMPkApAjQ2TjMxpGMhifK72tpi5ChnzMH"
+
+[registry]
+url = "https://api.apr.dev"
+
+[provider]
+cluster = "localnet"
+# Keypair DEDICADA para deploys/pruebas (pubkey 4WP66ApkXER77Joe4i5Zyiow3ZRbid2MD4E2RdrZZHtg),
+# NO la wallet personal por defecto de la CLI (~/.config/solana/id.json, que tiene fondos
+# reales en mainnet). Esta solo lleva SOL de devnet/localnet, que no vale nada.
+wallet = "~/deploy-devnet.json"
+
+# El validador local necesita Bubblegum y los programas de ZK Compression: sin
+# ellos el CPI del mint no existe. Se clonan de mainnet al arrancar.
+[test.validator]
+url = "https://api.mainnet-beta.solana.com"
+
+[[test.validator.clone_upgradeable_program]]
+address = "BGUMAp9Gq7iTEuizy4pqaxsTyUCBK68MDfK752saRPUY" # Bubblegum
+
+[[test.validator.clone_upgradeable_program]]
+address = "cmtDvXumGCrqC1Age74AVPhSRVXJMd8PJS91L8KbNCK" # SPL Account Compression
+
+[[test.validator.clone_upgradeable_program]]
+address = "noopb9bkMVfRPU8AsbpTUg8AQkHtKwMYZiFUjNRtMmV" # SPL Noop
+
+# Las pruebas de integración están en Rust (client/), no en TypeScript: no hay
+# node_modules en este proyecto. `anchor test` no es el camino aquí — ver README.
+[scripts]
+test = "cd client && cargo run --bin e2e"

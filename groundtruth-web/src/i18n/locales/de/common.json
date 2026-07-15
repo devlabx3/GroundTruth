@@ -1,0 +1,116 @@
+{
+  "brand": "GroundTruth",
+  "tagline": "Physischer Nachweis des Bodens, überprüfbar durch jeden Auditor",
+  "nav": {
+    "map": "Karte",
+    "parcels": "Parzellen",
+    "shipments": "Sendungen",
+    "treasury": "Treasury",
+    "certificates": "Zertifikate",
+    "farmers": "Landwirte",
+    "team": "Team",
+    "settings": "Einstellungen",
+    "verify": "Prüfen",
+    "login": "Anmelden",
+    "logout": "Abmelden",
+    "demo": "Demo anfragen"
+  },
+  "actions": {
+    "cancel": "Abbrechen",
+    "confirm": "Bestätigen",
+    "save": "Speichern",
+    "retry": "Erneut versuchen",
+    "copy": "Kopieren",
+    "copied": "Kopiert",
+    "back": "Zurück",
+    "close": "Schließen",
+    "continue": "Weiter",
+    "delete": "Löschen",
+    "add": "Hinzufügen"
+  },
+  "status": {
+    "conforme": "Konform",
+    "alerta": "Warnung",
+    "revocado": "Widerrufen",
+    "pendiente": "Ausstehend",
+    "vigente": "Gültig",
+    "sustituido": "Ersetzt",
+    "expirado": "Abgelaufen",
+    "verificado": "Verifiziert"
+  },
+  "fields": {
+    "name": "Name",
+    "email": "E-Mail",
+    "date": "Datum",
+    "amount": "Betrag",
+    "type": "Typ",
+    "state": "Status",
+    "crop": "Kultur"
+  },
+  "crops": {
+    "cafe": "Kaffee",
+    "cacao": "Kakao",
+    "aguacate": "Avocado"
+  },
+  "units": {
+    "ha": "ha"
+  },
+  "cycle": {
+    "ongoing": "laufend"
+  },
+  "hash": {
+    "match": "Stimmt überein",
+    "mismatch": "Stimmt nicht überein",
+    "pdf": "PDF-Hash",
+    "img": "Hash des Satellitenbilds"
+  },
+  "explorer": "Im Explorer ansehen",
+  "context": {
+    "choose": "Wie möchtest du eintreten?",
+    "farmer": "Als Landwirt",
+    "farmer_desc": "Warnungen und Parzellen deiner Betriebe (DApp lite)",
+    "operator_desc": "Dashboard der Geschäftseinheit"
+  },
+  "privileges": {
+    "unidad": {
+      "configurar": "Einheit konfigurieren"
+    },
+    "equipo": {
+      "gestionar": "Team und Unterrollen verwalten"
+    },
+    "agricultores": {
+      "gestionar": "Landwirte verwalten"
+    },
+    "topologia": {
+      "gestionar": "Betriebe und Parzellen verwalten"
+    },
+    "telemetria": {
+      "ver": "Telemetrie ansehen"
+    },
+    "tesoreria": {
+      "ver": "Treasury ansehen"
+    },
+    "embarques": {
+      "preparar": "Sendungen vorbereiten"
+    },
+    "certificados": {
+      "emitir": "Zertifikate ausstellen",
+      "revocar": "Zertifikate widerrufen",
+      "ver": "Zertifikate ansehen"
+    }
+  },
+  "soilcore": {
+    "label": "Verifizierungskern",
+    "stages": "Telemetrie · Satellit · Treasury · Zertifikat"
+  },
+  "language": "Sprache",
+  "loading": "Wird geladen…",
+  "context_switch": "Kontext wechseln",
+  "realtime": {
+    "live": "Live",
+    "down": "Keine Live-Aktualisierung. Erneuter Versuch…"
+  },
+  "footer": {
+    "regulation": "Verordnung (EU) 2023/1115 (EUDR)"
+  }
+}

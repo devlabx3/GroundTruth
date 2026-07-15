@@ -1,0 +1,57 @@
+{
+  "hero": {
+    "eyebrow": "Certificazione EUDR · Solana",
+    "title": "Prova fisica del terreno, verificabile da qualsiasi auditor",
+    "subtitle": "Certifichiamo dati agroclimatici di caffè, cacao e avocado con sensori nel terreno ed evidenza satellitare, ancorati on-chain per la conformità EUDR.",
+    "cta_primary": "Richiedi una demo",
+    "cta_secondary": "Verifica un certificato"
+  },
+  "how": {
+    "eyebrow": "Come funziona",
+    "title": "Due prove indipendenti, un certificato",
+    "step_chemical": "Prova chimica",
+    "step_chemical_desc": "Sensori nel suolo misurano in continuo pH, conducibilità, umidità e temperatura a due profondità.",
+    "step_satellite": "Evidenza satellitare",
+    "step_satellite_desc": "Un'immagine satellitare della particella viene conservata e ancorata tramite il suo hash, riproducibile davanti a un auditor.",
+    "step_certificate": "Certificato on-chain",
+    "step_certificate_desc": "Alla spedizione si emette un certificato per particella e ciclo, con il suo GeoJSON per TRACES NT."
+  },
+  "value": {
+    "eyebrow": "Perché GroundTruth",
+    "title": "La verifica senza attriti è il prodotto",
+    "point_traceable": "Ogni certificato si controlla in pochi secondi, senza chiedere nulla a nessuno.",
+    "point_hybrid": "Prova ibrida: ciò che misura il suolo e ciò che vede il satellite, insieme.",
+    "point_eudr": "Un risultato pronto per la dogana europea: GeoJSON per TRACES NT."
+  },
+  "login": {
+    "email": "Email",
+    "password": "Password",
+    "demo_hint": "Modalità demo: ancora nessun backend. Entra con un profilo dimostrativo.",
+    "demo_roles": {
+      "operator": "Direzione della Coop. Sierra Verde · anche agricoltrice",
+      "logistics": "Sotto-ruolo Logistica · senza privilegio di emissione",
+      "farmer": "Agricoltore · DApp lite",
+      "admin": "Admin GroundTruth · controllo totale"
+    },
+    "dev_hint": "Accesso rapido (solo sviluppo)",
+    "dev_roles": {
+      "operator": "Operatrice",
+      "logistics": "Logistica",
+      "farmer": "Agricoltore",
+      "admin": "Admin"
+    }
+  },
+  "contact": {
+    "title": "Richiedi una demo",
+    "name": "Nome",
+    "email": "Email",
+    "org": "Organizzazione",
+    "message": "Cosa esporti e verso quali mercati?",
+    "submit": "Invia richiesta",
+    "success": "Abbiamo ricevuto la tua richiesta. Ti scriveremo presto."
+  },
+  "footer": {
+    "rights": "GroundTruth",
+    "eudr_note": "Conformità al Regolamento (UE) 2023/1115 (EUDR)."
+  }
+}

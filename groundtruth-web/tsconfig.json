@@ -1,0 +1,34 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "jsx": "react-jsx",
+
+    // Vite compila con esbuild y NO comprueba tipos: `tsc` aquí solo verifica.
+    "noEmit": true,
+    "isolatedModules": true,
+    "verbatimModuleSyntax": true,
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+
+    // El motivo entero de la migración. Sin `strict`, los tipos son decoración:
+    // `noImplicitAny` es lo que obliga a declarar la forma de lo que llega de la API.
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+
+    // `paths` relativos al tsconfig, sin `baseUrl` (deprecado en TS 6, muere en TS 7).
+    "paths": {
+      "@/*": ["./src/*"]
+    },
+    // `node` para los ficheros de configuración (vite/vitest usan node:path, __dirname).
+    "types": ["vite/client", "vitest/globals", "@testing-library/jest-dom", "node"]
+  },
+  "include": ["src", "vite.config.ts", "vitest.config.ts"]
+}

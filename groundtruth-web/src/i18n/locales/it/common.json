@@ -1,0 +1,116 @@
+{
+  "brand": "GroundTruth",
+  "tagline": "Prova fisica del terreno, verificabile da qualsiasi auditor",
+  "nav": {
+    "map": "Mappa",
+    "parcels": "Particelle",
+    "shipments": "Spedizioni",
+    "treasury": "Treasury",
+    "certificates": "Certificati",
+    "farmers": "Agricoltori",
+    "team": "Team",
+    "settings": "Impostazioni",
+    "verify": "Verifica",
+    "login": "Accedi",
+    "logout": "Esci",
+    "demo": "Richiedi una demo"
+  },
+  "actions": {
+    "cancel": "Annulla",
+    "confirm": "Conferma",
+    "save": "Salva",
+    "retry": "Riprova",
+    "copy": "Copia",
+    "copied": "Copiato",
+    "back": "Indietro",
+    "close": "Chiudi",
+    "continue": "Continua",
+    "delete": "Elimina",
+    "add": "Aggiungi"
+  },
+  "status": {
+    "conforme": "Conforme",
+    "alerta": "Allerta",
+    "revocado": "Revocato",
+    "pendiente": "In attesa",
+    "vigente": "Valido",
+    "sustituido": "Sostituito",
+    "expirado": "Scaduto",
+    "verificado": "Verificato"
+  },
+  "fields": {
+    "name": "Nome",
+    "email": "Email",
+    "date": "Data",
+    "amount": "Importo",
+    "type": "Tipo",
+    "state": "Stato",
+    "crop": "Coltura"
+  },
+  "crops": {
+    "cafe": "Caffè",
+    "cacao": "Cacao",
+    "aguacate": "Avocado"
+  },
+  "units": {
+    "ha": "ha"
+  },
+  "cycle": {
+    "ongoing": "in corso"
+  },
+  "hash": {
+    "match": "Corrisponde",
+    "mismatch": "Non corrisponde",
+    "pdf": "Hash del PDF",
+    "img": "Hash dell'immagine satellitare"
+  },
+  "explorer": "Vedi nell'explorer",
+  "context": {
+    "choose": "Come vuoi entrare?",
+    "farmer": "Come agricoltore",
+    "farmer_desc": "Allerte e particelle delle tue aziende (DApp lite)",
+    "operator_desc": "Dashboard dell'unità di business"
+  },
+  "privileges": {
+    "unidad": {
+      "configurar": "Configurare l'unità"
+    },
+    "equipo": {
+      "gestionar": "Gestire team e sotto-ruoli"
+    },
+    "agricultores": {
+      "gestionar": "Gestire gli agricoltori"
+    },
+    "topologia": {
+      "gestionar": "Gestire aziende e particelle"
+    },
+    "telemetria": {
+      "ver": "Vedere la telemetria"
+    },
+    "tesoreria": {
+      "ver": "Vedere la treasury"
+    },
+    "embarques": {
+      "preparar": "Preparare spedizioni"
+    },
+    "certificados": {
+      "emitir": "Emettere certificati",
+      "revocar": "Revocare certificati",
+      "ver": "Vedere certificati"
+    }
+  },
+  "soilcore": {
+    "label": "Nucleo di verifica",
+    "stages": "telemetria · satellite · treasury · certificato"
+  },
+  "language": "Lingua",
+  "loading": "Caricamento…",
+  "context_switch": "Cambia contesto",
+  "realtime": {
+    "live": "In diretta",
+    "down": "Nessun aggiornamento in tempo reale. Nuovo tentativo…"
+  },
+  "footer": {
+    "regulation": "Regolamento (UE) 2023/1115 (EUDR)"
+  }
+}

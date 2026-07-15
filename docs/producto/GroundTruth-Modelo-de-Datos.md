@@ -1,6 +1,22 @@
 # GroundTruth — Modelo de Datos (v1)
 
-> Diseño de tablas para Supabase (PostgreSQL + PostGIS), derivado directamente de `contexto-ground2.md` (arquitectura), `GroundTruth-Casos-de-Uso-por-Rol.md` y `GroundTruth-Indice-de-Vistas-y-Navegacion.md`. Cada tabla existe porque un caso de uso o una decisión (D1–D10) la exige — no hay tablas especulativas.
+> Diseño de tablas para Supabase (PostgreSQL + PostGIS), derivado directamente de `GroundTruth-Arquitectura-Tecnica-MVP.md` (arquitectura), `GroundTruth-Casos-de-Uso-por-Rol.md` y `GroundTruth-Indice-de-Vistas-y-Navegacion.md`. Cada tabla existe porque un caso de uso o una decisión (D1–D10) la exige — no hay tablas especulativas.
+
+---
+
+### Estado de implementación
+
+**Este esquema NO es una propuesta: está aplicado.** Contrastado contra la base real
+(9 migraciones, PostgreSQL 17.6 + PostGIS) en julio de 2026.
+
+| | |
+| --- | --- |
+| **Tablas** | ✅ **las 24 del dominio existen** (+ 4 particiones de telemetría) |
+| **ENUMs** | ✅ **los 9 coinciden exactamente** |
+| **RLS** | ✅ activo en **23/23** tablas, **26 políticas**. **Verificado empíricamente** (§7) |
+| **Vista pública** | ✅ `certificados_publicos`; `anon` **solo** la ve a ella |
+
+Las divergencias encontradas se corrigen abajo, marcadas ⚠️. Lo no construido, 🔜.
 
 ---
 
@@ -97,14 +113,15 @@ Un mismo usuario puede cumplir varias condiciones a la vez (agricultor con vasta
 | `nombre` | `TEXT NOT NULL` | Cooperativa, gremio, exportador |
 | `nit_o_id_fiscal` | `TEXT` | Nullable |
 | `pais` | `CHAR(2)` | ISO 3166-1 |
-| `estado` | `ENUM operador_estado` | `PENDIENTE_ONCHAIN, ACTIVO, SUSPENDIDO` — alta crea Treasury on-chain antes de activar |
+| `idioma_defecto` | `CHAR(2) NOT NULL DEFAULT 'es'` | ⚠️ **Faltaba en este documento** (migración 0008). Idioma por defecto de la unidad |
+| `estado` | `ENUM operador_estado` | ⚠️ **Corrección:** el alta **NO crea la Treasury on-chain**. La unidad nace `PENDIENTE_ONCHAIN` **sin tesorería** (es una cuenta on-chain que se crea aparte) y **no puede certificar** hasta tenerla: `embarques.certificar` exige `estado = 'ACTIVO'` |
 | `updated_at` | `TIMESTAMPTZ` | Sí |
 
 **`usuarios`**
 
 | Columna | Tipo | Notas |
 | --- | --- | --- |
-| `auth_user_id` | `UUID UNIQUE NOT NULL` | FK lógica a `auth.users` de Supabase Auth |
+| `auth_user_id` | `UUID UNIQUE NOT NULL` | FK lógica a `auth.users` de Supabase Auth. 🔴 **Deuda:** los usuarios creados desde el Admin (y los agricultores) se insertan con un `gen_random_uuid()` **de relleno**, que no corresponde a ninguna identidad real. **Existen en el dominio pero NO pueden iniciar sesión**: falta el flujo de invitación |
 | `nombre` | `TEXT NOT NULL` | |
 | `email` | `TEXT UNIQUE NOT NULL` | |
 | `idioma` | `CHAR(2) DEFAULT 'es'` | ISO 639-1; default = regla i18n |
@@ -282,6 +299,8 @@ erDiagram
 | `nombre` | `TEXT NOT NULL` | Ej. "La Esperanza · lote 03" |
 | `geom` | `geometry(Polygon, 4326) NOT NULL` | Polígono Leaflet / GPS de campo |
 | `area_m2` | `NUMERIC GENERATED ALWAYS AS (ST_Area(geom::geography)) STORED` | Calculada por PostGIS, base de la regla de cobertura de sensores |
+| `ultimo_estado` | `ENUM estado_verificacion` | ✅ **Añadida en la 0011.** Semáforo EUDR materializado. Lo escribe **solo** el disparador `trg_parcela_semaforo`, y **solo cuando cambia**. Nadie lo toca a mano |
+| `ultima_lectura_en` | `TIMESTAMPTZ` | ✅ **Añadida en la 0011.** Momento de la lectura que fijó el semáforo actual |
 | `updated_at` | `TIMESTAMPTZ` | Sí |
 | Índice | `USING GIST (geom)` | Obligatorio para consultas espaciales |
 
@@ -569,7 +588,13 @@ CREATE TYPE embarque_estado        AS ENUM ('BORRADOR','LISTO_APROBACION','PROCE
 CREATE TYPE saga_estado            AS ENUM ('CERT_PENDING','EVIDENCE_READY','ONCHAIN_CONFIRMED','FAILED');
 ```
 
-`certificado_estado` implementa exactamente la máquina de estados definida en la arquitectura (`DRAFT → ACTIVE → {SUPERSEDED | EXPIRED | REVOKED}`).
+✅ **Los 9 ENUMs existen exactamente así en la base.** `certificado_estado` implementa la máquina de estados de la arquitectura (`DRAFT → ACTIVE → {SUPERSEDED | EXPIRED | REVOKED}`).
+
+> ⚠️ **Dos valores están definidos pero NO se usan todavía:**
+> - `embarque_estado.LISTO_APROBACION` — el flujo de aprobación (preparador ≠ aprobador) **no está implementado**: quien no tiene `certificados.emitir` recibe un 403.
+> - `saga_estado.EVIDENCE_READY` — hoy la evidencia y la emisión ocurren en la misma fase.
+>
+> Y la transición `ACTIVE → EXPIRED` **no la ejecuta nadie**: la fecha de vigencia se graba, pero no hay barrido que la mire.
 
 ---
 
@@ -587,7 +612,20 @@ CREATE TYPE saga_estado            AS ENUM ('CERT_PENDING','EVIDENCE_READY','ONC
 | `alertas` | `BTREE (agricultor_id, leida_en)` | Bandeja de alertas de la DApp lite, filtrando no leídas |
 | `auditoria` | `BTREE (operador_id, created_at DESC)` | Vista de auditoría por unidad |
 
-**Particionamiento de `lecturas_telemetria`:** con simulador corriendo continuamente (y más aún con hardware real vía ChirpStack), esta tabla crece sin límite. Se recomienda **particionamiento nativo de PostgreSQL por rango mensual** (`PARTITION BY RANGE (ts)`), con una política de retención que archive o comprima particiones de meses anteriores. No es necesario para el MVP con pocos nodos simulados, pero conviene crear la tabla ya particionada desde el inicio — convertir una tabla existente en particionada después es una migración cara.
+✅ **Todos los índices existen.**
+
+**Particionamiento de `lecturas_telemetria`:** ✅ **la tabla nació particionada** por rango mensual
+de `ts` — se hizo desde el día 1 precisamente porque convertir una tabla existente en
+particionada después es una migración cara.
+
+> 🔜 **Pero nadie crea las particiones siguientes.** Hoy existen `2026_07`, `2026_08`, `2026_09`
+> y una `DEFAULT`. **A partir de octubre de 2026, toda la telemetría cae en la partición
+> por defecto.** No se pierde ni un dato —la `DEFAULT` los recoge—, pero el diseño se degrada
+> **en silencio**: se pierde el *partition pruning* y la retención por mes deja de ser posible.
+>
+> Falta la tarea (cron) que cree la partición del mes siguiente por adelantado. Es barata, y
+> conviene hacerla **antes** de octubre: insertar en la `DEFAULT` y luego querer partir esas
+> filas obliga a moverlas.
 
 ---
 
@@ -622,7 +660,26 @@ CREATE POLICY parcelas_por_unidad ON parcelas
 
 El mismo patrón (join hasta `membresias` o bandera `es_admin`) se repite para cada tabla del dominio agro/certificación/tesorería. Para `FARMER`, la política equivalente filtra por `fincas.agricultor_id = usuario_actual`, acotado además a las columnas que la DApp lite expone (Q6): lectura de alertas y de sus propias parcelas, escritura solo en `ciclos_siembra` (declarar nueva siembra).
 
-Los **privilegios de Operador** (`certificados.emitir`, `equipo.gestionar`, etc.) no se resuelven en RLS de PostgreSQL directamente — RLS resuelve *a qué fila* se puede acceder (aislamiento por unidad); *qué acción* dentro de esa unidad se permite es responsabilidad del backend NestJS, que calcula los privilegios efectivos del `sub_rol` en cada request. Mezclar ambos niveles en RLS sería frágil (el catálogo de privilegios cambia con cada feature nueva); la separación aísla por tenant en la base de datos y autoriza por acción en el backend.
+Los **privilegios de Operador** (`certificados.emitir`, `equipo.gestionar`, etc.) no se resuelven en RLS — **RLS aísla FILAS; NestJS autoriza ACCIONES**. Mezclar ambos niveles en RLS sería frágil (el catálogo de privilegios cambia con cada feature nueva) y difícil de auditar.
+
+### ✅ RLS no es decorativo: está verificado
+
+El backend se conecta con el rol de servicio, que **omite RLS** (por eso autoriza él las
+acciones). Eso podría hacer pensar que las políticas no protegen nada. **No es así:** el
+frontend lleva la sesión de Supabase, y cualquier persona autenticada podría consultar
+PostgREST directamente con su JWT. **RLS es lo único que la detiene ahí.**
+
+Comprobado contra la base real:
+
+| Quién | Consulta directa a las tablas | Resultado |
+| --- | --- | --- |
+| **Anónimo** | `usuarios`, `parcelas`, `certificados`, `tesorerias` | **401** — ninguna |
+| **Anónimo** | `certificados_publicos` | ✅ la vista pública, y solo esa |
+| **Operadora de UNA unidad** | `operadores` | **1 de 2** — no ve la otra unidad |
+| | `usuarios` | **1** — solo ella misma |
+| | `parcelas`, `tesorerias` | **solo las de su unidad** |
+
+RLS activo en **23/23** tablas de dominio, con **26 políticas**.
 
 ### 7.1 Acceso anónimo — verificador público (V2)
 
@@ -651,11 +708,19 @@ Referencia rápida de qué campo de la base de datos es el **espejo de lectura**
 
 | Dato | Fuente de verdad | Espejo off-chain |
 | --- | --- | --- |
-| Saldo de tesorería | Cuenta ATA en Solana | `tesorerias.saldo_cache` (actualizado por webhook, nunca se le resta directamente sin confirmar la TX) |
-| Estado `ACTIVE`/`REVOKED` del certificado | **Off-chain** (`certificados.estado`) | El cNFT es inmutable; el estado de vigencia vive en Postgres por diseño (D1) |
-| Existencia del certificado (idempotencia) | Ambos: `CertificateRecord` PDA on-chain + `certificados` (parcela_id, ciclo_siembra_id) off-chain | Deben coincidir; el backend valida contra la cadena antes de confiar en la caché |
-| Hash de imagen/PDF | Off-chain calcula, on-chain ancla | `certificados.hash_pdf` / `hash_imagen` = mismo valor que va en los metadatos del cNFT |
-| URI del GeoJSON | Arweave (permanente) | `certificados.uri_geojson_arweave` es una copia de lectura del URI ya anclado |
+| ⚠️ **Saldo de tesorería** | **La cuenta ATA en Solana** | `tesorerias.saldo_cache`. **Corrección:** este documento decía "actualizado por webhook". **No.** El webhook de Helius **solo avisa**; el saldo se **RECONCILIA leyendo la cadena** y se **fija** con lo que ella dice — **nunca se suma ni se resta**. Así el espejo no puede derivar de la cuenta, pase lo que pase con el webhook |
+| ✅ Estado `ACTIVE`/`REVOKED` | **Off-chain** (`certificados.estado`) | El cNFT es inmutable: el estado de vigencia vive en Postgres por diseño (D1). **La revocación nunca será on-chain** |
+| ✅ **Idempotencia del certificado** | **La PDA `["cert", parcela_id, ciclo_id]`** | La cuenta se crea con `init`: un segundo `certify` **falla al crear la cuenta**. La cadena impide el doble cobro y el doble mint **sin que el programa compruebe nada**. Off-chain lo refleja el `UNIQUE (parcela_id, ciclo_siembra_id)` |
+| ✅ **Identidad del cNFT** | La cadena | `certificados.cnft_asset_id` — **es el hilo que ata la base con la cadena**. Se lee de la cadena tras mintear, no se calcula de forma optimista |
+| ✅ Hash de imagen/PDF | Off-chain calcula, on-chain ancla | `certificados.hash_pdf` / `hash_imagen` = el mismo valor que viaja en el cNFT. **Verificado end-to-end** |
+| ✅ URI del GeoJSON | Arweave (permanente) | `certificados.uri_geojson_arweave` |
+| ✅ **Dirección de depósito** | La cadena | ⚠️ `tesorerias.ata_usdc` — **es el ATA, no la `treasury_pda`**. La PDA es la *authority*; los USDC viven en su ATA |
+
+**Las PDAs se derivan de los UUID de Postgres en crudo** (16 bytes), sin guardar ningún mapeo:
+la dirección de cada cuenta on-chain es calculable desde la base, y por tanto **no puede
+desincronizarse**. *(El programa añade una PDA `Config` que este documento no contemplaba:
+guarda el firmante del backend, el mint de USDC y los **techos de cobro** que acotan a una
+keypair comprometida.)*
 
 ---
 
@@ -667,3 +732,38 @@ Coherente con la sección "Fuera de alcance del MVP" del documento de casos de u
 - **Data Marketplace / DeSci:** consumiría `lecturas_telemetria` y `certificados` vía una capa de exportación; no requiere tablas nuevas en el MVP, solo permisos de lectura adicionales.
 - **Monitoreo satelital en tiempo real:** el campo `alertas.tipo` ya admite `'SATELITAL'` en su `CHECK`, aunque no se emita todavía.
 - **Lote comercial multi-parcela:** hoy `parcelas` = lote (1:1); una tabla puente `lotes_parcelas` cubriría el mapeo N:1 sin tocar el resto del esquema.
+
+
+---
+
+## 12. Realtime (migraciones 0010 y 0011)
+
+**Tablas publicadas en `supabase_realtime`:** `alertas`, `parcelas`, `tesorerias`.
+
+**La regla de uso — campana, no cartero.** Supabase Realtime entrega la fila cambiada
+dentro del evento. Usar ese dato sería leer negocio directamente de Postgres desde el
+navegador, que es justo lo que prohíbe el Sistema de Diseño §5. Así que **el payload se
+ignora a propósito**: del evento solo se aprovecha *que algo cambió*, y la reacción es
+invalidar la caché de TanStack Query, que vuelve a pedir el dato **por NestJS** con sus
+guards y sus privilegios. Se gana la inmediatez sin abrir un segundo canal de datos.
+
+La privacidad la impone **RLS**, que Realtime evalúa **por suscriptor**: cada quien solo
+recibe eventos de las filas que sus políticas le dejan ver.
+
+> [!WARNING]
+> **Supabase Realtime NO entrega cambios de tablas particionadas.** Verificado contra la
+> base: `lecturas_telemetria` no emite ningún evento — ni por la tabla raíz, ni por el
+> nombre de la partición, ni con comodín de esquema, ni con
+> `publish_via_partition_root = true` (que en Postgres es necesario, pero no suficiente).
+>
+> Por eso el semáforo verde/rojo se **materializa** en `parcelas` (tabla normal) mediante
+> el disparador `trg_parcela_semaforo`, y es esa tabla la que se escucha.
+
+**El disparador escribe solo cuando el estado CAMBIA.** Actualizar `parcelas` en cada
+lectura sería amplificación de escritura pura —un UPDATE por sensor y por intervalo, con
+su evento de Realtime— para repetir lo que ya se sabía. Mil lecturas que no alteran el
+semáforo no despiertan a nadie.
+
+**Efecto lateral:** desaparecieron las **5 subconsultas correlacionadas** que
+`topologia`, `embarques` (×2), `farmer` y `supervision` ejecutaban **por parcela** contra
+la tabla particionada para averiguar el último estado. Ahora es una columna.
