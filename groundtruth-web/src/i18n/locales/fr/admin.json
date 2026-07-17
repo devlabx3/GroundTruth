@@ -113,7 +113,8 @@
     "hours": "Heures de télémétrie",
     "last_reading": "Dernier relevé",
     "generated_ok": "Relevés générés dans les seuils : la parcelle est conforme.",
-    "generated_alert": "Relevés hors seuils : la parcelle passe en alerte et l'agriculteur est prévenu."
+    "generated_alert": "Relevés hors seuils : la parcelle passe en alerte et l'agriculteur est prévenu.",
+    "disclaimer": "Avertissement : la télémétrie générée ici devient une preuve de certification réelle. Ce n'est pas un jouet de test — chaque lecture alimente le calcul de conformité et le certificat. À utiliser uniquement en développement ou en essais contrôlés."
   },
   "supervision": {
     "title": "Supervision globale",

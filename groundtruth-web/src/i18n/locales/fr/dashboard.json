@@ -51,7 +51,8 @@
     "temp_sup": "Temp. de surface",
     "temp_prof": "Temp. profonde",
     "chart_pending": "Séries pH / EC / humidité / température (Recharts) — bientôt",
-    "no_data": "Pas encore de relevés pour cette parcelle."
+    "no_data": "Pas encore de relevés pour cette parcelle.",
+    "simulated_source": "Source : données simulées"
   },
   "farmers": {
     "title": "Agriculteurs de l'unité",

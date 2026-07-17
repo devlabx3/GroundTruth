@@ -113,7 +113,8 @@
     "hours": "Hours of telemetry",
     "last_reading": "Last reading",
     "generated_ok": "Readings generated within thresholds: the plot is compliant.",
-    "generated_alert": "Readings out of range: the plot moves to alert and the farmer is notified."
+    "generated_alert": "Readings out of range: the plot moves to alert and the farmer is notified.",
+    "disclaimer": "Warning: telemetry generated here becomes real certification evidence. This is not a test toy — each reading feeds into the conformity calculation and the certificate. Use only in development or controlled trials."
   },
   "supervision": {
     "title": "Global supervision",

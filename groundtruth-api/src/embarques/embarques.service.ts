@@ -138,8 +138,9 @@ export class EmbarquesService {
   }
 
   /** Prepara un borrador (O7). Regla de unicidad de cultivo + pertenencia. */
-  async create(operadorId: string, userId: string, body: unknown) {
+  async create(operadorId: string, userId: string, body: unknown, privileges: string[] = []) {
     const { parcelaIds } = createSchema.parse(body);
+    const estado = privileges.includes('certificados.emitir') ? 'BORRADOR' : 'LISTO_APROBACION';
 
     return this.db.transaction(async (tx) => {
       // Parcelas de la unidad + su cultivo + ciclo activo + último estado.
@@ -177,8 +178,8 @@ export class EmbarquesService {
       const cultivoId = parcelas[0].cultivo_id;
       const emb = await tx.queryOne<{ id: string }>(
         `insert into embarques (operador_id, cultivo_id, estado, creado_por)
-         values ($1, $2, 'BORRADOR', $3) returning id`,
-        [operadorId, cultivoId, userId],
+         values ($1, $2, $3, $4) returning id`,
+        [operadorId, cultivoId, estado, userId],
       );
       const embarqueId = emb!.id;
 

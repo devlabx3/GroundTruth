@@ -113,7 +113,8 @@
     "hours": "Horas de telemetria",
     "last_reading": "Última leitura",
     "generated_ok": "Leituras geradas dentro dos limites: a parcela fica conforme.",
-    "generated_alert": "Leituras fora dos limites: a parcela passa a alerta e o agricultor é avisado."
+    "generated_alert": "Leituras fora dos limites: a parcela passa a alerta e o agricultor é avisado.",
+    "disclaimer": "Aviso: a telemetria gerada aqui se torna evidência real de certificação. Isso não é um brinquedo de teste — cada leitura alimenta o cálculo de conformidade e o certificado. Use apenas em desenvolvimento ou testes controlados."
   },
   "supervision": {
     "title": "Supervisão global",

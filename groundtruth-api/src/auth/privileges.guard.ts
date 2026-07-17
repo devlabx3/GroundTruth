@@ -8,6 +8,7 @@ import type { AuthedRequest } from './auth.guard';
 export interface OperadorRequest extends AuthedRequest {
   operadorId: string;
   usuarioId: string; // usuarios.id (no el auth_user_id) — para FKs de dominio
+  privileges: string[]; // conjunto efectivo de privilegios en este operador
 }
 
 /**
@@ -33,28 +34,40 @@ export class PrivilegesGuard implements CanActivate {
     const operadorId = req.headers['x-operador-id'];
     if (typeof operadorId !== 'string' || !operadorId) throw DomainErrors.noPrivilege();
 
-    const row = await this.db.queryOne<{ usuario_id: string; permitido: boolean }>(
+    const row = await this.db.queryOne<{
+      usuario_id: string;
+      es_admin: boolean;
+      privileges: string[];
+      tiene_requerido: boolean;
+    }>(
       `
-      select u.id as usuario_id,
-        u.es_admin
-        or exists (
-          select 1
-          from membresias m
-          join sub_rol_privilegios srp on srp.sub_rol_id = m.sub_rol_id
-          join catalogo_privilegios cp on cp.id = srp.privilegio_id
-          where m.usuario_id = u.id and m.activo
-            and m.operador_id = $2
-            and cp.clave = any($3)
-        ) as permitido
-      from usuarios u
-      where u.auth_user_id = $1 and u.activo
+      with user_privs as (
+        select u.id as usuario_id, u.es_admin,
+          case
+            when u.es_admin then array_agg(distinct cp.clave) filter (where cp.clave is not null)
+            else coalesce(
+              array_agg(distinct cp.clave) filter (where cp.clave is not null and m.activo),
+              '{}'::text[]
+            )
+          end as all_privs
+        from usuarios u
+        left join membresias m on m.usuario_id = u.id and m.operador_id = $2
+        left join sub_rol_privilegios srp on srp.sub_rol_id = m.sub_rol_id
+        left join catalogo_privilegios cp on cp.id = srp.privilegio_id
+        where u.auth_user_id = $1 and u.activo
+        group by u.id, u.es_admin
+      )
+      select usuario_id, es_admin, all_privs as privileges,
+        es_admin or (all_privs && $3::text[]) as tiene_requerido
+      from user_privs
       `,
       [req.authUserId, operadorId, anyOf],
     );
 
-    if (!row?.permitido) throw DomainErrors.noPrivilege();
+    if (!row?.tiene_requerido) throw DomainErrors.noPrivilege();
     req.operadorId = operadorId;
     req.usuarioId = row.usuario_id;
+    req.privileges = row.es_admin ? anyOf : row.privileges || [];
     return true;
   }
 }

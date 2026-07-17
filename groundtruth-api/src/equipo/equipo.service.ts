@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { z } from 'zod';
 import { DbService } from '@/db/db.service';
+import { SupabaseAuthService } from '@/auth/supabase-auth.service';
 import { DomainError, DomainErrors } from '@/common/domain-error';
 
 const crearSchema = z.object({
@@ -8,11 +9,19 @@ const crearSchema = z.object({
   privileges: z.array(z.string()).min(1),
 });
 const cambiarSchema = z.object({ subRolId: z.string().uuid() });
+const invitarSchema = z.object({
+  nombre: z.string().trim().min(1),
+  email: z.string().trim().email(),
+  subRolId: z.string().uuid(),
+});
 
 /** Equipo y sub-roles (O9). RBAC dinámico: la unidad compone sus sub-roles. */
 @Injectable()
 export class EquipoService {
-  constructor(private readonly db: DbService) {}
+  constructor(
+    private readonly db: DbService,
+    private readonly supabaseAuth: SupabaseAuthService,
+  ) {}
 
   async overview(operadorId: string) {
     const miembros = await this.db.query<any>(
@@ -125,5 +134,50 @@ export class EquipoService {
     );
     if (!updated) throw DomainErrors.notFound();
     return { id: membresiaId, subRolId };
+  }
+
+  async invitarMiembro(operadorId: string, actorId: string, body: unknown) {
+    const { nombre, email, subRolId } = invitarSchema.parse(body);
+
+    return this.db.transaction(async (tx) => {
+      const sr = await tx.queryOne<{ id: string }>(
+        'select id from sub_roles where id = $1 and operador_id = $2',
+        [subRolId, operadorId],
+      );
+      if (!sr) throw DomainErrors.notFound();
+
+      const authResult = await this.supabaseAuth.invitar(email, nombre);
+      const authUserId = authResult?.authUserId || this.generatePlaceholderId();
+
+      const usuario = await tx.queryOne<{ id: string }>(
+        `insert into usuarios (nombre, email, auth_user_id)
+         values ($1, $2, $3)
+         returning id`,
+        [nombre, email, authUserId],
+      );
+
+      const membresiaId = await tx.queryOne<{ id: string }>(
+        `insert into membresias (operador_id, usuario_id, sub_rol_id, invitado_en)
+         values ($1, $2, $3, now())
+         returning id`,
+        [operadorId, usuario!.id, subRolId],
+      );
+
+      await tx.query(
+        `insert into auditoria (operador_id, usuario_id, accion, referencia)
+         values ($1, $2, $3, $4)`,
+        [operadorId, actorId, 'equipo.invitar', JSON.stringify({ email, nombre })],
+      );
+
+      return {
+        membresiaId: membresiaId!.id,
+        usuarioId: usuario!.id,
+        email,
+      };
+    });
+  }
+
+  private generatePlaceholderId(): string {
+    return crypto.randomUUID();
   }
 }

@@ -109,6 +109,7 @@ export interface Parcela {
   /** Etapas completas del sello (0–4). Alimenta el SealProgress. */
   filled: number;
   certificada: boolean;
+  fuenteSimulada?: boolean;
   centro: LatLng;
   geom?: GeoJsonPolygon | null;
 }
@@ -133,6 +134,7 @@ export interface ParcelaDetalle extends Omit<Parcela, 'geom'> {
   poligono: LatLng[];
   telemetria: Telemetria | null;
   ciclos: Ciclo[];
+  fuenteSimulada?: boolean;
 }
 
 export interface Finca {

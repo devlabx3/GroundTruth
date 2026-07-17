@@ -51,7 +51,8 @@
     "temp_sup": "Temp. superficial",
     "temp_prof": "Temp. profunda",
     "chart_pending": "Séries de pH / EC / umidade / temperatura (Recharts) — em breve",
-    "no_data": "Ainda sem leituras para esta parcela."
+    "no_data": "Ainda sem leituras para esta parcela.",
+    "simulated_source": "Fonte: dados simulados"
   },
   "farmers": {
     "title": "Agricultores da unidade",

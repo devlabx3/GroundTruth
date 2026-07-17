@@ -27,4 +27,9 @@ export class EquipoController {
   cambiarSubrol(@Req() req: OperadorRequest, @Param('id', ParseUUIDPipe) id: string, @Body() body: unknown) {
     return this.equipo.cambiarSubrol(req.operadorId, id, body);
   }
+
+  @Post('miembros/invitar')
+  invitarMiembro(@Req() req: OperadorRequest, @Body() body: unknown) {
+    return this.equipo.invitarMiembro(req.operadorId, req.usuarioId, body);
+  }
 }

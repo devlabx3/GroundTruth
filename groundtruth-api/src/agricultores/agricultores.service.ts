@@ -9,6 +9,10 @@ const crearSchema = z.object({
   fincaNombre: z.string().trim().min(1),
 });
 
+const reasignarSchema = z.object({
+  agricultorId: z.string().uuid('agricultorId debe ser un UUID válido'),
+});
+
 /** Agricultores de la unidad (O5). Un agricultor = usuario dueño de finca(s). */
 @Injectable()
 export class AgricultoresService {
@@ -72,6 +76,41 @@ export class AgricultoresService {
         [actorId, operadorId, usuario!.id, JSON.stringify({ nombre, email, finca: fincaNombre })],
       );
       return { id: usuario!.id, fincaId: finca!.id, nombre, email };
+    });
+  }
+
+  /**
+   * Reasigna una finca existente de un agricultor a otro. Verifica que la finca
+   * pertenece al operador. Auditado.
+   */
+  async reasignarFinca(operadorId: string, fincaId: string, actorId: string, body: unknown) {
+    const { agricultorId } = reasignarSchema.parse(body);
+    return this.db.transaction(async (tx) => {
+      // Verificar que la finca existe y pertenece al operador
+      const finca = await tx.queryOne<{ id: string }>(
+        'select id from fincas where id = $1 and operador_id = $2',
+        [fincaId, operadorId],
+      );
+      if (!finca) throw DomainErrors.notFound();
+
+      // Verificar que el agricultor destino existe
+      const usuario = await tx.queryOne<{ id: string }>(
+        'select id from usuarios where id = $1 and activo',
+        [agricultorId],
+      );
+      if (!usuario) throw DomainErrors.notFound();
+
+      // Reasignar
+      await tx.query('update fincas set agricultor_id = $1 where id = $2', [agricultorId, fincaId]);
+
+      // Auditoría
+      await tx.query(
+        `insert into auditoria (actor_id, operador_id, accion, entidad, entidad_id, valor_nuevo)
+         values ($1, $2, 'finca.reasignar', 'fincas', $3, $4)`,
+        [actorId, operadorId, fincaId, JSON.stringify({ nuevoAgricultorId: agricultorId })],
+      );
+
+      return { id: fincaId, agricultorId };
     });
   }
 }

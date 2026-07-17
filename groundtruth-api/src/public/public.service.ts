@@ -8,6 +8,12 @@ const querySchema = z.object({
   by: z.enum(['number', 'asset', 'hash']),
 });
 
+const contactoSchema = z.object({
+  nombre: z.string().trim().min(1).max(200),
+  email: z.string().trim().email(),
+  mensaje: z.string().trim().min(1).max(5000),
+});
+
 /**
  * Verificador público (V2) — **la única superficie sin autenticación**.
  *
@@ -61,5 +67,16 @@ export class PublicService {
       assetId: row.cnft_asset_id,
       uriGeojson: row.uri_geojson_arweave,
     };
+  }
+
+  async crearContacto(body: unknown) {
+    const { nombre, email, mensaje } = contactoSchema.parse(body);
+    const row = await this.db.queryOne<{ id: string }>(
+      `insert into contactos (nombre, email, mensaje)
+       values ($1, $2, $3)
+       returning id`,
+      [nombre, email, mensaje],
+    );
+    return { id: row?.id };
   }
 }

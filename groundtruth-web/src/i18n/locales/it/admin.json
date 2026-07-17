@@ -113,7 +113,8 @@
     "hours": "Ore di telemetria",
     "last_reading": "Ultima lettura",
     "generated_ok": "Letture generate entro le soglie: la particella è conforme.",
-    "generated_alert": "Letture fuori soglia: la particella passa in allerta e l'agricoltore riceve l'avviso."
+    "generated_alert": "Letture fuori soglia: la particella passa in allerta e l'agricoltore riceve l'avviso.",
+    "disclaimer": "Avvertenza: la telemetria generata qui diventa prova di certificazione reale. Non è un giocattolo di prova — ogni lettura alimenta il calcolo di conformità e il certificato. Utilizzare solo in sviluppo o prove controllate."
   },
   "supervision": {
     "title": "Supervisione globale",

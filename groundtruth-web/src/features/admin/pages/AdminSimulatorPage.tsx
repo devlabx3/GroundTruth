@@ -118,6 +118,8 @@ export default function AdminSimulatorPage() {
         </Button>
       </div>
 
+      <AlertBanner tone="info" messageKey="admin:simulator.disclaimer" />
+
       {resultKey && <AlertBanner tone="info" messageKey={resultKey} />}
       {errorKey && !genOpen && <AlertBanner messageKey={errorKey} />}
 

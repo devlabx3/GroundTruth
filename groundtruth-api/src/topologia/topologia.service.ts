@@ -154,7 +154,8 @@ export class TopologiaService {
              count(ns.id) filter (where ns.activo) as sensores,
              -- Antes: subconsulta correlacionada contra la tabla PARTICIONADA, una
              -- por parcela. Ahora es una columna que mantiene el disparador (0011).
-             p.ultimo_estado
+             p.ultimo_estado,
+             bool_or(ns.tipo_nodo = 'SIMULADO') filter (where ns.activo) as fuente_simulada
       from parcelas p
       join fincas f   on f.id = p.finca_id
       join cultivos c on c.id = p.cultivo_id
@@ -175,7 +176,8 @@ export class TopologiaService {
              st_asgeojson(p.geom)::json as geom,
              st_y(st_centroid(p.geom)) as centro_lat,
              st_x(st_centroid(p.geom)) as centro_lng,
-             (select count(*) from nodos_sensores ns where ns.parcela_id = p.id and ns.activo) as sensores
+             (select count(*) from nodos_sensores ns where ns.parcela_id = p.id and ns.activo) as sensores,
+             (select bool_or(ns.tipo_nodo = 'SIMULADO') from nodos_sensores ns where ns.parcela_id = p.id and ns.activo) as fuente_simulada
       from parcelas p
       join fincas f   on f.id = p.finca_id
       join cultivos c on c.id = p.cultivo_id

@@ -45,6 +45,7 @@
   },
   "telemetry": {
     "title": "Última lectura",
+    "simulated_source": "Fuente: datos simulados",
     "ph": "pH",
     "ec": "EC",
     "humidity": "Humedad",

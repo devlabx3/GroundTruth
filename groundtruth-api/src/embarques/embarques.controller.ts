@@ -22,7 +22,7 @@ export class EmbarquesController {
   @Post()
   @NeedsPrivilege('embarques.preparar')
   create(@Req() req: OperadorRequest, @Body() body: unknown) {
-    return this.embarques.create(req.operadorId, req.usuarioId, body);
+    return this.embarques.create(req.operadorId, req.usuarioId, body, req.privileges);
   }
 
   /** Emisión: exige el privilegio sensible `certificados.emitir` (separación

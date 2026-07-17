@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { APP_FILTER, APP_GUARD } from '@nestjs/core';
 import { ConfigModule } from '@nestjs/config';
+import { ScheduleModule } from '@nestjs/schedule';
 import { validateEnv } from './config/env';
 import { DomainExceptionFilter } from './common/domain-exception.filter';
 import { DbModule } from './db/db.module';
@@ -24,6 +25,7 @@ import { PublicModule } from './public/public.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true, validate: validateEnv }),
+    ScheduleModule.forRoot(),
     DbModule,
     SolanaModule,
     EvidenciaModule,

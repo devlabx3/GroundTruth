@@ -55,7 +55,12 @@ export default function TopologyDetailPage() {
       </Card>
 
       <Card>
-        <div className="mb-3 text-xs text-graphite">{t('telemetry.title')}</div>
+        <div className="mb-3 flex items-center justify-between">
+          <span className="text-xs text-graphite">{t('telemetry.title')}</span>
+          {parcel.fuenteSimulada && (
+            <span className="text-xs text-graphite italic">{t('telemetry.simulated_source')}</span>
+          )}
+        </div>
         {parcel.telemetria ? (
           <TelemetryChart telemetria={parcel.telemetria} />
         ) : (

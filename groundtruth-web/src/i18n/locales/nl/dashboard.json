@@ -51,7 +51,8 @@
     "temp_sup": "Oppervlaktetemp.",
     "temp_prof": "Dieptetemp.",
     "chart_pending": "Tijdreeksen pH / EC / vochtigheid / temperatuur (Recharts) — binnenkort",
-    "no_data": "Nog geen metingen voor dit perceel."
+    "no_data": "Nog geen metingen voor dit perceel.",
+    "simulated_source": "Bron: gesimuleerde gegevens"
   },
   "farmers": {
     "title": "Boeren van de eenheid",

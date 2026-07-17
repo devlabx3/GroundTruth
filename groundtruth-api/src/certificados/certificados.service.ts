@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { Cron, CronExpression } from '@nestjs/schedule';
 import { z } from 'zod';
 import { DbService } from '@/db/db.service';
 import { DomainError, DomainErrors } from '@/common/domain-error';
@@ -119,5 +120,14 @@ export class CertificadosService {
 
       return { id, estado: ESTADO_UI['REVOKED'], revocadoEn: new Date().toISOString() };
     });
+  }
+
+  @Cron(CronExpression.EVERY_DAY_AT_3AM)
+  async expirarVencidos(): Promise<void> {
+    await this.db.query(
+      `update certificados
+        set estado = 'EXPIRED'
+        where estado = 'ACTIVE' and vigente_hasta < now()`,
+    );
   }
 }

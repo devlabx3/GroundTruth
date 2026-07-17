@@ -8,6 +8,8 @@ import { SolanaService } from '@/solana/solana.service';
 
 const TIMEOUT_MS = 4000;
 const LATENCIA_WARN_MS = 500;
+const IRYS_BAJO_SOL = 0.1;
+const LAMPORTS_PER_SOL = 1_000_000_000;
 
 type Estado = 'ok' | 'warn' | 'down' | 'no_configurado';
 
@@ -38,10 +40,11 @@ export class AdminIntegracionesService {
   ) {}
 
   async list(): Promise<Integracion[]> {
-    const [supabase, rpc, sentinel] = await Promise.all([
+    const [supabase, rpc, sentinel, irys] = await Promise.all([
       this.checkSupabase(),
       this.checkRpc(),
       this.checkSentinel(),
+      this.checkIrys(),
     ]);
 
     return [
@@ -50,12 +53,7 @@ export class AdminIntegracionesService {
       // realmente autentica sus llamadas (helius.controller). Antes miraba HELIUS_API_KEY,
       // una variable que ni el .env ni el webhook usan, así que salía siempre no configurada.
       this.pendiente('helius', 'Helius (webhooks)', !!this.config.get('HELIUS_WEBHOOK_SECRET')),
-      {
-        key: 'irys',
-        nombre: `Irys / Arweave (${this.config.get('IRYS_NETWORK') ?? 'devnet'})`,
-        estado: this.arweave.isEnabled() ? 'ok' : 'no_configurado',
-        latenciaMs: null,
-      },
+      irys,
       rpc,
       {
         key: 'storage',
@@ -125,5 +123,20 @@ export class AdminIntegracionesService {
       estado: configurada ? 'warn' : 'no_configurado', // configurada pero sin sonda
       latenciaMs: null,
     };
+  }
+
+  private async checkIrys(): Promise<Integracion> {
+    const nombre = `Irys / Arweave (${this.config.get('IRYS_NETWORK') ?? 'devnet'})`;
+    if (!this.arweave.isEnabled()) {
+      return { key: 'irys', nombre, estado: 'no_configurado', latenciaMs: null };
+    }
+    // Irys reutiliza la wallet de gas del backend (SOLANA_BACKEND_SECRET_KEY)
+    const sol = await this.solana.saldoSolLamports();
+    if (sol === null) {
+      return { key: 'irys', nombre, estado: 'no_configurado', latenciaMs: null };
+    }
+    const solBalance = sol / LAMPORTS_PER_SOL;
+    const estado = solBalance < IRYS_BAJO_SOL ? 'warn' : 'ok';
+    return { key: 'irys', nombre, estado, latenciaMs: null };
   }
 }

@@ -51,7 +51,8 @@
     "temp_sup": "Surface temp.",
     "temp_prof": "Deep temp.",
     "chart_pending": "pH / EC / humidity / temperature series (Recharts) — coming soon",
-    "no_data": "No readings for this parcel yet."
+    "no_data": "No readings for this parcel yet.",
+    "simulated_source": "Source: simulated data"
   },
   "farmers": {
     "title": "Farmers of the unit",

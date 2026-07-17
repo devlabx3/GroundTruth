@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Req } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post, Req } from '@nestjs/common';
 import { NeedsPrivilege } from '@/auth/needs-privilege.decorator';
 import type { OperadorRequest } from '@/auth/privileges.guard';
 import { AgricultoresService } from './agricultores.service';
@@ -16,5 +16,14 @@ export class AgricultoresController {
   @Post()
   crear(@Req() req: OperadorRequest, @Body() body: unknown) {
     return this.agricultores.crear(req.operadorId, req.usuarioId, body);
+  }
+
+  @Patch('fincas/:fincaId')
+  reasignarFinca(
+    @Param('fincaId') fincaId: string,
+    @Req() req: OperadorRequest,
+    @Body() body: unknown,
+  ) {
+    return this.agricultores.reasignarFinca(req.operadorId, fincaId, req.usuarioId, body);
   }
 }

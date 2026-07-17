@@ -113,7 +113,8 @@
     "hours": "Stunden Telemetrie",
     "last_reading": "Letzter Messwert",
     "generated_ok": "Messwerte innerhalb der Grenzwerte: Die Parzelle ist konform.",
-    "generated_alert": "Messwerte außerhalb der Grenzwerte: Die Parzelle geht in Alarm und die Landwirtin wird benachrichtigt."
+    "generated_alert": "Messwerte außerhalb der Grenzwerte: Die Parzelle geht in Alarm und die Landwirtin wird benachrichtigt.",
+    "disclaimer": "Warnung: Die hier generierte Telemetrie wird zu echten Zertifizierungsnachweisen. Dies ist kein Testspielzeug — jede Messung fließt in die Konformitätsberechnung und das Zertifikat ein. Nur in Entwicklung oder kontrollierten Versuchen verwenden."
   },
   "supervision": {
     "title": "Globale Aufsicht",

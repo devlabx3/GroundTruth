@@ -1,4 +1,4 @@
-import { Controller, Get, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
 import { Public } from '@/auth/public.decorator';
 import { PublicService } from './public.service';
 import { RateLimitGuard } from './rate-limit.guard';
@@ -21,5 +21,11 @@ export class PublicController {
   @Get('certificates')
   buscar(@Query() query: unknown) {
     return this.publico.buscarCertificado(query);
+  }
+
+  @Public()
+  @Post('contacto')
+  contacto(@Body() body: unknown) {
+    return this.publico.crearContacto(body);
   }
 }

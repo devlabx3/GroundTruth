@@ -102,6 +102,7 @@
   },
   "simulator": {
     "title": "Simulador IoT",
+    "disclaimer": "Advertencia: la telemetría generada aquí se convierte en evidencia real de certificación. No es un juguete de prueba — cada lectura alimenta el cálculo de conformidad y el certificado. Usar solo en desarrollo o ensayos controlados.",
     "node": "Nodo",
     "profile": "Perfil",
     "profile_healthy": "Sano",

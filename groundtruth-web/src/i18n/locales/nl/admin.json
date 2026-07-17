@@ -113,7 +113,8 @@
     "hours": "Uren telemetrie",
     "last_reading": "Laatste meting",
     "generated_ok": "Metingen binnen de drempels: het perceel is conform.",
-    "generated_alert": "Metingen buiten de drempels: het perceel gaat naar alarm en de boer krijgt bericht."
+    "generated_alert": "Metingen buiten de drempels: het perceel gaat naar alarm en de boer krijgt bericht.",
+    "disclaimer": "Waarschuwing: telemetrie gegenereerd hier wordt echt certificatiegeheim. Dit is geen testafleiding — elke meting voegt toe aan conformiteitsberekening en certificaat. Alleen gebruiken in ontwikkeling of gecontroleerde tests."
   },
   "supervision": {
     "title": "Globaal toezicht",

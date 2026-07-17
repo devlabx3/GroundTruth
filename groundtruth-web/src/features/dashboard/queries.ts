@@ -68,6 +68,7 @@ interface ApiParcela {
   ultimo_estado: EstadoEvaluado | null;
   centro_lat: string | number;
   centro_lng: string | number;
+  fuente_simulada?: boolean | null;
   geom?: GeoJsonPolygon | null;
 }
 
@@ -90,6 +91,7 @@ interface ApiCiclo {
 interface ApiParcelaDetalle extends ApiParcela {
   telemetria: ApiTelemetria | null;
   ciclos?: ApiCiclo[];
+  fuente_simulada?: boolean | null;
 }
 
 const estadoFrom = (evaluado: EstadoEvaluado | null | undefined): EstadoParcela =>
@@ -110,6 +112,7 @@ function mapParcela(r: ApiParcela): Parcela {
     // Sin pipeline de certificación aún: solo la etapa de telemetría se refleja.
     filled: r.ultimo_estado ? 1 : 0,
     certificada: false,
+    fuenteSimulada: Boolean(r.fuente_simulada),
     centro: puntoDesdeCrudo({ lat: Number(r.centro_lat), lng: Number(r.centro_lng) }),
     geom: r.geom,
   };
@@ -411,7 +414,7 @@ export function anilloALeaflet(geom: GeoJsonPolygon | null | undefined): LatLng[
 }
 
 /** GET /topologia/parcelas/:id → forma del detalle de parcela (O4/O6). */
-function mapParcelaDetalle(r: ApiParcelaDetalle): ParcelaDetalle {
+export function mapParcelaDetalle(r: ApiParcelaDetalle): ParcelaDetalle {
   const areaHa = Number(r.area_ha);
   const ciclosRaw: ApiCiclo[] = r.ciclos ?? [];
   const certificada = ciclosRaw.some((c) => c.certificado);
@@ -434,6 +437,7 @@ function mapParcelaDetalle(r: ApiParcelaDetalle): ParcelaDetalle {
     estado: estadoFrom(tel?.estado_evaluado),
     certificada,
     filled: certificada ? 4 : tel ? 1 : 0,
+    fuenteSimulada: Boolean(r.fuente_simulada),
     centro: puntoDesdeCrudo({ lat: Number(r.centro_lat), lng: Number(r.centro_lng) }),
     poligono,
     telemetria: tel
