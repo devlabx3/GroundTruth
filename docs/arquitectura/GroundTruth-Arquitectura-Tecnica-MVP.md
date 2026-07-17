@@ -305,6 +305,15 @@ tiene lo conserva: no se rompe a nadie en caliente.
 
 El payload sustenta la propuesta de valor. Formato JSON compatible con ChirpStack (hardware futuro = zero changes en el backend):
 
+> ✅ **Ingesta implementada (Bloque 2).** El endpoint oficial `POST /telemetria/ingest`
+> (`groundtruth-api/src/telemetria/`) recibe este payload, resuelve el nodo, evalúa el semáforo
+> contra `umbrales_eudr`, persiste en `lecturas_telemetria` y alerta — todo en
+> `TelemetriaIngestionService`. El simulador IoT alimenta **el mismo servicio en proceso**, así
+> que hardware real y simulado comparten evaluación/persistencia/alertado: el día que llegue el
+> sensor físico solo se apaga el simulador. Auth actual: secreto compartido
+> (`TELEMETRIA_INGEST_SECRET`, estilo webhook Helius); el HMAC por-nodo + verificación de la
+> firma ATECC608 son follow-up (el campo `firma` ya se persiste en `firma_hex`).
+
 ```json
 {
   "node_id": "GT-NODO-0001",
@@ -716,7 +725,7 @@ flowchart TD
 | **Helius RPC** | Webhooks de depósito USDC. **Solo avisa**: la ingesta la hace el reconciliador que lee la cadena | ✅ |
 | **Sentinel Hub API** (Copernicus) | Imagen raster del polígono; OAuth2 | ⚠️ construido, **sin credenciales** |
 | **Supabase Realtime** | Alertas, semáforo de parcelas y saldo en vivo | ✅ implementado (0010/0011). ⚠️ No sobre tablas particionadas: ver §10 |
-| **ChirpStack** | Ingesta IoT real (payload compatible) | 🔜 el MVP usa simulador propio en el backend |
+| **ChirpStack** | Ingesta IoT real (payload compatible) | ✅ endpoint `POST /telemetria/ingest` (Bloque 2); auth por secreto compartido, HMAC/ATECC608 follow-up. El simulador alimenta el mismo servicio en proceso |
 | **Switchboard V3** | Functions TEE + Attestation Program | 🔜 Fase B |
 
 ---

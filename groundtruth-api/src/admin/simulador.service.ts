@@ -2,6 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { z } from 'zod';
 import { DbService, Tx } from '@/db/db.service';
 import { DomainErrors } from '@/common/domain-error';
+import {
+  TelemetriaIngestionService,
+  type LecturaResuelta,
+  type Umbral,
+} from '@/telemetria/telemetria-ingestion.service';
 
 const activoSchema = z.object({ activo: z.boolean() });
 
@@ -11,20 +16,23 @@ const generarSchema = z.object({
   horas: z.coerce.number().int().min(1).max(72).default(24),
 });
 
-interface Umbral {
-  min: number;
-  max: number;
-}
-
 /**
- * Simulador IoT (A5). Los nodos SIMULADO producen la misma telemetría firmada
- * que producirá el hardware LoRaWAN: se evalúa contra `umbrales_eudr` y, si sale
- * ROJO, levanta la alerta que verá el agricultor en su dApp. El simulador no es
- * un juguete de demo — es el generador de la evidencia de la que cuelga todo.
+ * Simulador IoT (A5). El motor inferencial que produce la telemetría — los nodos
+ * SIMULADO generan las mismas lecturas que producirá el hardware LoRaWAN. Pero NO
+ * las persiste ni las evalúa por su cuenta: las entrega al pipeline oficial
+ * (`TelemetriaIngestionService`), el MISMO que ingiere el hardware real. Así, el
+ * día que llegue el sensor físico, solo se apaga el simulador — la evaluación, el
+ * semáforo y el alertado ya están donde tienen que estar.
+ *
+ * El simulador es el generador de la evidencia de la que cuelga la certificación;
+ * no es un juguete de demo.
  */
 @Injectable()
 export class AdminSimuladorService {
-  constructor(private readonly db: DbService) {}
+  constructor(
+    private readonly db: DbService,
+    private readonly ingesta: TelemetriaIngestionService,
+  ) {}
 
   async nodos() {
     const rows = await this.db.query<any>(
@@ -69,18 +77,21 @@ export class AdminSimuladorService {
   }
 
   /**
-   * Genera `horas` lecturas horarias para cada nodo activo de la parcela.
+   * Genera `horas` lecturas horarias para cada nodo SIMULADO activo de la parcela.
    * `sano` cae dentro de los umbrales del cultivo; `degradado` se sale a propósito
-   * (y por tanto produce ROJO + alerta). Los valores se derivan de los umbrales
-   * reales de la base, no de constantes: si el Admin cambia los umbrales, el
-   * simulador cambia con ellos.
+   * (y por tanto produce ROJO + alerta, ya vía el pipeline de ingesta). Los valores
+   * se derivan de los umbrales reales de la base, no de constantes: si el Admin
+   * cambia los umbrales, el simulador cambia con ellos.
+   *
+   * Solo genera para nodos `SIMULADO`: cuando existan nodos `FISICO` reales, el
+   * simulador no fabrica datos falsos sobre ellos.
    */
   async generar(actorId: string, body: unknown) {
     const { parcelaId, perfil, horas } = generarSchema.parse(body);
 
     return this.db.transaction(async (tx) => {
-      const parcela = await tx.queryOne<any>(
-        `select p.id, p.cultivo_id, f.agricultor_id
+      const parcela = await tx.queryOne<{ cultivo_id: string }>(
+        `select p.cultivo_id
          from parcelas p join fincas f on f.id = p.finca_id
          where p.id = $1`,
         [parcelaId],
@@ -88,52 +99,38 @@ export class AdminSimuladorService {
       if (!parcela) throw DomainErrors.notFound();
 
       const nodos = await tx.query<{ id: string }>(
-        'select id from nodos_sensores where parcela_id = $1 and activo',
+        `select id from nodos_sensores
+         where parcela_id = $1 and activo and tipo_nodo = 'SIMULADO'`,
         [parcelaId],
       );
       if (nodos.length === 0) throw DomainErrors.sensorCoverageUnmet(1);
 
       const umbrales = await this.umbrales(tx, parcela.cultivo_id);
-      let rojas = 0;
+      const ahora = Date.now();
 
+      // El motor inferencial produce las lecturas crudas; el pipeline oficial las
+      // evalúa, persiste y alerta (misma ruta que el hardware real).
+      const lecturas: LecturaResuelta[] = [];
       for (const nodo of nodos) {
         for (let h = horas - 1; h >= 0; h--) {
-          const ph = valor(umbrales.ph, perfil);
-          const humedad = valor(umbrales.humedad, perfil);
-          const verde =
-            dentro(ph, umbrales.ph) && dentro(humedad, umbrales.humedad);
-          if (!verde) rojas++;
-
-          await tx.query(
-            `insert into lecturas_telemetria
-               (nodo_id, parcela_id, ts, ph, ec_us_cm, humedad_suelo_pct,
-                temp_suelo_prof1_c, temp_suelo_prof2_c, estado_evaluado)
-             values ($1, $2, now() - ($3 || ' hours')::interval, $4, $5, $6, $7, $8, $9)`,
-            [
-              nodo.id,
-              parcelaId,
-              h,
-              ph.toFixed(2),
-              ruido(950, 80).toFixed(2),
-              humedad.toFixed(2),
-              ruido(22, 1.5).toFixed(2),
-              ruido(20, 1).toFixed(2),
-              verde ? 'VERDE' : 'ROJO',
-            ],
-          );
+          lecturas.push({
+            nodoId: nodo.id,
+            parcelaId,
+            ts: new Date(ahora - h * 3_600_000),
+            // Nodo SIMULADO: sin secure element, la lectura llega sin firmar.
+            firma: null,
+            valores: {
+              ph: valor(umbrales.ph, perfil),
+              ec_us_cm: ruido(950, 80),
+              humedad_suelo_pct: valor(umbrales.humedad, perfil),
+              temp_suelo_prof1_c: ruido(22, 1.5),
+              temp_suelo_prof2_c: ruido(20, 1),
+            },
+          });
         }
       }
 
-      // Una alerta por generación degradada (no una por lectura: la bandeja del
-      // agricultor sirve para actuar, no para ahogarse en ruido).
-      if (perfil === 'degradado' && rojas > 0) {
-        const ph = umbrales.ph.min - 0.4;
-        await tx.query(
-          `insert into alertas (parcela_id, agricultor_id, tipo, severidad, variable, valor, umbral_referencia, mensaje)
-           values ($1, $2, 'IOT', 'ALERTA', 'ph', $3, $4, 'alerts.out_of_range')`,
-          [parcelaId, parcela.agricultor_id, ph.toFixed(2), umbrales.ph.min],
-        );
-      }
+      const { resultados, rojas } = await this.ingesta.ingestarEnTx(tx, lecturas);
 
       await tx.query(
         `insert into auditoria (actor_id, accion, entidad, entidad_id, valor_nuevo)
@@ -144,7 +141,7 @@ export class AdminSimuladorService {
       return {
         parcelaId,
         perfil,
-        lecturas: nodos.length * horas,
+        lecturas: resultados.length,
         estado: rojas > 0 ? 'alerta' : 'conforme',
       };
     });
@@ -164,8 +161,6 @@ export class AdminSimuladorService {
     };
   }
 }
-
-const dentro = (v: number, u: Umbral) => v >= u.min && v <= u.max;
 
 /** Ruido gaussiano ligero alrededor de una media. */
 function ruido(media: number, desv: number): number {

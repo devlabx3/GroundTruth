@@ -21,6 +21,7 @@ import { AdminModule } from './admin/admin.module';
 import { SolanaModule } from './solana/solana.module';
 import { EvidenciaModule } from './evidencia/evidencia.module';
 import { PublicModule } from './public/public.module';
+import { TelemetriaModule } from './telemetria/telemetria.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { PublicModule } from './public/public.module';
     SolanaModule,
     EvidenciaModule,
     PublicModule,
+    TelemetriaModule,
     MeModule,
     TopologiaModule,
     TesoreriaModule,

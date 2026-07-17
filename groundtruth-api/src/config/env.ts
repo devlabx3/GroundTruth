@@ -9,6 +9,8 @@ const schema = z.object({
   HELIUS_API_KEY: z.string().optional(),
   /** Secreto compartido del webhook de depósitos. Sin él, el endpoint queda CERRADO. */
   HELIUS_WEBHOOK_SECRET: z.string().optional(),
+  /** Secreto compartido de ingesta IoT (POST /telemetria/ingest). Sin él, el endpoint queda CERRADO. */
+  TELEMETRIA_INGEST_SECRET: z.string().optional(),
 
   /** Storage (evidencia): PDF del certificado e imagen satelital. */
   SUPABASE_SERVICE_ROLE_KEY: z.string().optional(),
