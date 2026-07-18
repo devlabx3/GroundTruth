@@ -1,11 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { z } from 'zod';
 import { DbService } from '@/db/db.service';
+import { SupabaseAuthService } from '@/auth/supabase-auth.service';
 import { DomainErrors } from '@/common/domain-error';
 
 const crearUsuarioSchema = z.object({
   nombre: z.string().trim().min(1),
   email: z.string().trim().email(),
+});
+
+const editarUsuarioSchema = z.object({
+  nombre: z.string().trim().min(1).optional(),
+  email: z.string().trim().email().optional(),
 });
 
 const crearPrivilegioSchema = z.object({
@@ -20,7 +26,10 @@ const crearPrivilegioSchema = z.object({
 /** Usuarios y membresías (A3) + catálogo de privilegios (A2). */
 @Injectable()
 export class AdminIdentidadService {
-  constructor(private readonly db: DbService) {}
+  constructor(
+    private readonly db: DbService,
+    private readonly supabaseAuth: SupabaseAuthService,
+  ) {}
 
   // ---- Usuarios (A3) ----
 
@@ -60,12 +69,15 @@ export class AdminIdentidadService {
       );
       if (existe) throw DomainErrors.userExists();
 
+      const authResult = await this.supabaseAuth.invitar(email, nombre);
+      const authUserId = authResult?.authUserId ?? crypto.randomUUID();
+
       // Sin membresía ni finca: es un usuario de plataforma sin rol todavía
       // ("rol ≠ persona" — el rol lo dará una membresía o una finca después).
       const u = await tx.queryOne<{ id: string }>(
         `insert into usuarios (auth_user_id, nombre, email)
-         values (gen_random_uuid(), $1, $2) returning id`,
-        [nombre, email.toLowerCase()],
+         values ($1, $2, $3) returning id`,
+        [authUserId, nombre, email.toLowerCase()],
       );
       await tx.query(
         `insert into auditoria (actor_id, accion, entidad, entidad_id, valor_nuevo)
@@ -74,6 +86,102 @@ export class AdminIdentidadService {
       );
       return { id: u!.id, nombre, email, membresias: '', estado: 'activa' };
     });
+  }
+
+  /**
+   * Edita nombre/email. Si el email cambia, sincroniza PRIMERO el login real en
+   * Supabase Auth (`actualizarEmail`) — si eso falla, no se toca el dominio, para
+   * que ambos sistemas nunca queden desincronizados. Auditado con antes/después.
+   */
+  async editarUsuario(actorId: string, id: string, body: unknown) {
+    const { nombre, email } = editarUsuarioSchema.parse(body);
+    return this.db.transaction(async (tx) => {
+      const u = await tx.queryOne<{ nombre: string; email: string; auth_user_id: string }>(
+        'select nombre, email, auth_user_id from usuarios where id = $1 for update',
+        [id],
+      );
+      if (!u) throw DomainErrors.notFound();
+
+      const nuevoEmail = email?.toLowerCase();
+      if (nuevoEmail && nuevoEmail !== u.email) {
+        const existe = await tx.queryOne<{ id: string }>(
+          'select id from usuarios where email = $1 and id <> $2',
+          [nuevoEmail, id],
+        );
+        if (existe) throw DomainErrors.userExists();
+
+        const sincronizado = await this.supabaseAuth.actualizarEmail(u.auth_user_id, nuevoEmail);
+        if (!sincronizado && this.supabaseAuth.isEnabled()) {
+          throw DomainErrors.authSyncFailed();
+        }
+      }
+
+      const actualizado = await tx.queryOne<{ nombre: string; email: string }>(
+        `update usuarios set nombre = coalesce($2, nombre), email = coalesce($3, email)
+         where id = $1 returning nombre, email`,
+        [id, nombre ?? null, nuevoEmail ?? null],
+      );
+      await tx.query(
+        `insert into auditoria (actor_id, accion, entidad, entidad_id, valor_anterior, valor_nuevo)
+         values ($1, 'usuario.editar', 'usuarios', $2, $3, $4)`,
+        [
+          actorId,
+          id,
+          JSON.stringify({ nombre: u.nombre, email: u.email }),
+          JSON.stringify({ nombre: actualizado!.nombre, email: actualizado!.email }),
+        ],
+      );
+      return { id, nombre: actualizado!.nombre, email: actualizado!.email };
+    });
+  }
+
+  /** Reactivar (auditado). Espejo de `desactivarUsuario`; nunca deja huérfana una unidad. */
+  async reactivarUsuario(actorId: string, id: string) {
+    return this.db.transaction(async (tx) => {
+      const u = await tx.queryOne<{ activo: boolean }>(
+        'select activo from usuarios where id = $1 for update',
+        [id],
+      );
+      if (!u) throw DomainErrors.notFound();
+      if (u.activo) return { id, estado: 'activa' };
+
+      await tx.query(
+        'update usuarios set activo = true, desactivado_en = null where id = $1',
+        [id],
+      );
+      await tx.query(
+        `insert into auditoria (actor_id, accion, entidad, entidad_id, valor_anterior, valor_nuevo)
+         values ($1, 'usuario.reactivar', 'usuarios', $2, '{"activo":false}', '{"activo":true}')`,
+        [actorId, id],
+      );
+      return { id, estado: 'activa' };
+    });
+  }
+
+  /**
+   * Dispara el email de recuperación de contraseña. El Admin nunca ve ni fija
+   * una contraseña ajena. Si Supabase Auth no está configurado, falla con un
+   * error claro en vez de fingir éxito — el Admin necesita saber que no salió.
+   */
+  async enviarResetPassword(actorId: string, id: string) {
+    const u = await this.db.queryOne<{ email: string }>(
+      'select email from usuarios where id = $1',
+      [id],
+    );
+    if (!u) throw DomainErrors.notFound();
+
+    if (!this.supabaseAuth.isEnabled()) {
+      throw DomainErrors.authNotConfigured();
+    }
+    const enviado = await this.supabaseAuth.enviarResetPassword(u.email);
+    if (!enviado) throw DomainErrors.authSyncFailed();
+
+    await this.db.query(
+      `insert into auditoria (actor_id, accion, entidad, entidad_id, valor_nuevo)
+       values ($1, 'usuario.reset_password', 'usuarios', $2, $3)`,
+      [actorId, id, JSON.stringify({ email: u.email })],
+    );
+    return { id, enviado: true };
   }
 
   /**

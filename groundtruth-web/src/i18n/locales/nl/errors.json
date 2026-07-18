@@ -1,6 +1,8 @@
 {
   "account_inactive": "Je account is inactief. Neem contact op met je beheerder.",
   "arweave_retry": "Het permanente bewijs kon niet worden verankerd. Opnieuw proberen.",
+  "auth_not_configured": "Het verificatiesysteem is niet geconfigureerd. Neem contact op met je beheerder.",
+  "auth_sync_failed": "Kan niet synchroniseren met de verificatieservice. Probeer het opnieuw.",
   "cert_exists": "Er bestaat al een geldig certificaat voor deze cyclus.",
   "cert_not_found": "Er bestaat geen certificaat met die identificatie.",
   "cert_not_revocable": "Dit certificaat kan in zijn huidige staat niet worden ingetrokken.",

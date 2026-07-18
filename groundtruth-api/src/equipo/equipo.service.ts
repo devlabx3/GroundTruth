@@ -164,9 +164,9 @@ export class EquipoService {
       );
 
       await tx.query(
-        `insert into auditoria (operador_id, usuario_id, accion, referencia)
-         values ($1, $2, $3, $4)`,
-        [operadorId, actorId, 'equipo.invitar', JSON.stringify({ email, nombre })],
+        `insert into auditoria (actor_id, operador_id, accion, entidad, entidad_id, valor_nuevo)
+         values ($1, $2, 'equipo.invitar', 'usuarios', $3, $4)`,
+        [actorId, operadorId, usuario!.id, JSON.stringify({ email, nombre })],
       );
 
       return {

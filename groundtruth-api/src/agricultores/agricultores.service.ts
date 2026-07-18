@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { z } from 'zod';
 import { DbService } from '@/db/db.service';
+import { SupabaseAuthService } from '@/auth/supabase-auth.service';
 import { DomainErrors } from '@/common/domain-error';
 
 const crearSchema = z.object({
@@ -16,7 +17,10 @@ const reasignarSchema = z.object({
 /** Agricultores de la unidad (O5). Un agricultor = usuario dueño de finca(s). */
 @Injectable()
 export class AgricultoresService {
-  constructor(private readonly db: DbService) {}
+  constructor(
+    private readonly db: DbService,
+    private readonly supabaseAuth: SupabaseAuthService,
+  ) {}
 
   list(operadorId: string) {
     return this.db
@@ -47,10 +51,10 @@ export class AgricultoresService {
   }
 
   /**
-   * Alta de agricultor: crea el usuario y su finca en la unidad. El `auth_user_id`
-   * es un placeholder hasta que exista el flujo de invitación (Supabase Auth):
-   * el agricultor aún no puede iniciar sesión, pero el operador ya gestiona su
-   * finca y parcelas. Auditado.
+   * Alta de agricultor: crea el usuario y su finca en la unidad. Invita de
+   * verdad vía Supabase Auth (recibe email para fijar contraseña); si no está
+   * configurado, cae a un placeholder y el agricultor queda sin poder iniciar
+   * sesión hasta que se invite de nuevo. Auditado.
    */
   async crear(operadorId: string, actorId: string, body: unknown) {
     const { nombre, email, fincaNombre } = crearSchema.parse(body);
@@ -60,10 +64,13 @@ export class AgricultoresService {
 
       const pais = await tx.queryOne<{ pais: string }>('select pais from operadores where id = $1', [operadorId]);
 
+      const authResult = await this.supabaseAuth.invitar(email, nombre);
+      const authUserId = authResult?.authUserId ?? crypto.randomUUID();
+
       const usuario = await tx.queryOne<{ id: string }>(
         `insert into usuarios (auth_user_id, nombre, email, activo)
-         values (gen_random_uuid(), $1, $2, true) returning id`,
-        [nombre, email],
+         values ($1, $2, $3, true) returning id`,
+        [authUserId, nombre, email],
       );
       const finca = await tx.queryOne<{ id: string }>(
         `insert into fincas (operador_id, agricultor_id, nombre, pais)

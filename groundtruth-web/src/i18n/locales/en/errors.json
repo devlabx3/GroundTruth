@@ -1,6 +1,8 @@
 {
   "account_inactive": "Your account is inactive. Contact your administrator.",
   "arweave_retry": "Couldn't anchor the permanent evidence. Retrying.",
+  "auth_not_configured": "The authentication system is not configured. Contact your administrator.",
+  "auth_sync_failed": "Could not synchronize with the authentication service. Please retry.",
   "cert_exists": "A valid certificate already exists for this cycle.",
   "cert_not_found": "No certificate exists with that identifier.",
   "cert_not_revocable": "This certificate cannot be revoked in its current state.",

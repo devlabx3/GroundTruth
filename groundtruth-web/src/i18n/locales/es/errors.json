@@ -1,6 +1,8 @@
 {
   "account_inactive": "Tu cuenta está inactiva. Contacta a tu administrador.",
   "arweave_retry": "No se pudo anclar la evidencia permanente. Reintentando.",
+  "auth_not_configured": "El sistema de autenticación no está configurado. Contacta a tu administrador.",
+  "auth_sync_failed": "No se pudo sincronizar con el servicio de autenticación. Reintenta.",
   "cert_exists": "Ya existe un certificado vigente para este ciclo.",
   "cert_not_found": "No existe un certificado con ese identificador.",
   "cert_not_revocable": "Este certificado no se puede revocar en su estado actual.",

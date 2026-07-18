@@ -1,6 +1,8 @@
 {
   "account_inactive": "Dein Konto ist inaktiv. Kontaktiere deinen Administrator.",
   "arweave_retry": "Der permanente Nachweis konnte nicht verankert werden. Neuer Versuch.",
+  "auth_not_configured": "Das Authentifizierungssystem ist nicht konfiguriert. Kontaktiere deinen Administrator.",
+  "auth_sync_failed": "Synchronisierung mit dem Authentifizierungsdienst misslungen. Versuche es erneut.",
   "cert_exists": "Für diesen Zyklus existiert bereits ein gültiges Zertifikat.",
   "cert_not_found": "Es existiert kein Zertifikat mit dieser Kennung.",
   "cert_not_revocable": "Dieses Zertifikat kann in seinem aktuellen Zustand nicht widerrufen werden.",

@@ -151,9 +151,10 @@ describe('EquipoService', () => {
 
       const auditCall = tx.query.mock.calls[0];
       expect(auditCall[0]).toContain('insert into auditoria');
-      expect(auditCall[1][0]).toBe('operador-123');
-      expect(auditCall[1][1]).toBe('actor-123');
-      expect(auditCall[1][2]).toBe('equipo.invitar');
+      expect(auditCall[0]).toContain("'equipo.invitar'");
+      expect(auditCall[1][0]).toBe('actor-123'); // actor_id
+      expect(auditCall[1][1]).toBe('operador-123'); // operador_id
+      expect(auditCall[1][2]).toBeDefined(); // usuario_id (hardcodeado, no verificamos el valor)
     });
 
     it('valida email con zod', async () => {

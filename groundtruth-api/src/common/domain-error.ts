@@ -34,4 +34,9 @@ export const DomainErrors = {
   userExists: () => new DomainError('USER_EXISTS', 'user_exists', 409),
   paramOutOfRange: () => new DomainError('PARAM_OUT_OF_RANGE', 'param_out_of_range', 422),
   privilegeExists: () => new DomainError('PRIVILEGE_EXISTS', 'privilege_exists', 409),
+  /** Supabase Auth respondió pero la llamada (email/reset) falló — reintentable. */
+  authSyncFailed: () => new DomainError('AUTH_SYNC_FAILED', 'auth_sync_failed', 502, true),
+  /** Faltan credenciales de Supabase Auth: el Admin necesita saberlo, no un éxito fingido. */
+  authNotConfigured: () =>
+    new DomainError('AUTH_NOT_CONFIGURED', 'auth_not_configured', 503, false),
 } as const;

@@ -745,7 +745,7 @@ flowchart TD
 | R9 | Latencia de descarga satelital | ✅ Todo el pipeline de evidencia es asíncrono y **previo** a la TX on-chain |
 | R10 | Costos on-chain | ✅ cNFTs con ZK Compression; archivos pesados fuera de Arweave/Solana |
 | R11 | Precisión analógica del nodo v1 | 🔜 El ADC no es lineal: calibración y acondicionamiento por nodo como requisito del despliegue en campo (§15.B); no bloquea el MVP (simulador) |
-| **R12** | **Invitación y login de usuarios creados** | ⚠️ **NUEVO.** Los usuarios que crea el Admin (y los agricultores) nacen con un `auth_user_id` de relleno: **existen en el dominio pero no pueden iniciar sesión**. Falta el flujo de invitación de Supabase Auth |
+| **R12** | **Invitación y login de usuarios creados** | ✅ **RESUELTO.** Los usuarios ahora nacen con `auth_user_id` real vía `SupabaseAuthService.invitar()`. Las 4 altas (agricultores, unidades, identidad, equipos) usan el mismo patrón. Admin puede editar nombre/email (sincroniza con login real), reactivar usuarios, y disparar email de reset de contraseña sin nunca ver la contraseña ajena. Flujo de aceptación de invitación en el email de Supabase: pending en frontend (callback + set-password). |
 
 ---
 

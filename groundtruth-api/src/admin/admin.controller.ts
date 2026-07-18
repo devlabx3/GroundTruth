@@ -91,6 +91,25 @@ export class AdminIdentidadController {
     return this.identidad.desactivarUsuario(req.usuarioId, id);
   }
 
+  @Patch('usuarios/:id')
+  editarUsuario(
+    @Req() req: AdminRequest,
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() body: unknown,
+  ) {
+    return this.identidad.editarUsuario(req.usuarioId, id, body);
+  }
+
+  @Post('usuarios/:id/reactivar')
+  reactivarUsuario(@Req() req: AdminRequest, @Param('id', ParseUUIDPipe) id: string) {
+    return this.identidad.reactivarUsuario(req.usuarioId, id);
+  }
+
+  @Post('usuarios/:id/reset-password')
+  resetPassword(@Req() req: AdminRequest, @Param('id', ParseUUIDPipe) id: string) {
+    return this.identidad.enviarResetPassword(req.usuarioId, id);
+  }
+
   @Get('privilegios')
   listPrivilegios() {
     return this.identidad.listPrivilegios();

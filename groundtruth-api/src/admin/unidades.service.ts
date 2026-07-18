@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { z } from 'zod';
 import { DbService, Tx } from '@/db/db.service';
+import { SupabaseAuthService } from '@/auth/supabase-auth.service';
 import { DomainErrors } from '@/common/domain-error';
 
 const MICRO = 1_000_000;
@@ -29,7 +30,10 @@ const estadoSchema = z.object({
  */
 @Injectable()
 export class AdminUnidadesService {
-  constructor(private readonly db: DbService) {}
+  constructor(
+    private readonly db: DbService,
+    private readonly supabaseAuth: SupabaseAuthService,
+  ) {}
 
   async list() {
     const rows = await this.db.query<any>(
@@ -173,7 +177,7 @@ export class AdminUnidadesService {
     });
   }
 
-  /** Reutiliza el usuario si el email ya existe; si no, lo crea. */
+  /** Reutiliza el usuario si el email ya existe; si no, lo crea e invita de verdad. */
   private async upsertUsuario(tx: Tx, nombre: string, email: string): Promise<string> {
     const existente = await tx.queryOne<{ id: string; activo: boolean }>(
       'select id, activo from usuarios where email = $1',
@@ -183,12 +187,12 @@ export class AdminUnidadesService {
       if (!existente.activo) throw DomainErrors.accountInactive();
       return existente.id;
     }
-    // auth_user_id provisional: el usuario existe en el dominio pero aún no
-    // puede iniciar sesión — falta el flujo de invitación de Supabase Auth.
+    const authResult = await this.supabaseAuth.invitar(email, nombre);
+    const authUserId = authResult?.authUserId ?? crypto.randomUUID();
     const nuevo = await tx.queryOne<{ id: string }>(
       `insert into usuarios (auth_user_id, nombre, email)
-       values (gen_random_uuid(), $1, $2) returning id`,
-      [nombre, email.toLowerCase()],
+       values ($1, $2, $3) returning id`,
+      [authUserId, nombre, email.toLowerCase()],
     );
     return nuevo!.id;
   }

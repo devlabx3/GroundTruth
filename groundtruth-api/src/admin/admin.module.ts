@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { AuthModule } from '@/auth/auth.module';
 import { CertificadosModule } from '@/certificados/certificados.module';
 import { EmbarquesModule } from '@/embarques/embarques.module';
 import { TelemetriaModule } from '@/telemetria/telemetria.module';
@@ -25,7 +26,7 @@ import { AdminFinanzasService } from './finanzas.service';
  * en todo el sistema, con su transacción y su idempotencia.
  */
 @Module({
-  imports: [CertificadosModule, EmbarquesModule, TelemetriaModule],
+  imports: [AuthModule, CertificadosModule, EmbarquesModule, TelemetriaModule],
   controllers: [
     AdminHomeController,
     AdminUnidadesController,
