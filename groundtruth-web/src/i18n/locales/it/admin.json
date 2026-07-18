@@ -75,6 +75,11 @@
     "empty": "Nessun utente per questa ricerca.",
     "deactivate": "Disattiva",
     "deactivate_confirm": "{{name}} non potrà più accedere. L'azione viene auditata. Confermi?",
+    "edit": "Modifica",
+    "reactivate": "Riattiva",
+    "reset_password": "Invia reset password",
+    "reset_password_confirm": "Un'email di recupero password sarà inviata a {{name}}. Confermi?",
+    "reset_password_sent": "Email di recupero password inviata.",
     "state": {
       "activa": "Attiva",
       "inactiva": "Inattiva"

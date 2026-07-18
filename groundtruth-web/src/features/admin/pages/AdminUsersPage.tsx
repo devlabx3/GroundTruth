@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useForm } from 'react-hook-form';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { z } from 'zod';
-import { MagnifyingGlassIcon, PlusIcon } from '@phosphor-icons/react';
+import { MagnifyingGlassIcon, PlusIcon, PencilSimpleIcon } from '@phosphor-icons/react';
 import Button from '@/components/ui/Button';
 import Table from '@/components/ui/Table';
 import type { Column } from '@/components/ui/Table';
@@ -13,7 +13,7 @@ import Input from '@/components/ui/Input';
 import { SkeletonRows } from '@/components/ui/Skeleton';
 import AlertBanner from '@/components/shared/AlertBanner';
 import { zodResolver } from '@/lib/zodResolver';
-import { fetchUsuarios, crearUsuario, desactivarUsuario } from '../queries';
+import { fetchUsuarios, crearUsuario, desactivarUsuario, editarUsuario, reactivarUsuario, enviarResetPassword } from '../queries';
 import { errorKey as claveDeError } from '@/lib/api';
 import type { UsuarioAdmin } from '@/types/api';
 
@@ -35,9 +35,12 @@ export default function AdminUsersPage() {
   const queryClient = useQueryClient();
   const [query, setQuery] = useState('');
   const [createOpen, setCreateOpen] = useState(false);
+  const [editing, setEditing] = useState<UsuarioAdmin | null>(null);
   const [deactivating, setDeactivating] = useState<UsuarioAdmin | null>(null);
+  const [resetting, setResetting] = useState<UsuarioAdmin | null>(null);
   const [busy, setBusy] = useState(false);
   const [errorKey, setErrorKey] = useState<string | null>(null);
+  const [successKey, setSuccessKey] = useState<string | null>(null);
 
   const { data: rows = [], isLoading } = useQuery({
     queryKey: ['admin', 'usuarios'],
@@ -51,12 +54,18 @@ export default function AdminUsersPage() {
 
   const refresh = () => queryClient.invalidateQueries({ queryKey: ['admin', 'usuarios'] });
 
-  async function onCreate(values: Formulario) {
+  async function onCreateOrEdit(values: Formulario) {
     setBusy(true);
     setErrorKey(null);
+    setSuccessKey(null);
     try {
-      await crearUsuario(values);
-      setCreateOpen(false);
+      if (editing) {
+        await editarUsuario(editing.id, values);
+        setEditing(null);
+      } else {
+        await crearUsuario(values);
+        setCreateOpen(false);
+      }
       reset();
       refresh();
     } catch (e) {
@@ -67,8 +76,6 @@ export default function AdminUsersPage() {
   }
 
   async function onDeactivate() {
-    // Sin fila seleccionada no hay nada que hacer — y sobre todo, no se activa
-    // `busy`: si se activara y saliéramos, el botón quedaría bloqueado para siempre.
     const target = deactivating;
     if (!target) return;
     setBusy(true);
@@ -76,6 +83,38 @@ export default function AdminUsersPage() {
     setDeactivating(null);
     try {
       await desactivarUsuario(target.id);
+      refresh();
+    } catch (e) {
+      setErrorKey(claveDeError(e));
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function onReactivate(usuario: UsuarioAdmin) {
+    setBusy(true);
+    setErrorKey(null);
+    try {
+      await reactivarUsuario(usuario.id);
+      refresh();
+    } catch (e) {
+      setErrorKey(claveDeError(e));
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function onResetPassword() {
+    const target = resetting;
+    if (!target) return;
+    setBusy(true);
+    setErrorKey(null);
+    setSuccessKey(null);
+    setResetting(null);
+    try {
+      await enviarResetPassword(target.id);
+      setSuccessKey('admin:users.reset_password_sent');
+      setTimeout(() => setSuccessKey(null), 5000);
       refresh();
     } catch (e) {
       setErrorKey(claveDeError(e));
@@ -105,12 +144,32 @@ export default function AdminUsersPage() {
         {t(`users.state.${r.estado}`)}
       </span>
     ) },
-    { key: 'actions', header: '', align: 'right', render: (r) =>
-      r.estado === 'activa' ? (
-        <Button variant="ghost" className="px-2 py-1 text-xs" onClick={() => setDeactivating(r)}>
-          {t('users.deactivate')}
+    { key: 'actions', header: '', align: 'right', render: (r) => (
+      <div className="flex gap-2">
+        <Button variant="ghost" className="px-2 py-1 text-xs" onClick={() => { setErrorKey(null); setSuccessKey(null); setEditing(r); reset({ nombre: r.nombre, email: r.email }); setCreateOpen(true); }}>
+          <PencilSimpleIcon size={14} />
         </Button>
-      ) : null },
+        {r.estado === 'activa' ? (
+          <>
+            <Button variant="ghost" className="px-2 py-1 text-xs" onClick={() => setDeactivating(r)}>
+              {t('users.deactivate')}
+            </Button>
+            <Button variant="ghost" className="px-2 py-1 text-xs" onClick={() => setResetting(r)}>
+              {t('users.reset_password')}
+            </Button>
+          </>
+        ) : (
+          <>
+            <Button variant="ghost" className="px-2 py-1 text-xs" onClick={() => onReactivate(r)}>
+              {t('users.reactivate')}
+            </Button>
+            <Button variant="ghost" className="px-2 py-1 text-xs" onClick={() => setResetting(r)}>
+              {t('users.reset_password')}
+            </Button>
+          </>
+        )}
+      </div>
+    ) },
   ];
 
   return (
@@ -123,7 +182,8 @@ export default function AdminUsersPage() {
         </Button>
       </div>
 
-      {errorKey && !createOpen && <AlertBanner messageKey={errorKey} />}
+      {errorKey && <AlertBanner messageKey={errorKey} />}
+      {successKey && <AlertBanner messageKey={successKey} tone="info" />}
 
       <label className="relative block max-w-md">
         <MagnifyingGlassIcon size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-graphite" />
@@ -141,13 +201,13 @@ export default function AdminUsersPage() {
         <Table columns={columns} rows={filtered} emptyTitle={t('users.empty')} />
       )}
 
-      <Dialog open={createOpen} onClose={() => setCreateOpen(false)} title={t('users.create')}>
-        <form onSubmit={handleSubmit(onCreate)} className="flex flex-col gap-4">
+      <Dialog open={createOpen} onClose={() => { setCreateOpen(false); setEditing(null); }} title={editing ? t('users.edit') : t('users.create')}>
+        <form onSubmit={handleSubmit(onCreateOrEdit)} className="flex flex-col gap-4">
           {errorKey && <AlertBanner messageKey={errorKey} />}
           <Input label={t('common:fields.name')} errorKey={errors.nombre?.message} {...register('nombre')} />
           <Input label={t('common:fields.email')} type="email" errorKey={errors.email?.message} {...register('email')} />
           <div className="flex justify-end gap-2">
-            <Button variant="secondary" type="button" onClick={() => setCreateOpen(false)}>
+            <Button variant="secondary" type="button" onClick={() => { setCreateOpen(false); setEditing(null); }}>
               {t('common:actions.cancel')}
             </Button>
             <Button type="submit" disabled={busy}>
@@ -156,6 +216,15 @@ export default function AdminUsersPage() {
           </div>
         </form>
       </Dialog>
+
+      <ConfirmDialog
+        open={!!resetting}
+        onClose={() => setResetting(null)}
+        onConfirm={onResetPassword}
+        title={t('users.reset_password')}
+        body={t('users.reset_password_confirm', { name: resetting?.nombre ?? '' })}
+        confirmLabel={t('users.reset_password')}
+      />
 
       <ConfirmDialog
         open={!!deactivating}

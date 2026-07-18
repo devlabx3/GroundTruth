@@ -75,6 +75,11 @@
     "empty": "Geen gebruikers voor deze zoekopdracht.",
     "deactivate": "Deactiveren",
     "deactivate_confirm": "{{name}} kan niet meer inloggen. De actie wordt geauditeerd. Bevestig je?",
+    "edit": "Bewerken",
+    "reactivate": "Reactiveren",
+    "reset_password": "Wachtwoord reset verzenden",
+    "reset_password_confirm": "Een e-mail voor wachtwoordherstel wordt naar {{name}} verzonden. Bevestig je?",
+    "reset_password_sent": "E-mail voor wachtwoordherstel verzonden.",
     "state": {
       "activa": "Actief",
       "inactiva": "Inactief"

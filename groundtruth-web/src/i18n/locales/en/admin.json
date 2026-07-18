@@ -70,11 +70,16 @@
   "users": {
     "title": "Users and memberships",
     "create": "Create user",
+    "edit": "Edit",
     "memberships": "Memberships",
     "search_placeholder": "Search by name or email…",
     "empty": "No users for that search.",
     "deactivate": "Deactivate",
     "deactivate_confirm": "{{name}} won't be able to sign in. The action is audited. Confirm?",
+    "reactivate": "Reactivate",
+    "reset_password": "Send password reset",
+    "reset_password_confirm": "A password recovery email will be sent to {{name}}. Confirm?",
+    "reset_password_sent": "Password recovery email sent.",
     "state": {
       "activa": "Active",
       "inactiva": "Inactive"

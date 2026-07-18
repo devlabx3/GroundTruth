@@ -163,6 +163,46 @@ export async function desactivarUsuario(
   return data;
 }
 
+export async function editarUsuario(
+  id: string,
+  payload: { nombre?: string; email?: string },
+): Promise<{ id: string; nombre: string; email: string }> {
+  if (isDemo()) {
+    const u = USERS.find((x) => x.id === id);
+    if (u) Object.assign(u, payload);
+    return { id, nombre: u?.nombre ?? '', email: u?.email ?? '' };
+  }
+  const { data } = await api.patch<{ id: string; nombre: string; email: string }>(
+    `/admin/usuarios/${id}`,
+    payload,
+  );
+  return data;
+}
+
+export async function reactivarUsuario(
+  id: string,
+): Promise<{ id: string; estado: EstadoCuenta }> {
+  if (isDemo()) {
+    const u = USERS.find((x) => x.id === id);
+    if (u) u.estado = 'activa';
+    return { id, estado: 'activa' };
+  }
+  const { data } = await api.post<{ id: string; estado: EstadoCuenta }>(
+    `/admin/usuarios/${id}/reactivar`,
+  );
+  return data;
+}
+
+export async function enviarResetPassword(
+  id: string,
+): Promise<{ id: string; enviado: boolean }> {
+  if (isDemo()) return { id, enviado: true };
+  const { data } = await api.post<{ id: string; enviado: boolean }>(
+    `/admin/usuarios/${id}/reset-password`,
+  );
+  return data;
+}
+
 // ---- Catálogo de privilegios (A2) ----
 
 export async function fetchPrivilegios(): Promise<PrivilegioCatalogo[]> {
