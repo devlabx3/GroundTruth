@@ -72,6 +72,7 @@
     "create": "Crear usuario",
     "edit": "Editar",
     "memberships": "Membresías",
+    "role": "Rol",
     "search_placeholder": "Buscar por nombre o correo…",
     "empty": "Sin usuarios para esa búsqueda.",
     "deactivate": "Desactivar",
@@ -80,11 +81,18 @@
     "reset_password": "Enviar reset de contraseña",
     "reset_password_confirm": "Se enviará un correo a {{name}} para restablecer su contraseña. ¿Confirmas?",
     "reset_password_sent": "Correo de recuperación enviado.",
+    "set_password": "Fijar contraseña",
+    "set_password_body": "Vas a fijar una nueva contraseña para {{name}}. Compártela con la persona por un canal seguro (no por email).",
+    "new_password": "Nueva contraseña",
+    "set_password_done": "Contraseña actualizada correctamente.",
     "state": {
       "activa": "Activa",
       "inactiva": "Inactiva"
     },
-    "no_membership": "Sin membresía"
+    "no_membership": "Sin membresía",
+    "showing_page": "Mostrando {{start}}–{{end}} de {{count}} usuarios (página {{current}} de {{total}})",
+    "prev_page": "Anterior",
+    "next_page": "Siguiente"
   },
   "params": {
     "title": "Parámetros del sistema",

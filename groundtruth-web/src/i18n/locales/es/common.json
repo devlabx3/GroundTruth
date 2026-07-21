@@ -3,6 +3,7 @@
   "tagline": "Prueba física del terreno, verificable ante cualquier auditor",
   "nav": {
     "map": "Mapa",
+    "farms": "Fincas",
     "parcels": "Parcelas",
     "shipments": "Embarques",
     "treasury": "Tesorería",
@@ -45,7 +46,8 @@
     "amount": "Monto",
     "type": "Tipo",
     "state": "Estado",
-    "crop": "Cultivo"
+    "crop": "Cultivo",
+    "country": "País"
   },
   "crops": {
     "cafe": "Café",

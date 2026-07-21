@@ -80,6 +80,10 @@
     "reset_password": "Passwort-Zurücksetzen senden",
     "reset_password_confirm": "Eine E-Mail zur Passwortwiederherstellung wird an {{name}} gesendet. Bestätigst du?",
     "reset_password_sent": "E-Mail zur Passwortwiederherstellung gesendet.",
+    "set_password": "Passwort festlegen",
+    "set_password_body": "Du legst ein neues Passwort für {{name}} fest. Teile es der Person über einen sicheren Kanal mit (nicht per E-Mail).",
+    "new_password": "Neues Passwort",
+    "set_password_done": "Passwort erfolgreich aktualisiert.",
     "state": {
       "activa": "Aktiv",
       "inactiva": "Inaktiv"

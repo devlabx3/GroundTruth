@@ -72,6 +72,7 @@
     "create": "Create user",
     "edit": "Edit",
     "memberships": "Memberships",
+    "role": "Role",
     "search_placeholder": "Search by name or email…",
     "empty": "No users for that search.",
     "deactivate": "Deactivate",
@@ -80,11 +81,18 @@
     "reset_password": "Send password reset",
     "reset_password_confirm": "A password recovery email will be sent to {{name}}. Confirm?",
     "reset_password_sent": "Password recovery email sent.",
+    "set_password": "Set password",
+    "set_password_body": "You're about to set a new password for {{name}}. Share it with them through a secure channel (not by email).",
+    "new_password": "New password",
+    "set_password_done": "Password updated successfully.",
     "state": {
       "activa": "Active",
       "inactiva": "Inactive"
     },
-    "no_membership": "No membership"
+    "no_membership": "No membership",
+    "showing_page": "Showing {{start}}–{{end}} of {{count}} users (page {{current}} of {{total}})",
+    "prev_page": "Previous",
+    "next_page": "Next"
   },
   "params": {
     "title": "System parameters",

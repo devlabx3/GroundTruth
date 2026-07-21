@@ -7,7 +7,6 @@ import { DomainErrors } from '@/common/domain-error';
 const crearSchema = z.object({
   nombre: z.string().trim().min(1),
   email: z.string().trim().email(),
-  fincaNombre: z.string().trim().min(1),
 });
 
 const reasignarSchema = z.object({
@@ -30,10 +29,13 @@ export class AgricultoresService {
                count(distinct f.id) as fincas,
                count(distinct p.id) as parcelas,
                string_agg(distinct f.nombre, ', ') as finca_nombres
-        from fincas f
-        join usuarios u on u.id = f.agricultor_id
+        from usuarios u
+        left join fincas f on f.agricultor_id = u.id and f.operador_id = $1
         left join parcelas p on p.finca_id = f.id
-        where f.operador_id = $1
+        where exists (
+          select 1 from fincas f2
+          where f2.agricultor_id = u.id and f2.operador_id = $1
+        )
         group by u.id
         order by u.nombre
         `,
@@ -51,18 +53,17 @@ export class AgricultoresService {
   }
 
   /**
-   * Alta de agricultor: crea el usuario y su finca en la unidad. Invita de
-   * verdad vía Supabase Auth (recibe email para fijar contraseña); si no está
-   * configurado, cae a un placeholder y el agricultor queda sin poder iniciar
-   * sesión hasta que se invite de nuevo. Auditado.
+   * Alta de agricultor: crea solo el usuario, sin finca (la finca se crea
+   * independientemente después, y se asigna el agricultor cuando se crea).
+   * Invita de verdad vía Supabase Auth (recibe email para fijar contraseña);
+   * si no está configurado, cae a un placeholder y el agricultor queda sin
+   * poder iniciar sesión hasta que se invite de nuevo. Auditado.
    */
   async crear(operadorId: string, actorId: string, body: unknown) {
-    const { nombre, email, fincaNombre } = crearSchema.parse(body);
+    const { nombre, email } = crearSchema.parse(body);
     return this.db.transaction(async (tx) => {
       const existe = await tx.queryOne('select 1 from usuarios where email = $1', [email]);
       if (existe) throw DomainErrors.userExists();
-
-      const pais = await tx.queryOne<{ pais: string }>('select pais from operadores where id = $1', [operadorId]);
 
       const authResult = await this.supabaseAuth.invitar(email, nombre);
       const authUserId = authResult?.authUserId ?? crypto.randomUUID();
@@ -72,23 +73,19 @@ export class AgricultoresService {
          values ($1, $2, $3, true) returning id`,
         [authUserId, nombre, email],
       );
-      const finca = await tx.queryOne<{ id: string }>(
-        `insert into fincas (operador_id, agricultor_id, nombre, pais)
-         values ($1, $2, $3, $4) returning id`,
-        [operadorId, usuario!.id, fincaNombre, pais?.pais ?? null],
-      );
       await tx.query(
         `insert into auditoria (actor_id, operador_id, accion, entidad, entidad_id, valor_nuevo)
          values ($1, $2, 'agricultor.crear', 'usuarios', $3, $4)`,
-        [actorId, operadorId, usuario!.id, JSON.stringify({ nombre, email, finca: fincaNombre })],
+        [actorId, operadorId, usuario!.id, JSON.stringify({ nombre, email })],
       );
-      return { id: usuario!.id, fincaId: finca!.id, nombre, email };
+      return { id: usuario!.id, nombre, email };
     });
   }
 
   /**
-   * Reasigna una finca existente de un agricultor a otro. Verifica que la finca
-   * pertenece al operador. Auditado.
+   * Asigna (o reasigna) un agricultor a una finca. Si es la primera vez que
+   * ese agricultor tiene una finca en esa operadora, crea su membresía con
+   * sub_rol "Agricultor" (usando el patrón ON CONFLICT de 0013). Auditado.
    */
   async reasignarFinca(operadorId: string, fincaId: string, actorId: string, body: unknown) {
     const { agricultorId } = reasignarSchema.parse(body);
@@ -107,14 +104,28 @@ export class AgricultoresService {
       );
       if (!usuario) throw DomainErrors.notFound();
 
-      // Reasignar
+      // Asignar
       await tx.query('update fincas set agricultor_id = $1 where id = $2', [agricultorId, fincaId]);
+
+      // Crear membresía Agricultor si no existe (primera vez en la unidad)
+      const sub_rol_agricultor = await tx.queryOne<{ id: string }>(
+        `select id from sub_roles where operador_id = $1 and nombre = 'Agricultor' and es_autogenerado`,
+        [operadorId],
+      );
+      if (sub_rol_agricultor) {
+        await tx.query(
+          `insert into membresias (usuario_id, operador_id, sub_rol_id, aceptado_en)
+           values ($1, $2, $3, now())
+           on conflict (usuario_id, operador_id) do nothing`,
+          [agricultorId, operadorId, sub_rol_agricultor.id],
+        );
+      }
 
       // Auditoría
       await tx.query(
         `insert into auditoria (actor_id, operador_id, accion, entidad, entidad_id, valor_nuevo)
-         values ($1, $2, 'finca.reasignar', 'fincas', $3, $4)`,
-        [actorId, operadorId, fincaId, JSON.stringify({ nuevoAgricultorId: agricultorId })],
+         values ($1, $2, 'finca.asignar', 'fincas', $3, $4)`,
+        [actorId, operadorId, fincaId, JSON.stringify({ agricultorId })],
       );
 
       return { id: fincaId, agricultorId };

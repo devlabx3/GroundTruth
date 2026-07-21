@@ -1,7 +1,7 @@
 import { NavLink, Outlet, useNavigate, useParams, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
-  MapTrifoldIcon, PlantIcon, TruckIcon, WalletIcon, SealCheckIcon, UsersThreeIcon, UserListIcon, GearIcon, SignOutIcon,
+  MapTrifoldIcon, PlantIcon, TruckIcon, WalletIcon, SealCheckIcon, UsersThreeIcon, UserListIcon, GearIcon, SignOutIcon, TreeIcon,
 } from '@phosphor-icons/react';
 import LanguageSwitcher from '@/components/shared/LanguageSwitcher';
 import ContextSwitcher from '@/components/shared/ContextSwitcher';
@@ -15,11 +15,12 @@ import { TREASURY } from '@/features/dashboard/fixtures';
 /** Ítems del sidebar, cada uno con el privilegio que lo habilita (Indice-de-Vistas §5). */
 const NAV = [
   { to: 'dashboard', key: 'nav.map', icon: MapTrifoldIcon, privilege: null },
+  { to: 'dashboard/agricultores', key: 'nav.farmers', icon: UserListIcon, privilege: PRIVILEGES.FARMERS_MANAGE },
+  { to: 'dashboard/fincas', key: 'nav.farms', icon: TreeIcon, privilege: PRIVILEGES.TOPOLOGY_MANAGE },
   { to: 'dashboard/topologia', key: 'nav.parcels', icon: PlantIcon, privilege: PRIVILEGES.TOPOLOGY_MANAGE },
   { to: 'dashboard/embarques', key: 'nav.shipments', icon: TruckIcon, privilege: PRIVILEGES.SHIPMENTS_PREPARE },
   { to: 'dashboard/tesoreria', key: 'nav.treasury', icon: WalletIcon, privilege: PRIVILEGES.TREASURY_VIEW },
   { to: 'dashboard/certificados', key: 'nav.certificates', icon: SealCheckIcon, privilege: PRIVILEGES.CERTS_VIEW },
-  { to: 'dashboard/agricultores', key: 'nav.farmers', icon: UserListIcon, privilege: PRIVILEGES.FARMERS_MANAGE },
   { to: 'dashboard/equipo', key: 'nav.team', icon: UsersThreeIcon, privilege: PRIVILEGES.TEAM_MANAGE },
   { to: 'dashboard/configuracion', key: 'nav.settings', icon: GearIcon, privilege: PRIVILEGES.UNIT_CONFIGURE },
 ];

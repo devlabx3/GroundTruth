@@ -6,6 +6,7 @@ import {
   ParseUUIDPipe,
   Patch,
   Post,
+  Query,
   Req,
   UseGuards,
 } from '@nestjs/common';
@@ -77,8 +78,8 @@ export class AdminIdentidadController {
   constructor(private readonly identidad: AdminIdentidadService) {}
 
   @Get('usuarios')
-  listUsuarios() {
-    return this.identidad.listUsuarios();
+  listUsuarios(@Query() query: Record<string, any>) {
+    return this.identidad.listUsuarios(query);
   }
 
   @Post('usuarios')
@@ -108,6 +109,15 @@ export class AdminIdentidadController {
   @Post('usuarios/:id/reset-password')
   resetPassword(@Req() req: AdminRequest, @Param('id', ParseUUIDPipe) id: string) {
     return this.identidad.enviarResetPassword(req.usuarioId, id);
+  }
+
+  @Post('usuarios/:id/fijar-password')
+  fijarPassword(
+    @Req() req: AdminRequest,
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() body: unknown,
+  ) {
+    return this.identidad.fijarPasswordUsuario(req.usuarioId, id, body);
   }
 
   @Get('privilegios')

@@ -80,6 +80,10 @@
     "reset_password": "Enviar redefinição de senha",
     "reset_password_confirm": "Um e-mail de recuperação de senha será enviado para {{name}}. Confirma?",
     "reset_password_sent": "E-mail de recuperação de senha enviado.",
+    "set_password": "Definir senha",
+    "set_password_body": "Você está prestes a definir uma nova senha para {{name}}. Compartilhe com a pessoa por um canal seguro (não por e-mail).",
+    "new_password": "Nova senha",
+    "set_password_done": "Senha atualizada com sucesso.",
     "state": {
       "activa": "Ativa",
       "inactiva": "Inativa"

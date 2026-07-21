@@ -14,6 +14,10 @@ const editarUsuarioSchema = z.object({
   email: z.string().trim().email().optional(),
 });
 
+const fijarPasswordSchema = z.object({
+  password: z.string().min(8, 'password debe tener al menos 8 caracteres'),
+});
+
 const crearPrivilegioSchema = z.object({
   clave: z
     .string()
@@ -21,6 +25,17 @@ const crearPrivilegioSchema = z.object({
     .regex(/^[a-z]+\.[a-z]+$/, 'clave debe ser dominio.accion'),
   nombre: z.string().trim().min(1),
   sensible: z.boolean().optional().default(false),
+});
+
+const listUsuariosQuerySchema = z.object({
+  page: z.coerce.number().int().min(1).default(1),
+  pageSize: z.coerce.number().int().min(1).max(100).default(20),
+  sortBy: z.enum(['nombre', 'email', 'membresia', 'rol']).default('nombre'),
+  sortDir: z.enum(['asc', 'desc']).default('asc'),
+  nombre: z.string().trim().optional(),
+  email: z.string().trim().optional(),
+  membresia: z.string().trim().optional(),
+  rol: z.string().trim().optional(),
 });
 
 /** Usuarios y membresías (A3) + catálogo de privilegios (A2). */
@@ -33,31 +48,100 @@ export class AdminIdentidadService {
 
   // ---- Usuarios (A3) ----
 
-  async listUsuarios() {
-    const rows = await this.db.query<any>(
-      `
-      select u.id, u.nombre, u.email, u.activo, u.es_admin,
-             coalesce(
-               (select string_agg(o.nombre, ', ' order by o.nombre)
-                from membresias m
-                join operadores o on o.id = m.operador_id
-                where m.usuario_id = u.id and m.activo),
-               ''
-             ) as membresias,
-             exists (select 1 from fincas f where f.agricultor_id = u.id) as es_agricultor
-      from usuarios u
-      order by u.nombre
-      `,
-    );
-    return rows.map((u) => ({
-      id: u.id,
-      nombre: u.nombre,
-      email: u.email,
-      membresias: u.membresias,
-      esAgricultor: u.es_agricultor,
-      esAdmin: u.es_admin,
-      estado: u.activo ? 'activa' : 'inactiva',
-    }));
+  async listUsuarios(params: unknown) {
+    const { page, pageSize, sortBy, sortDir, nombre, email, membresia, rol } =
+      listUsuariosQuerySchema.parse(params);
+
+    const offset = (page - 1) * pageSize;
+
+    // Mapeo seguro de columnas de sort (validado por schema Zod)
+    const sortColMap: Record<string, string> = {
+      nombre: 'u.nombre',
+      email: 'u.email',
+      membresia: 'usuarios_agg.membresias',
+      rol: 'usuarios_agg.rol',
+    };
+    const sortCol = sortColMap[sortBy];
+    const orderDir = sortDir.toUpperCase();
+
+    // Filtros aplicados como ILIKE en la subquery
+    const nombreFilter = nombre ? `%${nombre}%` : null;
+    const emailFilter = email ? `%${email}%` : null;
+    const membresias_Filter = membresia ? `%${membresia}%` : null;
+    const rolFilter = rol ? `%${rol}%` : null;
+
+    // Construir el SQL de forma segura: el order by usa valores whitelist
+    const sql = `
+      with usuarios_agg as (
+        select
+          u.id,
+          u.nombre,
+          u.email,
+          u.activo,
+          u.es_admin,
+          coalesce(
+            (select string_agg(o.nombre, ', ' order by o.nombre)
+             from membresias m
+             join operadores o on o.id = m.operador_id
+             where m.usuario_id = u.id and m.activo),
+            ''
+          ) as membresias,
+          coalesce(
+            (select string_agg(sr.nombre, ', ' order by sr.nombre)
+             from membresias m
+             join sub_roles sr on sr.id = m.sub_rol_id
+             where m.usuario_id = u.id and m.activo),
+            ''
+          ) as rol,
+          exists (select 1 from fincas f where f.agricultor_id = u.id) as es_agricultor
+        from usuarios u
+      )
+      select
+        id,
+        nombre,
+        email,
+        membresias,
+        rol,
+        es_agricultor,
+        es_admin,
+        activo,
+        count(*) over() as total
+      from usuarios_agg
+      where
+        ($1::text is null or nombre ilike $1)
+        and ($2::text is null or email ilike $2)
+        and ($3::text is null or membresias ilike $3)
+        and ($4::text is null or rol ilike $4)
+      order by ${sortCol} ${orderDir}
+      limit $5 offset $6
+    `;
+
+    const rows = await this.db.query<any>(sql, [
+      nombreFilter,
+      emailFilter,
+      membresias_Filter,
+      rolFilter,
+      pageSize,
+      offset,
+    ]);
+
+    const total = rows.length > 0 ? Number(rows[0].total) : 0;
+
+    return {
+      items: rows.map((u) => ({
+        id: u.id,
+        nombre: u.nombre,
+        email: u.email,
+        membresias: u.membresias,
+        rol: u.rol,
+        esAgricultor: u.es_agricultor,
+        esAdmin: u.es_admin,
+        estado: u.activo ? 'activa' : 'inactiva',
+      })),
+      total,
+      page,
+      pageSize,
+    };
   }
 
   async crearUsuario(actorId: string, body: unknown) {
@@ -84,7 +168,7 @@ export class AdminIdentidadService {
          values ($1, 'usuario.crear', 'usuarios', $2, $3)`,
         [actorId, u!.id, JSON.stringify({ nombre, email })],
       );
-      return { id: u!.id, nombre, email, membresias: '', estado: 'activa' };
+      return { id: u!.id, nombre, email, membresias: '', rol: '', estado: 'activa' };
     });
   }
 
@@ -182,6 +266,42 @@ export class AdminIdentidadService {
       [actorId, id, JSON.stringify({ email: u.email })],
     );
     return { id, enviado: true };
+  }
+
+  /**
+   * Fija la contraseña directamente (vía transitoria, sin email — Bloque 1 ítem 3
+   * temporal mientras el SMTP/Resend está suspendido). No se audita el valor de
+   * la contraseña, solo que ocurrió. Si el usuario no existe en Supabase Auth,
+   * lo crea automáticamente y sincroniza el nuevo auth_user_id en la BD.
+   */
+  async fijarPasswordUsuario(actorId: string, id: string, body: unknown) {
+    const { password } = fijarPasswordSchema.parse(body);
+    const u = await this.db.queryOne<{ auth_user_id: string; email: string }>(
+      'select auth_user_id, email from usuarios where id = $1',
+      [id],
+    );
+    if (!u) throw DomainErrors.notFound();
+
+    if (!this.supabaseAuth.isEnabled()) {
+      throw DomainErrors.authNotConfigured();
+    }
+    const result = await this.supabaseAuth.fijarPassword(u.auth_user_id, password, u.email);
+    if (!result.success) throw DomainErrors.authSyncFailed();
+
+    // Si se creó un nuevo usuario en Supabase Auth, sincronizar el ID en la BD
+    if (result.newAuthUserId) {
+      await this.db.query('update usuarios set auth_user_id = $1 where id = $2', [
+        result.newAuthUserId,
+        id,
+      ]);
+    }
+
+    await this.db.query(
+      `insert into auditoria (actor_id, accion, entidad, entidad_id)
+       values ($1, 'usuario.fijar_password', 'usuarios', $2)`,
+      [actorId, id],
+    );
+    return { id, fijado: true };
   }
 
   /**

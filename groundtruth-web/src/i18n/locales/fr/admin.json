@@ -80,6 +80,10 @@
     "reset_password": "Envoyer réinitialisation de mot de passe",
     "reset_password_confirm": "Un e-mail de récupération de mot de passe sera envoyé à {{name}}. Confirmes-tu ?",
     "reset_password_sent": "E-mail de récupération de mot de passe envoyé.",
+    "set_password": "Définir un mot de passe",
+    "set_password_body": "Tu vas définir un nouveau mot de passe pour {{name}}. Partage-le avec la personne via un canal sécurisé (pas par e-mail).",
+    "new_password": "Nouveau mot de passe",
+    "set_password_done": "Mot de passe mis à jour avec succès.",
     "state": {
       "activa": "Actif",
       "inactiva": "Inactif"

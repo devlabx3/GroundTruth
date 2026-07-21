@@ -83,11 +83,11 @@ export const UNITS: (UnidadResumen & { treasury: string | null; miembros: Miembr
 ];
 
 export const USERS: UsuarioAdmin[] = [
-  { id: 'u-demo-lucia', nombre: 'Lucía Fernández', email: 'lucia@sierraverde.coop', membresias: 'Coop. Sierra Verde', estado: 'activa' },
-  { id: 'u-demo-tomas', nombre: 'Tomás Rivas', email: 'tomas@sierraverde.coop', membresias: 'Coop. Sierra Verde', estado: 'activa' },
-  { id: 'u-demo-pedro', nombre: 'Pedro Ayala', email: 'pedro.ayala@correo.hn', membresias: '— (agricultor)', estado: 'activa' },
-  { id: 'u-kivu-1', nombre: 'Aline Mukamana', email: 'aline@agrokivu.cd', membresias: 'AgroExport Kivu', estado: 'activa' },
-  { id: 'u-dar-1', nombre: 'Camilo Restrepo', email: 'camilo@cacaodarien.co', membresias: 'Cacao del Darién', estado: 'inactiva' },
+  { id: 'u-demo-lucia', nombre: 'Lucía Fernández', email: 'lucia@sierraverde.coop', membresias: 'Coop. Sierra Verde', rol: 'Dirección', estado: 'activa' },
+  { id: 'u-demo-tomas', nombre: 'Tomás Rivas', email: 'tomas@sierraverde.coop', membresias: 'Coop. Sierra Verde', rol: 'Logística', estado: 'activa' },
+  { id: 'u-demo-pedro', nombre: 'Pedro Ayala', email: 'pedro.ayala@correo.hn', membresias: '', rol: 'Agricultor', estado: 'activa' },
+  { id: 'u-kivu-1', nombre: 'Aline Mukamana', email: 'aline@agrokivu.cd', membresias: 'AgroExport Kivu', rol: 'Dirección', estado: 'activa' },
+  { id: 'u-dar-1', nombre: 'Camilo Restrepo', email: 'camilo@cacaodarien.co', membresias: 'Cacao del Darién', rol: 'Dirección', estado: 'inactiva' },
 ];
 
 // Parámetros versionados (A4): tarifas / umbrales / vigencia / sensores.

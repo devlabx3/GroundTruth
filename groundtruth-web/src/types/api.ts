@@ -140,7 +140,8 @@ export interface ParcelaDetalle extends Omit<Parcela, 'geom'> {
 export interface Finca {
   id: string;
   nombre: string;
-  agricultor: string;
+  agricultor: string | null;
+  areaHa?: number;
   parcelas: number;
 }
 
@@ -274,7 +275,6 @@ export interface Agricultor {
 export interface CrearAgricultorPayload {
   nombre: string;
   email: string;
-  fincaNombre: string;
 }
 
 export interface Unidad {
@@ -339,7 +339,15 @@ export interface UsuarioAdmin {
   nombre: string;
   email: string;
   membresias: string;
+  rol: string;
   estado: EstadoCuenta;
+}
+
+export interface UsuariosPaginados {
+  items: UsuarioAdmin[];
+  total: number;
+  page: number;
+  pageSize: number;
 }
 
 export interface PrivilegioCatalogo {

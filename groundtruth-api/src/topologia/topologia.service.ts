@@ -9,6 +9,19 @@ const M2_POR_HA = 10_000;
 /** Punto del polígono tal como lo dibuja el mapa: [lat, lng] (orden de Leaflet). */
 const puntoSchema = z.tuple([z.number().min(-90).max(90), z.number().min(-180).max(180)]);
 
+const crearFincaSchema = z.object({
+  nombre: z.string().trim().min(1),
+  pais: z.string().trim().min(2).max(2),
+  areaHa: z.number().positive(),
+  agricultorId: z.string().uuid().optional(),
+});
+
+const editarFincaSchema = z.object({
+  nombre: z.string().trim().min(1),
+  pais: z.string().trim().min(2).max(2),
+  areaHa: z.number().positive(),
+});
+
 const crearParcelaSchema = z.object({
   fincaId: z.string().uuid(),
   nombre: z.string().trim().min(1),
@@ -27,13 +40,13 @@ export class TopologiaService {
   async listFincas(operadorId: string) {
     const rows = await this.db.query<any>(
       `
-      select f.id, f.nombre, u.nombre as agricultor,
+      select f.id, f.nombre, u.nombre as agricultor, f.area_ha,
              count(p.id) as parcelas
       from fincas f
-      join usuarios u on u.id = f.agricultor_id
+      left join usuarios u on u.id = f.agricultor_id
       left join parcelas p on p.finca_id = f.id
       where f.operador_id = $1
-      group by f.id, f.nombre, u.nombre
+      group by f.id, f.nombre, u.nombre, f.area_ha
       order by f.nombre
       `,
       [operadorId],
@@ -41,9 +54,95 @@ export class TopologiaService {
     return rows.map((f) => ({
       id: f.id,
       nombre: f.nombre,
-      agricultor: f.agricultor,
+      agricultor: f.agricultor ?? null,
+      areaHa: f.area_ha,
       parcelas: Number(f.parcelas),
     }));
+  }
+
+  /**
+   * Crear una finca independiente en la unidad. Opcionalmente se puede
+   * asignar un agricultor (dueño) en el momento. Auditado.
+   */
+  async crearFinca(operadorId: string, actorId: string, body: unknown) {
+    const { nombre, pais, areaHa, agricultorId } = crearFincaSchema.parse(body);
+    return this.db.transaction(async (tx) => {
+      // Si se especifica un agricultor, verificar que existe
+      if (agricultorId) {
+        const agricultor = await tx.queryOne<{ id: string }>(
+          'select id from usuarios where id = $1 and activo',
+          [agricultorId],
+        );
+        if (!agricultor) throw DomainErrors.notFound();
+      }
+
+      // Crear la finca
+      const finca = await tx.queryOne<{ id: string }>(
+        `insert into fincas (operador_id, agricultor_id, nombre, pais, area_ha)
+         values ($1, $2, $3, $4, $5) returning id`,
+        [operadorId, agricultorId ?? null, nombre, pais, areaHa],
+      );
+
+      // Si se asignó un agricultor, crear su membresía Agricultor si no existe
+      if (agricultorId) {
+        const sub_rol_agricultor = await tx.queryOne<{ id: string }>(
+          `select id from sub_roles where operador_id = $1 and nombre = 'Agricultor' and es_autogenerado`,
+          [operadorId],
+        );
+        if (sub_rol_agricultor) {
+          await tx.query(
+            `insert into membresias (usuario_id, operador_id, sub_rol_id, aceptado_en)
+             values ($1, $2, $3, now())
+             on conflict (usuario_id, operador_id) do nothing`,
+            [agricultorId, operadorId, sub_rol_agricultor.id],
+          );
+        }
+      }
+
+      await tx.query(
+        `insert into auditoria (actor_id, operador_id, accion, entidad, entidad_id, valor_nuevo)
+         values ($1, $2, 'finca.crear', 'fincas', $3, $4)`,
+        [actorId, operadorId, finca!.id, JSON.stringify({ nombre, pais, areaHa, agricultorId })],
+      );
+
+      return { id: finca!.id, nombre, pais, areaHa, agricultorId: agricultorId ?? null };
+    });
+  }
+
+  /**
+   * Editar una finca existente: nombre, país y área. Auditado.
+   */
+  async editarFinca(operadorId: string, fincaId: string, actorId: string, body: unknown) {
+    const { nombre, pais, areaHa } = editarFincaSchema.parse(body);
+    return this.db.transaction(async (tx) => {
+      // Verificar que la finca existe y pertenece al operador
+      const finca = await tx.queryOne<{ id: string; nombre: string; pais: string; area_ha: number }>(
+        'select id, nombre, pais, area_ha from fincas where id = $1 and operador_id = $2',
+        [fincaId, operadorId],
+      );
+      if (!finca) throw DomainErrors.notFound();
+
+      // Actualizar
+      await tx.query(
+        `update fincas set nombre = $1, pais = $2, area_ha = $3 where id = $4`,
+        [nombre, pais, areaHa, fincaId],
+      );
+
+      // Auditoría
+      await tx.query(
+        `insert into auditoria (actor_id, operador_id, accion, entidad, entidad_id, valor_anterior, valor_nuevo)
+         values ($1, $2, 'finca.editar', 'fincas', $3, $4, $5)`,
+        [
+          actorId,
+          operadorId,
+          fincaId,
+          JSON.stringify({ nombre: finca.nombre, pais: finca.pais, areaHa: finca.area_ha }),
+          JSON.stringify({ nombre, pais, areaHa }),
+        ],
+      );
+
+      return { id: fincaId, nombre, pais, areaHa };
+    });
   }
 
   /**
@@ -61,7 +160,7 @@ export class TopologiaService {
    * NO abre ciclo de siembra: eso lo declara el agricultor desde su dApp. Una parcela
    * recién creada existe, pero no puede certificarse hasta que haya siembra.
    */
-  async crearParcela(operadorId: string, body: unknown) {
+  async crearParcela(operadorId: string, actorId: string, body: unknown) {
     const { fincaId, nombre, cultivo, poligono, nodos } = crearParcelaSchema.parse(body);
 
     // La inversión [lat,lng]→[lng,lat] y el cierre del anillo viven en `geo.ts`,
@@ -118,9 +217,10 @@ export class TopologiaService {
       }
 
       await tx.query(
-        `insert into auditoria (operador_id, accion, entidad, entidad_id, valor_nuevo)
-         values ($1, 'parcela.crear', 'parcelas', $2, $3)`,
+        `insert into auditoria (actor_id, operador_id, accion, entidad, entidad_id, valor_nuevo)
+         values ($1, $2, 'parcela.crear', 'parcelas', $3, $4)`,
         [
+          actorId,
           operadorId,
           parcela!.id,
           JSON.stringify({ nombre, cultivo, areaHa: areaM2 / M2_POR_HA, nodos: nodos.length }),

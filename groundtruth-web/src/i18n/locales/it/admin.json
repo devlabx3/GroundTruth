@@ -80,6 +80,10 @@
     "reset_password": "Invia reset password",
     "reset_password_confirm": "Un'email di recupero password sarà inviata a {{name}}. Confermi?",
     "reset_password_sent": "Email di recupero password inviata.",
+    "set_password": "Imposta password",
+    "set_password_body": "Stai per impostare una nuova password per {{name}}. Condividila con la persona tramite un canale sicuro (non via email).",
+    "new_password": "Nuova password",
+    "set_password_done": "Password aggiornata con successo.",
     "state": {
       "activa": "Attiva",
       "inactiva": "Inattiva"

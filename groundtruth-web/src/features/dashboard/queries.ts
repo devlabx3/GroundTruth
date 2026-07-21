@@ -363,19 +363,49 @@ export async function fetchAgricultores(): Promise<Agricultor[]> {
   return data;
 }
 
-export async function crearAgricultor(payload: CrearAgricultorPayload): Promise<Agricultor> {
+export async function crearAgricultor(payload: { nombre: string; email: string }): Promise<Agricultor> {
   if (isDemo()) {
     const a: Agricultor = {
       id: `agr-${Date.now()}`,
       nombre: payload.nombre,
       email: payload.email,
-      finca: payload.fincaNombre,
+      finca: '',
       parcelas: 0,
     };
     FARMERS.push(a);
     return a;
   }
   const { data } = await api.post<Agricultor>('/agricultores', payload);
+  return data;
+}
+
+export async function crearFinca(payload: { nombre: string; pais: string; areaHa: number; agricultorId?: string }): Promise<{ id: string; nombre: string; pais: string; areaHa: number; agricultorId: string | null }> {
+  if (isDemo()) {
+    return {
+      id: `fin-${Date.now()}`,
+      nombre: payload.nombre,
+      pais: payload.pais,
+      areaHa: payload.areaHa,
+      agricultorId: payload.agricultorId ?? null,
+    };
+  }
+  const { data } = await api.post<{ id: string; nombre: string; pais: string; areaHa: number; agricultorId: string | null }>('/topologia/fincas', payload);
+  return data;
+}
+
+export async function asignarAgricultorFinca(fincaId: string, agricultorId: string): Promise<{ id: string; agricultorId: string }> {
+  if (isDemo()) {
+    return { id: fincaId, agricultorId };
+  }
+  const { data } = await api.patch<{ id: string; agricultorId: string }>(`/agricultores/fincas/${fincaId}`, { agricultorId });
+  return data;
+}
+
+export async function editarFinca(fincaId: string, payload: { nombre: string; pais: string; areaHa: number }): Promise<{ id: string; nombre: string; pais: string; areaHa: number }> {
+  if (isDemo()) {
+    return { id: fincaId, ...payload };
+  }
+  const { data } = await api.patch<{ id: string; nombre: string; pais: string; areaHa: number }>(`/topologia/fincas/${fincaId}`, payload);
   return data;
 }
 

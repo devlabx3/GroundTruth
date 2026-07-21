@@ -3,6 +3,7 @@
   "tagline": "Physical proof of the land, verifiable by any auditor",
   "nav": {
     "map": "Map",
+    "farms": "Farms",
     "parcels": "Parcels",
     "shipments": "Shipments",
     "treasury": "Treasury",
@@ -45,7 +46,8 @@
     "amount": "Amount",
     "type": "Type",
     "state": "Status",
-    "crop": "Crop"
+    "crop": "Crop",
+    "country": "Country"
   },
   "crops": {
     "cafe": "Coffee",

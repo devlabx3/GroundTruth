@@ -80,6 +80,10 @@
     "reset_password": "Wachtwoord reset verzenden",
     "reset_password_confirm": "Een e-mail voor wachtwoordherstel wordt naar {{name}} verzonden. Bevestig je?",
     "reset_password_sent": "E-mail voor wachtwoordherstel verzonden.",
+    "set_password": "Wachtwoord instellen",
+    "set_password_body": "Je staat op het punt een nieuw wachtwoord in te stellen voor {{name}}. Deel dit met de persoon via een veilig kanaal (niet per e-mail).",
+    "new_password": "Nieuw wachtwoord",
+    "set_password_done": "Wachtwoord succesvol bijgewerkt.",
     "state": {
       "activa": "Actief",
       "inactiva": "Inactief"

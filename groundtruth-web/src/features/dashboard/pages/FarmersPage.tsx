@@ -19,7 +19,6 @@ import type { Agricultor } from '@/types/api';
 const schema = z.object({
   nombre: z.string().min(1, 'errors:field_required'),
   email: z.string().min(1, 'errors:field_required').email('errors:email_invalid'),
-  fincaNombre: z.string().min(1, 'errors:field_required'),
 });
 
 /** El formulario recibe EXACTAMENTE lo que el esquema valida. */
@@ -40,7 +39,7 @@ export default function FarmersPage() {
 
   const { register, handleSubmit, reset, formState: { errors } } = useForm({
     resolver: zodResolver(schema),
-    defaultValues: { nombre: '', email: '', fincaNombre: '' },
+    defaultValues: { nombre: '', email: '' },
   });
 
   const columns: Column<Agricultor>[] = [
@@ -86,7 +85,6 @@ export default function FarmersPage() {
           {errorKey && <AlertBanner messageKey={errorKey} />}
           <Input label={t('common:fields.name')} errorKey={errors.nombre?.message} {...register('nombre')} />
           <Input label={t('common:fields.email')} type="email" errorKey={errors.email?.message} {...register('email')} />
-          <Input label={t('topology.farm')} errorKey={errors.fincaNombre?.message} {...register('fincaNombre')} />
           <div className="flex justify-end gap-2">
             <Button variant="secondary" type="button" onClick={() => setDialogOpen(false)}>
               {t('common:actions.cancel')}

@@ -25,6 +25,7 @@ import type {
   UnidadDetalle,
   UnidadResumen,
   UsuarioAdmin,
+  UsuariosPaginados,
 } from '@/types/api';
 import {
   FINANZAS,
@@ -125,9 +126,70 @@ export async function cambiarEstadoUnidad(
 
 // ---- Usuarios (A3) ----
 
-export async function fetchUsuarios(): Promise<UsuarioAdmin[]> {
-  if (isDemo()) return demoQueryFn(USERS)();
-  const { data } = await api.get<UsuarioAdmin[]>('/admin/usuarios');
+export interface FetchUsuariosParams {
+  page?: number;
+  pageSize?: number;
+  sortBy?: 'nombre' | 'email' | 'membresia' | 'rol';
+  sortDir?: 'asc' | 'desc';
+  nombre?: string;
+  email?: string;
+  membresia?: string;
+  rol?: string;
+}
+
+export async function fetchUsuarios(
+  params: FetchUsuariosParams = {},
+): Promise<UsuariosPaginados> {
+  if (isDemo()) {
+    // Simulación en memoria: aplicar paginación + orden + filtros
+    const {
+      page = 1,
+      pageSize = 20,
+      sortBy = 'nombre',
+      sortDir = 'asc',
+      nombre,
+      email,
+      membresia,
+      rol,
+    } = params;
+
+    let filtered = USERS.filter((u) => {
+      if (nombre && !u.nombre.toLowerCase().includes(nombre.toLowerCase())) return false;
+      if (email && !u.email.toLowerCase().includes(email.toLowerCase())) return false;
+      if (membresia && !u.membresias.toLowerCase().includes(membresia.toLowerCase())) return false;
+      if (rol && !u.rol?.toLowerCase().includes(rol.toLowerCase())) return false;
+      return true;
+    });
+
+    const sortMap: Record<string, (a: UsuarioAdmin, b: UsuarioAdmin) => number> = {
+      nombre: (a, b) => a.nombre.localeCompare(b.nombre),
+      email: (a, b) => a.email.localeCompare(b.email),
+      membresia: (a, b) => a.membresias.localeCompare(b.membresias),
+      rol: (a, b) => (a.rol || '').localeCompare(b.rol || ''),
+    };
+
+    const sorter = sortMap[sortBy];
+    filtered.sort(sorter);
+    if (sortDir === 'desc') filtered.reverse();
+
+    const total = filtered.length;
+    const offset = (page - 1) * pageSize;
+    const items = filtered.slice(offset, offset + pageSize);
+
+    return { items, total, page, pageSize };
+  }
+
+  const query = new URLSearchParams();
+  if (params.page !== undefined) query.set('page', String(params.page));
+  if (params.pageSize !== undefined) query.set('pageSize', String(params.pageSize));
+  if (params.sortBy !== undefined) query.set('sortBy', params.sortBy);
+  if (params.sortDir !== undefined) query.set('sortDir', params.sortDir);
+  if (params.nombre !== undefined) query.set('nombre', params.nombre);
+  if (params.email !== undefined) query.set('email', params.email);
+  if (params.membresia !== undefined) query.set('membresia', params.membresia);
+  if (params.rol !== undefined) query.set('rol', params.rol);
+
+  const { data } = await api.get<UsuariosPaginados>(`/admin/usuarios?${query.toString()}`);
   return data;
 }
 
@@ -140,6 +202,7 @@ export async function crearUsuario(payload: {
       id: `u-${Date.now()}`,
       ...payload,
       membresias: '',
+      rol: '',
       estado: 'activa',
     };
     USERS.push(u);
@@ -199,6 +262,19 @@ export async function enviarResetPassword(
   if (isDemo()) return { id, enviado: true };
   const { data } = await api.post<{ id: string; enviado: boolean }>(
     `/admin/usuarios/${id}/reset-password`,
+  );
+  return data;
+}
+
+/** Vía transitoria mientras el SMTP (Resend) está suspendido: fija la contraseña sin email. */
+export async function fijarPassword(
+  id: string,
+  password: string,
+): Promise<{ id: string; fijado: boolean }> {
+  if (isDemo()) return { id, fijado: true };
+  const { data } = await api.post<{ id: string; fijado: boolean }>(
+    `/admin/usuarios/${id}/fijar-password`,
+    { password },
   );
   return data;
 }
