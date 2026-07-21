@@ -49,6 +49,7 @@ export const router = createBrowserRouter([
           { path: 'verificar/:certId', element: page(() => import('@/features/public/pages/VerifierPage')) },
           { path: 'contacto', element: page(() => import('@/features/public/pages/ContactPage')) },
           { path: 'login', element: page(() => import('@/features/public/pages/LoginPage')) },
+          { path: 'reset-password', element: page(() => import('@/features/public/pages/ResetPasswordPage')) },
         ],
       },
       // ---- Autenticado (sesión) ----

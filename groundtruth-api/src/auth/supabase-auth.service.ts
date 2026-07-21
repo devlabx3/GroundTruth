@@ -19,12 +19,14 @@ export class SupabaseAuthService {
   private readonly supabaseUrl: string | undefined;
   private readonly supabaseAnonKey: string | undefined;
   private readonly supabaseServiceRoleKey: string | undefined;
+  private readonly frontendUrl: string | undefined;
   private enabled = false;
 
   constructor(private readonly config: ConfigService) {
     this.supabaseUrl = this.config.get('SUPABASE_URL');
     this.supabaseAnonKey = this.config.get('SUPABASE_ANON_KEY');
     this.supabaseServiceRoleKey = this.config.get('SUPABASE_SERVICE_ROLE_KEY');
+    this.frontendUrl = this.config.get('FRONTEND_URL');
 
     if (this.supabaseUrl && this.supabaseServiceRoleKey) {
       this.enabled = true;
@@ -88,15 +90,20 @@ export class SupabaseAuthService {
    * Dispara el email de recuperación de contraseña. El Admin nunca ve ni fija una
    * contraseña ajena — solo pide que Supabase se la mande a la persona. Nunca
    * lanza: un fallo de red no debe romper la petición del Admin, igual que `invitar()`.
+   * El link del email apunta a /reset-password en el frontend (vía redirectTo).
    */
   async enviarResetPassword(email: string): Promise<boolean> {
     if (!this.enabled) return false;
 
     try {
+      const redirectTo = this.frontendUrl ? `${this.frontendUrl}/es/reset-password` : undefined;
       const response = await fetch(`${this.supabaseUrl}/auth/v1/recover`, {
         method: 'POST',
         headers: this.headers(),
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({
+          email,
+          ...(redirectTo && { redirect_to: redirectTo }),
+        }),
         signal: AbortSignal.timeout(10_000),
       });
 

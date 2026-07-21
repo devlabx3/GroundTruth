@@ -41,6 +41,18 @@
       "admin": "Admin"
     }
   },
+  "reset_password": {
+    "title": "Set new password",
+    "new_password": "New password",
+    "confirm_password": "Confirm password",
+    "submit": "Set password",
+    "success_title": "Password updated",
+    "success_message": "Your password has been updated successfully. Redirecting to login...",
+    "invalid_link": "The recovery link is invalid or expired. Please request a new password reset.",
+    "error": "An error occurred while updating your password. Please try again.",
+    "not_configured": "Password recovery is not configured for this environment.",
+    "back_to_login": "Back to login"
+  },
   "contact": {
     "title": "Request a demo",
     "name": "Name",

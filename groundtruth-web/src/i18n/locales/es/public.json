@@ -41,6 +41,18 @@
       "admin": "Admin"
     }
   },
+  "reset_password": {
+    "title": "Fijar nueva contraseña",
+    "new_password": "Nueva contraseña",
+    "confirm_password": "Confirmar contraseña",
+    "submit": "Fijar contraseña",
+    "success_title": "Contraseña actualizada",
+    "success_message": "Tu contraseña ha sido actualizada correctamente. Redirigiendo a login...",
+    "invalid_link": "El link de recuperación es inválido o expiró. Solicita un nuevo reset de contraseña.",
+    "error": "Ocurrió un error al actualizar tu contraseña. Intenta de nuevo.",
+    "not_configured": "La recuperación de contraseña no está configurada en este entorno.",
+    "back_to_login": "Volver a login"
+  },
   "contact": {
     "title": "Solicitar demo",
     "name": "Nombre",

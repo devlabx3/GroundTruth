@@ -21,6 +21,8 @@
   "no_active_cycle": "Una parcela no tiene un ciclo de siembra activo.",
   "no_privilege": "Tu rol no permite esta acción. Solicítala a un administrador de tu unidad.",
   "not_found": "No encontramos lo que buscabas.",
+  "password_min": "La contraseña debe tener al menos 8 caracteres.",
+  "password_mismatch": "Las contraseñas no coinciden.",
   "offline": "Sin conexión. Revisa tu internet.",
   "param_out_of_range": "Valor fuera del rango permitido.",
   "parcel_anomaly": "Una parcela tiene una anomalía y no puede certificarse.",
