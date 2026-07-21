@@ -56,10 +56,10 @@ export class AdminIdentidadService {
 
     // Mapeo seguro de columnas de sort (validado por schema Zod)
     const sortColMap: Record<string, string> = {
-      nombre: 'u.nombre',
-      email: 'u.email',
-      membresia: 'usuarios_agg.membresias',
-      rol: 'usuarios_agg.rol',
+      nombre: 'nombre',
+      email: 'email',
+      membresia: 'membresias',
+      rol: 'rol',
     };
     const sortCol = sortColMap[sortBy];
     const orderDir = sortDir.toUpperCase();
