@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import Card from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
-import Input from '@/components/ui/Input';
+import PasswordInput from '@/components/ui/PasswordInput';
 import AlertBanner from '@/components/shared/AlertBanner';
 import { zodResolver } from '@/lib/zodResolver';
 import { getSupabase } from '@/lib/supabase';
@@ -141,16 +141,14 @@ export default function ResetPasswordPage() {
       <h1 className="text-2xl">{t('public:reset_password.title')}</h1>
       <form onSubmit={handleSubmit(onSubmit)}>
         <Card className="mt-6 flex flex-col gap-4">
-          <Input
+          <PasswordInput
             label={t('public:reset_password.new_password')}
-            type="password"
             autoComplete="new-password"
             errorKey={errors.password?.message}
             {...register('password')}
           />
-          <Input
+          <PasswordInput
             label={t('public:reset_password.confirm_password')}
-            type="password"
             autoComplete="new-password"
             errorKey={errors.confirmPassword?.message}
             {...register('confirmPassword')}

@@ -7,6 +7,7 @@ import { z } from 'zod';
 import Card from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
+import PasswordInput from '@/components/ui/PasswordInput';
 import AlertBanner from '@/components/shared/AlertBanner';
 import { zodResolver } from '@/lib/zodResolver';
 import { getSupabase } from '@/lib/supabase';
@@ -174,9 +175,8 @@ export default function LoginPage() {
             errorKey={errors.email?.message}
             {...register('email')}
           />
-          <Input
+          <PasswordInput
             label={t('login.password')}
-            type="password"
             autoComplete="current-password"
             errorKey={errors.password?.message}
             {...register('password')}
