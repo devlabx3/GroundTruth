@@ -96,14 +96,15 @@ export class SupabaseAuthService {
     if (!this.enabled) return false;
 
     try {
+      // GoTrue lee `redirect_to` del QUERY STRING en /auth/v1/recover, no del body JSON:
+      // mandarlo en el body se ignora silenciosamente y el link cae al Site URL del proyecto.
       const redirectTo = this.frontendUrl ? `${this.frontendUrl}/es/reset-password` : undefined;
-      const response = await fetch(`${this.supabaseUrl}/auth/v1/recover`, {
+      const url = new URL(`${this.supabaseUrl}/auth/v1/recover`);
+      if (redirectTo) url.searchParams.set('redirect_to', redirectTo);
+      const response = await fetch(url, {
         method: 'POST',
         headers: this.headers(),
-        body: JSON.stringify({
-          email,
-          ...(redirectTo && { redirect_to: redirectTo }),
-        }),
+        body: JSON.stringify({ email }),
         signal: AbortSignal.timeout(10_000),
       });
 

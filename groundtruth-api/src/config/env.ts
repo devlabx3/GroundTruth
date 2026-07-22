@@ -4,6 +4,8 @@ import { z } from 'zod';
 const schema = z.object({
   PORT: z.coerce.number().default(3000),
   CORS_ORIGIN: z.string().default('http://localhost:5173'),
+  /** URL pública del frontend — base de los links de recuperación de contraseña. */
+  FRONTEND_URL: z.string().url().default('http://localhost:5173'),
   SUPABASE_URL: z.string().url(),
   DATABASE_URL: z.string().min(1),
   HELIUS_API_KEY: z.string().optional(),
