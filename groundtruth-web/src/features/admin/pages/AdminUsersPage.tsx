@@ -10,6 +10,8 @@ import type { Column } from '@/components/ui/Table';
 import Dialog from '@/components/ui/Dialog';
 import ConfirmDialog from '@/components/ui/ConfirmDialog';
 import Input from '@/components/ui/Input';
+import TableFilters, { type FilterConfig } from '@/components/ui/TableFilters';
+import TablePagination from '@/components/ui/TablePagination';
 import { SkeletonRows } from '@/components/ui/Skeleton';
 import AlertBanner from '@/components/shared/AlertBanner';
 import { zodResolver } from '@/lib/zodResolver';
@@ -40,12 +42,10 @@ export default function AdminUsersPage() {
   const { t } = useTranslation(['admin', 'common']);
   const queryClient = useQueryClient();
   const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(20);
   const [sortBy, setSortBy] = useState<'nombre' | 'email' | 'membresia' | 'rol'>('nombre');
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc');
-  const [filtroNombre, setFiltroNombre] = useState('');
-  const [filtroEmail, setFiltroEmail] = useState('');
-  const [filtroMembresia, setFiltroMembresia] = useState('');
-  const [filtroRol, setFiltroRol] = useState('');
+  const [filters, setFilters] = useState<Record<string, string>>({});
   const [createOpen, setCreateOpen] = useState(false);
   const [editing, setEditing] = useState<UsuarioAdmin | null>(null);
   const [deactivating, setDeactivating] = useState<UsuarioAdmin | null>(null);
@@ -55,20 +55,18 @@ export default function AdminUsersPage() {
   const [errorKey, setErrorKey] = useState<string | null>(null);
   const [successKey, setSuccessKey] = useState<string | null>(null);
 
-  const pageSize = 20;
-
   const { data: result = { items: [], total: 0, page: 1, pageSize: 20 }, isLoading } = useQuery({
-    queryKey: ['admin', 'usuarios', page, pageSize, sortBy, sortDir, filtroNombre, filtroEmail, filtroMembresia, filtroRol],
+    queryKey: ['admin', 'usuarios', page, pageSize, sortBy, sortDir, filters],
     queryFn: () =>
       fetchUsuarios({
         page,
         pageSize,
         sortBy,
         sortDir,
-        ...(filtroNombre && { nombre: filtroNombre }),
-        ...(filtroEmail && { email: filtroEmail }),
-        ...(filtroMembresia && { membresia: filtroMembresia }),
-        ...(filtroRol && { rol: filtroRol }),
+        ...(filters.nombre && { nombre: filters.nombre }),
+        ...(filters.email && { email: filters.email }),
+        ...(filters.membresia && { membresia: filters.membresia }),
+        ...(filters.rol && { rol: filters.rol }),
       }),
   });
 
@@ -93,7 +91,7 @@ export default function AdminUsersPage() {
 
   const refresh = () =>
     queryClient.invalidateQueries({
-      queryKey: ['admin', 'usuarios', page, pageSize, sortBy, sortDir, filtroNombre, filtroEmail, filtroMembresia, filtroRol],
+      queryKey: ['admin', 'usuarios', page, pageSize, sortBy, sortDir, filters],
     });
 
   const toggleSort = (col: 'nombre' | 'email' | 'membresia' | 'rol') => {
@@ -103,6 +101,12 @@ export default function AdminUsersPage() {
       setSortBy(col);
       setSortDir('asc');
     }
+    setPage(1);
+  };
+
+  const handleFiltersChange = (newFilters: Record<string, string>) => {
+    setFilters(newFilters);
+    setPage(1);
   };
 
   async function onCreateOrEdit(values: Formulario) {
@@ -194,6 +198,13 @@ export default function AdminUsersPage() {
     }
   }
 
+  const filterConfig: FilterConfig[] = [
+    { key: 'nombre', label: t('common:fields.name'), placeholder: t('common:fields.name') },
+    { key: 'email', label: t('common:fields.email'), placeholder: t('common:fields.email'), type: 'email' },
+    { key: 'membresia', label: t('users.memberships'), placeholder: t('users.memberships') },
+    { key: 'rol', label: t('users.role'), placeholder: t('users.role') },
+  ];
+
   const SortableHeader = ({ col, label }: { col: 'nombre' | 'email' | 'membresia' | 'rol'; label: string }) => (
     <button
       onClick={() => toggleSort(col)}
@@ -278,81 +289,27 @@ export default function AdminUsersPage() {
       {errorKey && <AlertBanner messageKey={errorKey} />}
       {successKey && <AlertBanner messageKey={successKey} tone="info" />}
 
-      <div className="grid grid-cols-1 gap-3 md:grid-cols-4">
-        <Input
-          label={t('common:fields.name')}
-          placeholder={t('common:fields.name')}
-          value={filtroNombre}
-          onChange={(e) => {
-            setFiltroNombre(e.target.value);
-            setPage(1);
-          }}
-        />
-        <Input
-          label={t('common:fields.email')}
-          placeholder={t('common:fields.email')}
-          value={filtroEmail}
-          onChange={(e) => {
-            setFiltroEmail(e.target.value);
-            setPage(1);
-          }}
-        />
-        <Input
-          label={t('users.memberships')}
-          placeholder={t('users.memberships')}
-          value={filtroMembresia}
-          onChange={(e) => {
-            setFiltroMembresia(e.target.value);
-            setPage(1);
-          }}
-        />
-        <Input
-          label={t('users.role')}
-          placeholder={t('users.role')}
-          value={filtroRol}
-          onChange={(e) => {
-            setFiltroRol(e.target.value);
-            setPage(1);
-          }}
-        />
-      </div>
+      <TableFilters filters={filterConfig} onFiltersChange={handleFiltersChange} activeFilters={filters} />
 
       {isLoading ? (
         <SkeletonRows rows={4} />
       ) : (
-        <Table columns={columns} rows={rows} emptyTitle={t('users.empty')} />
-      )}
-
-      {total > 0 && (
-        <div className="flex items-center justify-between text-sm text-graphite">
-          <div>
-            {t('users.showing_page', {
-              current: page,
-              total: totalPages,
-              start: (page - 1) * pageSize + 1,
-              end: Math.min(page * pageSize, total),
-              count: total,
-            })}
-          </div>
-          <div className="flex gap-2">
-            <Button
-              variant="secondary"
-              onClick={() => setPage(Math.max(1, page - 1))}
-              disabled={page === 1}
-              className="px-3 py-2 text-xs"
-            >
-              {t('users.prev_page')}
-            </Button>
-            <Button
-              variant="secondary"
-              onClick={() => setPage(Math.min(totalPages, page + 1))}
-              disabled={page === totalPages}
-              className="px-3 py-2 text-xs"
-            >
-              {t('users.next_page')}
-            </Button>
-          </div>
-        </div>
+        <>
+          <Table columns={columns} rows={rows} emptyTitle={t('users.empty')} />
+          {totalPages > 1 && (
+            <TablePagination
+              currentPage={page}
+              totalPages={totalPages}
+              pageSize={pageSize}
+              total={total}
+              onPageChange={setPage}
+              onPageSizeChange={(size) => {
+                setPageSize(size);
+                setPage(1);
+              }}
+            />
+          )}
+        </>
       )}
 
       <Dialog open={createOpen} onClose={() => { setCreateOpen(false); setEditing(null); }} title={editing ? t('users.edit') : t('users.create')}>
