@@ -359,9 +359,43 @@ export async function eliminarSubrol(id: string): Promise<{ id: string }> {
 
 // ---- Agricultores (O5) ----
 
-export async function fetchAgricultores(): Promise<Agricultor[]> {
-  if (isDemo()) return FARMERS;
-  const { data } = await api.get<Agricultor[]>('/agricultores');
+export interface PaginatedAgricultores {
+  items: Agricultor[];
+  total: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
+}
+
+export async function fetchAgricultores(
+  filters?: { nombre?: string; email?: string; finca?: string },
+  page: number = 1,
+  pageSize: number = 25,
+): Promise<PaginatedAgricultores> {
+  if (isDemo()) {
+    const filtered = FARMERS.filter((a) => {
+      if (filters?.nombre && !a.nombre.toLowerCase().includes(filters.nombre.toLowerCase())) return false;
+      if (filters?.email && !a.email.toLowerCase().includes(filters.email.toLowerCase())) return false;
+      if (filters?.finca && !a.finca.toLowerCase().includes(filters.finca.toLowerCase())) return false;
+      return true;
+    });
+
+    const total = filtered.length;
+    const totalPages = Math.ceil(total / pageSize);
+    const offset = (page - 1) * pageSize;
+    const items = filtered.slice(offset, offset + pageSize);
+
+    return { items, total, page, pageSize, totalPages };
+  }
+
+  const params = new URLSearchParams();
+  if (filters?.nombre) params.append('nombre', filters.nombre);
+  if (filters?.email) params.append('email', filters.email);
+  if (filters?.finca) params.append('finca', filters.finca);
+  params.append('page', String(page));
+  params.append('pageSize', String(pageSize));
+
+  const { data } = await api.get<PaginatedAgricultores>(`/agricultores?${params}`);
   return data;
 }
 

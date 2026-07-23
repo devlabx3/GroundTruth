@@ -9,6 +9,8 @@ import Table from '@/components/ui/Table';
 import type { Column } from '@/components/ui/Table';
 import Dialog from '@/components/ui/Dialog';
 import Input from '@/components/ui/Input';
+import TableFilters, { type FilterConfig } from '@/components/ui/TableFilters';
+import TablePagination from '@/components/ui/TablePagination';
 import { SkeletonRows } from '@/components/ui/Skeleton';
 import AlertBanner from '@/components/shared/AlertBanner';
 import { zodResolver } from '@/lib/zodResolver';
@@ -33,10 +35,21 @@ type Formulario = z.infer<typeof schema>;
 export default function FarmersPage() {
   const { t } = useTranslation(['dashboard', 'common']);
   const queryClient = useQueryClient();
-  const { data: rows, isLoading } = useQuery({ queryKey: ['dashboard', 'agricultores'], queryFn: fetchAgricultores });
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(25);
+  const [filters, setFilters] = useState<Record<string, string>>({});
   const [dialogOpen, setDialogOpen] = useState(false);
   const [busy, setBusy] = useState(false);
   const [errorKey, setErrorKey] = useState<string | null>(null);
+
+  const { data: result, isLoading } = useQuery({
+    queryKey: ['dashboard', 'agricultores', filters, page, pageSize],
+    queryFn: () => fetchAgricultores(
+      { nombre: filters.nombre, email: filters.email, finca: filters.finca },
+      page,
+      pageSize,
+    ),
+  });
 
   const activeMembership = useSession((s) => s.activeMembership());
   const isDireccion = activeMembership?.subRolNombre === 'Dirección';
@@ -45,6 +58,12 @@ export default function FarmersPage() {
     resolver: zodResolver(schema),
     defaultValues: { nombre: '', email: '' },
   });
+
+  const filterConfig: FilterConfig[] = [
+    { key: 'nombre', label: t('common:fields.name'), placeholder: 'Buscar por nombre...' },
+    { key: 'email', label: t('common:fields.email'), placeholder: 'Buscar por email...', type: 'email' },
+    { key: 'finca', label: t('topology.farm'), placeholder: 'Buscar por finca...' },
+  ];
 
   const columns: Column<Agricultor>[] = [
     { key: 'nombre', header: t('common:fields.name') },
@@ -60,6 +79,8 @@ export default function FarmersPage() {
       await crearAgricultor(values);
       setDialogOpen(false);
       reset();
+      setPage(1);
+      setFilters({});
       queryClient.invalidateQueries({ queryKey: ['dashboard', 'agricultores'] });
     } catch (e) {
       setErrorKey(claveDeError(e));
@@ -67,6 +88,11 @@ export default function FarmersPage() {
       setBusy(false);
     }
   }
+
+  const handleFiltersChange = (newFilters: Record<string, string>) => {
+    setFilters(newFilters);
+    setPage(1);
+  };
 
   return (
     <div className="flex flex-col gap-4">
@@ -80,10 +106,27 @@ export default function FarmersPage() {
         )}
       </div>
 
+      <TableFilters filters={filterConfig} onFiltersChange={handleFiltersChange} activeFilters={filters} />
+
       {isLoading ? (
         <SkeletonRows rows={3} />
       ) : (
-        <Table columns={columns} rows={rows} emptyTitle={t('farmers.empty')} />
+        <>
+          <Table columns={columns} rows={result?.items ?? []} emptyTitle={t('farmers.empty')} />
+          {result && result.totalPages > 1 && (
+            <TablePagination
+              currentPage={page}
+              totalPages={result.totalPages}
+              pageSize={pageSize}
+              total={result.total}
+              onPageChange={setPage}
+              onPageSizeChange={(size) => {
+                setPageSize(size);
+                setPage(1);
+              }}
+            />
+          )}
+        </>
       )}
 
       <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)} title={t('farmers.create')}>

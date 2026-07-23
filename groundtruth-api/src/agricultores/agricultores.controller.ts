@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Patch, Post, Req } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post, Query, Req } from '@nestjs/common';
 import { NeedsPrivilege } from '@/auth/needs-privilege.decorator';
 import type { OperadorRequest } from '@/auth/privileges.guard';
 import { AgricultoresService } from './agricultores.service';
@@ -9,8 +9,20 @@ export class AgricultoresController {
   constructor(private readonly agricultores: AgricultoresService) {}
 
   @Get()
-  list(@Req() req: OperadorRequest) {
-    return this.agricultores.list(req.operadorId);
+  list(
+    @Req() req: OperadorRequest,
+    @Query('nombre') nombre?: string,
+    @Query('email') email?: string,
+    @Query('finca') finca?: string,
+    @Query('page') page: string = '1',
+    @Query('pageSize') pageSize: string = '25',
+  ) {
+    return this.agricultores.list(
+      req.operadorId,
+      { nombre, email, finca },
+      Number(page),
+      Number(pageSize),
+    );
   }
 
   @Post()
