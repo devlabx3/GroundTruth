@@ -6,7 +6,7 @@
 
 Contrastado contra el router y el árbol de componentes (julio 2026).
 
-> ✅ **Las 37 rutas de este índice existen, una a una.** El router las implementa todas, con
+> ✅ **Las rutas de este índice existen, una a una.** El router las implementa todas, con
 > los guards en el orden del §2.1.
 >
 > ⚠️ **Lo que NO coincide es el inventario de componentes (§7):** el documento nombraba **una
@@ -14,6 +14,14 @@ Contrastado contra el router y el árbol de componentes (julio 2026).
 > Se construyó con **menos componentes y más genéricos** (`Card`, `Table`, `Dialog`…), montados
 > en cada vista. **Es mejor así**: menos superficie que mantener y menos abstracciones de un
 > solo uso. Este documento se corrige para reflejar lo que existe, no al revés.
+>
+> 🆕 **Fincas y agricultores se separaron en dos flujos** (antes vivían fusionados bajo O4):
+> alta de finca+agricultor en un único paso con `OnchainProgressModal` (`/dashboard/fincas/nueva`),
+> gestión/listado de fincas (`/dashboard/fincas`) y gestión de parcelas (`/dashboard/topologia`)
+> quedaron como vistas independientes. Los tres listados de gestión —fincas, parcelas,
+> agricultores— y también `/admin/unidades` y `/admin/usuarios` ganaron **filtros, ordenamiento
+> por columna y paginación** mediante los componentes genéricos `TableFilters`/`TablePagination`
+> (§7), reemplazando lo que antes era "trae todo de una vez sin controles".
 
 ---
 
@@ -93,10 +101,12 @@ Cada fila indica el **privilegio** que habilita el ítem del sidebar (`Privilege
 | --- | --- | --- | --- | --- | --- |
 | `/:locale/dashboard` | Dashboard | O2 | (base, todo miembro) | `Card` ×3, `ParcelMap`, `TreasuryBalanceCard` | ⚠️ Query agregada. **Sin Realtime**: refetch |
 | `/:locale/dashboard/tesoreria` | Tesorería | O3 | `tesoreria.ver` | `TreasuryBalanceCard`, `CopyButton`, `Table`, `ExplorerLink` | ✅ `GET /tesoreria`. ⚠️ **La dirección de depósito es el ATA, no la Treasury PDA.** La vista **reconcilia leyendo la cadena** al abrirse, y hay botón manual: no depende del webhook |
-| `/:locale/dashboard/topologia` | Fincas y parcelas | O4 | `topologia.gestionar` | `Table` de parcelas, `SoilCoreIndicator`, `StatusBadge`, `Button` | Query lista |
+| `/:locale/dashboard/fincas` | Fincas de la unidad | O4 | `topologia.gestionar` | `Table` (nombre, agricultor + email, país, área, parcelas), `TableFilters` (nombre/agricultor/país), `TablePagination`, encabezados ordenables, `Dialog` (editar) | ✅ `GET /topologia/fincas/buscar` — filtros, orden y paginación en el backend (`buscarFincas`), no en memoria |
+| `/:locale/dashboard/fincas/nueva` | Nueva finca **con agricultor** (un solo paso) | O4, O5 | `topologia.gestionar` | `Select` (país, `COUNTRIES`), `Input` ×4, `OnchainProgressModal` (2 pasos: crear finca → asignar agricultor) | ✅ `POST /topologia/fincas-con-agricultor` — transacción atómica: crea la finca, reutiliza el usuario agricultor si el email ya existe (`upsertUsuario`, igual patrón que alta de unidad) o lo invita de verdad por Supabase Auth, crea la membresía `Agricultor` y audita. El email de reset password se envía **después** del commit |
+| `/:locale/dashboard/topologia` | Parcelas de la unidad | O4 | `topologia.gestionar` | `Table` de parcelas, `SoilCoreIndicator`, `StatusBadge`, `TableFilters` (nombre/finca/cultivo/estado), `TablePagination`, encabezados ordenables | ✅ `GET /topologia/parcelas/buscar` (`buscarParcelas`). El filtro de estado traduce `conforme/alerta/pendiente` (UI) a `ultimo_estado` real en BD |
 | `/:locale/dashboard/topologia/nueva` | Nueva parcela | O4 | `topologia.gestionar` | `ParcelMap` (dibujo), `Select` (finca, cultivo), `AlertBanner` (gate) | ✅ `POST /topologia/parcelas`. **El gate de sensores y la validez del polígono los impone el SERVIDOR** con PostGIS; el navegador solo estima |
 | `/:locale/dashboard/topologia/:id` | Detalle / editar parcela | O4, O6 | `topologia.gestionar` (edición) / `telemetria.ver` (lectura) | `ParcelMap`, `TelemetryChart` (Recharts), `SoilCoreIndicator`, `CycleHistoryList` | ⚠️ Query detalle. **Sin Realtime**: refetch |
-| `/:locale/dashboard/agricultores` | Agricultores de la unidad | O5 | `agricultores.gestionar` | `Table`, `Dialog` (crear) | ⚠️ Crear un agricultor **crea su usuario y su finca**. No hay "vincular/reasignar". 🔴 **El agricultor creado aún no puede iniciar sesión** |
+| `/:locale/dashboard/agricultores` | Agricultores de la unidad | O5 | `agricultores.gestionar` | `Table`, `TableFilters` (nombre/email/finca), `TablePagination`, encabezados ordenables, `Dialog` (crear) | ✅ `GET /agricultores` con filtros/orden/paginación en el backend. Crear un agricultor suelto (sin finca) sigue existiendo para el caso de alta anticipada; el flujo normal de alta es fusionado desde `/dashboard/fincas/nueva`. ✅ **El agricultor ya recibe invitación real por Supabase Auth** (antes no podía iniciar sesión) |
 | `/:locale/dashboard/embarques` | Embarques | O7 | `embarques.preparar` | `Table` (estado: borrador / listo para aprobación / procesando / emitido), `StatusBadge`, `Button` (nuevo) | Query lista |
 | `/:locale/dashboard/embarques/nuevo` | Preparar embarque | O7 | `embarques.preparar` | `Table` de parcelas elegibles, `Card` de costo | ✅ Costo leído de los **parámetros reales** |
 | `/:locale/dashboard/embarques/:id` | Detalle de embarque | O7 | `embarques.preparar` / `certificados.emitir` | `Card` de costo, `OnchainProgressModal` (5 pasos) | ✅ `POST :id/certificar` — **saga de 3 fases**, UNA transacción on-chain. 🔜 **Sin `ApprovalPendingBanner`**: quien no tiene el privilegio recibe 403; el flujo de aprobación no existe. 🔜 **Sin suscripción al saga** (el modal no es recuperable si se cierra) |
@@ -112,11 +122,11 @@ Cada fila indica el **privilegio** que habilita el ítem del sidebar (`Privilege
 | Ruta | Vista | Caso de uso | Componentes principales | Datos |
 | --- | --- | --- | --- | --- |
 | `/:locale/admin` | Panel global | A6 | `Card` ×4 + buscador transversal | ✅ Query agregada multi-unidad |
-| `/:locale/admin/unidades` | Unidades de negocio | A1 | `Table`, `Button` | ✅ Estados: activa / suspendida / **pendiente on-chain** |
+| `/:locale/admin/unidades` | Unidades de negocio | A1 | `Table`, `TableFilters` (nombre/país/estado), `TablePagination`, encabezados ordenables, `Button` | ✅ Estados: activa / suspendida / **pendiente on-chain**. Filtro de estado traduce `activa/suspendida/pendiente` (UI) a `operador_estado` real en BD (`ACTIVO/SUSPENDIDO/PENDIENTE_ONCHAIN`) |
 | `/:locale/admin/unidades/nueva` | Alta de unidad | A1 | `Card`, `OnchainProgressModal` (2 pasos) | ⚠️ **NO llama a `init_operator_treasury`.** Los 2 pasos son *crear la unidad + su sub-rol* y *sembrar al administrador*. La unidad nace `PENDIENTE_ONCHAIN` **sin tesorería** |
 | `/:locale/admin/unidades/:id` | Detalle de unidad | A1 | `TreasuryBalanceCard`, `Table` de miembros, `Button` | ✅ **Suspender muerde**: la unidad no puede certificar. Si está `PENDIENTE_ONCHAIN`, **no hay tesorería que mostrar** y se dice |
 | `/:locale/admin/privilegios` | Catálogo de privilegios | A2 | `Table`, `Dialog`, `ConfirmDialog` con el impacto (cuántos sub-roles lo usan) | ✅ Deprecar = **deja de asignarse**; quien lo tiene lo conserva |
-| `/:locale/admin/usuarios` | Soporte de usuarios y membresías | A3 | `Table`, buscador, `Dialog`, `ConfirmDialog` | ✅ Desactivar respeta el guardarraíl **LAST_TEAM_ADMIN**. 🔴 Los usuarios creados **no pueden iniciar sesión** todavía |
+| `/:locale/admin/usuarios` | Soporte de usuarios y membresías | A3 | `Table`, `TableFilters` (nombre/email/membresía/rol), `TablePagination`, encabezados ordenables, `Dialog`, `ConfirmDialog` | ✅ Desactivar respeta el guardarraíl **LAST_TEAM_ADMIN**. ✅ Los usuarios ya reciben invitación real por Supabase Auth y pueden fijar contraseña (reset o fijado directo por el admin) |
 | `/:locale/admin/parametros` | Parámetros del sistema | A4 | `Card` por sección + `Table` de bitácora | ✅ **No es decorativo**: el `certify` lee estas tarifas al cobrar. Cambios auditados con antes/después |
 | `/:locale/admin/simulador` | Simulador IoT | A5 | `Table` de nodos, `Dialog` (perfil sano/degradado + horas) | ✅ **Genera telemetría real**, evaluada contra los umbrales de la base, y levanta la alerta que ve el agricultor |
 | `/:locale/admin/supervision` | Supervisión global | A6 | `Table` con filtros y buscador | ✅ Query transversal |
@@ -152,7 +162,19 @@ superficie que mantener y ninguna abstracción de un solo uso.
 ### Genéricos (`components/ui/`)
 
 `Button` · `Card` · `Table` · `Dialog` · `ConfirmDialog` · `Input` · `Select` · `Textarea` ·
-`StatusBadge` · `EmptyState` · `Skeleton` · `CopyButton`
+`StatusBadge` · `EmptyState` · `Skeleton` · `CopyButton` · `TableFilters` · `TablePagination`
+
+> **`TableFilters`/`TablePagination`**: par de componentes para listados de gestión con volumen
+> (fincas, parcelas, agricultores, unidades, usuarios). `TableFilters` recibe un array de
+> `FilterConfig` (texto o `select`) y expone un único objeto `activeFilters`; `TablePagination`
+> maneja página actual, tamaño de página (10/25/50/100) y total. El filtrado/orden/paginación
+> **siempre ocurre en el backend** (WHERE dinámico con parámetros indexados por posición y
+> whitelist explícito de columnas ordenables — nunca se interpola el nombre de columna que
+> manda el cliente), salvo en modo demo, donde se simula en memoria con la misma firma. Antes de
+> replicar este patrón en un listado nuevo, revisar si esa lista ya se usa como **selector**
+> en otra vista (p. ej. `fetchFincas`/`fetchParcelas` alimentan selectores de alta): en ese caso
+> se agrega una función/endpoint de búsqueda en paralelo (`buscarFincas`, `buscarParcelas`) en
+> vez de cambiar la firma de la función existente, para no romper al otro consumidor.
 
 > **`Button`: los colores son del `variant`, nunca del `className`.** Pasar
 > `className="bg-… text-…"` ya produjo un **botón invisible** (esmeralda sobre esmeralda);
