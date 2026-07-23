@@ -65,6 +65,30 @@ export class TopologiaController {
     return this.topologia.crearParcela(req.operadorId, req.usuarioId, body);
   }
 
+  /** Parcelas de la unidad, paginadas/filtrables/ordenables — listado de gestión. */
+  @Get('parcelas/buscar')
+  @NeedsPrivilege('topologia.gestionar', 'telemetria.ver')
+  buscarParcelas(
+    @Req() req: OperadorRequest,
+    @Query('nombre') nombre?: string,
+    @Query('finca') finca?: string,
+    @Query('cultivo') cultivo?: string,
+    @Query('estado') estado?: 'conforme' | 'alerta' | 'pendiente',
+    @Query('page') page: string = '1',
+    @Query('pageSize') pageSize: string = '25',
+    @Query('sortBy') sortBy: 'nombre' | 'finca' | 'cultivo' | 'areaHa' | 'estado' = 'nombre',
+    @Query('sortDir') sortDir: 'asc' | 'desc' = 'asc',
+  ) {
+    return this.topologia.buscarParcelas(
+      req.operadorId,
+      { nombre, finca, cultivo, estado },
+      Number(page),
+      Number(pageSize),
+      sortBy,
+      sortDir,
+    );
+  }
+
   /** Detalle de parcela: gestión O lectura de telemetría (Índice §5). */
   @Get('parcelas/:id')
   @NeedsPrivilege('topologia.gestionar', 'telemetria.ver')

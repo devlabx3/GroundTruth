@@ -446,6 +446,97 @@ export class TopologiaService {
     );
   }
 
+  /** Parcelas de la unidad, paginadas y filtrables — el listado de gestión (O4/O6). */
+  async buscarParcelas(
+    operadorId: string,
+    filters?: { nombre?: string; finca?: string; cultivo?: string; estado?: 'conforme' | 'alerta' | 'pendiente' },
+    page: number = 1,
+    pageSize: number = 25,
+    sortBy: 'nombre' | 'finca' | 'cultivo' | 'areaHa' | 'estado' = 'nombre',
+    sortDir: 'asc' | 'desc' = 'asc',
+  ) {
+    const offset = (page - 1) * pageSize;
+
+    const whereClauses: string[] = ['f.operador_id = $1'];
+    const params: any[] = [operadorId];
+
+    if (filters?.nombre) {
+      params.push(`%${filters.nombre}%`);
+      whereClauses.push(`lower(p.nombre) like lower($${params.length})`);
+    }
+    if (filters?.finca) {
+      params.push(`%${filters.finca}%`);
+      whereClauses.push(`lower(f.nombre) like lower($${params.length})`);
+    }
+    if (filters?.cultivo) {
+      params.push(`%${filters.cultivo}%`);
+      whereClauses.push(`lower(c.nombre) like lower($${params.length})`);
+    }
+    if (filters?.estado) {
+      const ultimoEstado = filters.estado === 'conforme' ? 'VERDE' : filters.estado === 'alerta' ? 'ROJO' : null;
+      if (ultimoEstado) {
+        params.push(ultimoEstado);
+        whereClauses.push(`p.ultimo_estado = $${params.length}`);
+      } else {
+        whereClauses.push(`p.ultimo_estado is null`);
+      }
+    }
+
+    const where = whereClauses.join(' and ');
+    const dir = sortDir === 'desc' ? 'desc' : 'asc';
+    const orderColumn =
+      sortBy === 'finca' ? 'f.nombre'
+      : sortBy === 'cultivo' ? 'c.nombre'
+      : sortBy === 'areaHa' ? 'p.area_m2'
+      : sortBy === 'estado' ? 'p.ultimo_estado'
+      : 'p.nombre';
+
+    const countResult = await this.db.queryOne<{ total: string }>(
+      `
+      select count(distinct p.id) as total
+      from parcelas p
+      join fincas f   on f.id = p.finca_id
+      join cultivos c on c.id = p.cultivo_id
+      where ${where}
+      `,
+      params,
+    );
+
+    const total = Number(countResult?.total ?? 0);
+    const totalPages = Math.ceil(total / pageSize);
+
+    const limitParamIndex = params.length + 1;
+    const offsetParamIndex = params.length + 2;
+    const rows = await this.db.query(
+      `
+      select p.id,
+             p.nombre,
+             f.nombre                        as finca,
+             f.agricultor_id                 as agricultor_id,
+             c.nombre                        as cultivo,
+             round(p.area_m2)                as area_m2,
+             round(p.area_m2 / 10000.0, 2)   as area_ha,
+             st_asgeojson(p.geom)::json      as geom,
+             st_y(st_centroid(p.geom))       as centro_lat,
+             st_x(st_centroid(p.geom))       as centro_lng,
+             count(ns.id) filter (where ns.activo) as sensores,
+             p.ultimo_estado,
+             bool_or(ns.tipo_nodo = 'SIMULADO') filter (where ns.activo) as fuente_simulada
+      from parcelas p
+      join fincas f   on f.id = p.finca_id
+      join cultivos c on c.id = p.cultivo_id
+      left join nodos_sensores ns on ns.parcela_id = p.id
+      where ${where}
+      group by p.id, f.nombre, f.agricultor_id, c.nombre
+      order by ${orderColumn} ${dir}
+      limit $${limitParamIndex} offset $${offsetParamIndex}
+      `,
+      [...params, pageSize, offset],
+    );
+
+    return { items: rows, total, page, pageSize, totalPages };
+  }
+
   async getParcela(operadorId: string, parcelaId: string) {
     const parcela = await this.db.queryOne(
       `

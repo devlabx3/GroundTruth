@@ -124,6 +124,63 @@ export async function fetchParcelas(): Promise<Parcela[]> {
   return data.map(mapParcela);
 }
 
+export interface PaginatedParcelas {
+  items: Parcela[];
+  total: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
+}
+
+/** Parcelas de la unidad, paginadas/filtrables/ordenables — listado de gestión (O4/O6). */
+export async function buscarParcelas(
+  filters?: { nombre?: string; finca?: string; cultivo?: string; estado?: EstadoParcela },
+  page: number = 1,
+  pageSize: number = 25,
+  sortBy: 'nombre' | 'finca' | 'cultivo' | 'areaHa' | 'estado' = 'nombre',
+  sortDir: 'asc' | 'desc' = 'asc',
+): Promise<PaginatedParcelas> {
+  if (isDemo()) {
+    const all = await demoQueryFn(PARCELS)();
+    const filtered = all.filter((p) => {
+      if (filters?.nombre && !p.nombre.toLowerCase().includes(filters.nombre.toLowerCase())) return false;
+      if (filters?.finca && !p.finca.toLowerCase().includes(filters.finca.toLowerCase())) return false;
+      if (filters?.cultivo && !p.cultivo.toLowerCase().includes(filters.cultivo.toLowerCase())) return false;
+      if (filters?.estado && p.estado !== filters.estado) return false;
+      return true;
+    });
+
+    const sorted = [...filtered].sort((a, b) => {
+      const av = sortBy === 'areaHa' ? a.areaHa : a[sortBy];
+      const bv = sortBy === 'areaHa' ? b.areaHa : b[sortBy];
+      const cmp = typeof av === 'number' && typeof bv === 'number' ? av - bv : String(av).localeCompare(String(bv));
+      return sortDir === 'desc' ? -cmp : cmp;
+    });
+
+    const total = sorted.length;
+    const totalPages = Math.ceil(total / pageSize);
+    const offset = (page - 1) * pageSize;
+    const items = sorted.slice(offset, offset + pageSize);
+
+    return { items, total, page, pageSize, totalPages };
+  }
+
+  const params = new URLSearchParams();
+  if (filters?.nombre) params.append('nombre', filters.nombre);
+  if (filters?.finca) params.append('finca', filters.finca);
+  if (filters?.cultivo) params.append('cultivo', filters.cultivo);
+  if (filters?.estado) params.append('estado', filters.estado);
+  params.append('page', String(page));
+  params.append('pageSize', String(pageSize));
+  params.append('sortBy', sortBy);
+  params.append('sortDir', sortDir);
+
+  const { data } = await api.get<{ items: ApiParcela[]; total: number; page: number; pageSize: number; totalPages: number }>(
+    `/topologia/parcelas/buscar?${params}`,
+  );
+  return { ...data, items: data.items.map(mapParcela) };
+}
+
 /** Fincas de la unidad — selector del alta de parcela (O4). */
 export async function fetchFincas(): Promise<Finca[]> {
   if (isDemo()) {
