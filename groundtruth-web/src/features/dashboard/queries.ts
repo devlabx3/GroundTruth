@@ -132,6 +132,8 @@ export async function fetchFincas(): Promise<Finca[]> {
       id: `finca-${i}`,
       nombre,
       agricultor: '—',
+      agricultorEmail: null,
+      pais: 'CR',
       parcelas: 0,
     }));
   }

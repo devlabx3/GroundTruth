@@ -15,7 +15,7 @@ import { SkeletonRows } from '@/components/ui/Skeleton';
 import AlertBanner from '@/components/shared/AlertBanner';
 import { zodResolver } from '@/lib/zodResolver';
 import { COUNTRIES } from '@/lib/countries';
-import { fetchFincas, fetchAgricultores, asignarAgricultorFinca, editarFinca } from '../queries';
+import { fetchFincas, editarFinca } from '../queries';
 import { errorKey as claveDeError } from '@/lib/api';
 import type { Finca } from '@/types/api';
 
@@ -27,12 +27,6 @@ const editarSchema = z.object({
 
 type EditarFormulario = z.infer<typeof editarSchema>;
 
-const asignarSchema = z.object({
-  agricultorId: z.string().uuid('errors:field_required'),
-});
-
-type AsignarFormulario = z.infer<typeof asignarSchema>;
-
 /**
  * Fincas de la unidad (O4). Crear finca + asignar agricultor.
  */
@@ -42,18 +36,12 @@ export default function FarmsPage() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [editing, setEditing] = useState<Finca | null>(null);
-  const [assignOpen, setAssignOpen] = useState<Finca | null>(null);
   const [busy, setBusy] = useState(false);
   const [errorKey, setErrorKey] = useState<string | null>(null);
 
   const { data: fincas = [], isLoading: loadingFincas } = useQuery({
     queryKey: ['dashboard', 'fincas'],
     queryFn: fetchFincas,
-  });
-
-  const { data: agricultores = [], isLoading: loadingAgricultores } = useQuery({
-    queryKey: ['dashboard', 'agricultores'],
-    queryFn: fetchAgricultores,
   });
 
   const {
@@ -65,18 +53,6 @@ export default function FarmsPage() {
     resolver: zodResolver(editarSchema),
     defaultValues: { nombre: '', pais: '', areaHa: 0 },
   });
-
-  const {
-    register: registerAsignar,
-    handleSubmit: handleSubmitAsignar,
-    reset: resetAsignar,
-    formState: { errors: errorsAsignar },
-  } = useForm({
-    resolver: zodResolver(asignarSchema),
-    defaultValues: { agricultorId: '' },
-  });
-
-  const isLoading = loadingFincas || loadingAgricultores;
 
   async function onEditarFinca(values: EditarFormulario) {
     if (!editing) return;
@@ -94,53 +70,29 @@ export default function FarmsPage() {
     }
   }
 
-  async function onAssignAgricultor(values: AsignarFormulario) {
-    if (!assignOpen) return;
-    setBusy(true);
-    setErrorKey(null);
-    try {
-      await asignarAgricultorFinca(assignOpen.id, values.agricultorId);
-      setAssignOpen(null);
-      resetAsignar();
-      queryClient.invalidateQueries({ queryKey: ['dashboard', 'fincas'] });
-    } catch (e) {
-      setErrorKey(claveDeError(e));
-    } finally {
-      setBusy(false);
-    }
-  }
-
   const columns: Column<Finca>[] = [
     { key: 'nombre', header: t('common:fields.name') },
-    { key: 'agricultor', header: t('topology.farmer'), render: (r) => r.agricultor || <span className="text-graphite">{t('topology.unassigned')}</span> },
+    { key: 'agricultor', header: t('topology.farmer'), render: (r) => r.agricultor ? (
+      <div className="flex flex-col">
+        <span>{r.agricultor}</span>
+        {r.agricultorEmail && <span className="text-xs text-graphite">{r.agricultorEmail}</span>}
+      </div>
+    ) : <span className="text-graphite">{t('topology.unassigned')}</span> },
     { key: 'areaHa', header: t('topology.area'), align: 'right', mono: true, render: (r) => `${r.areaHa ? Number(r.areaHa).toFixed(2) : '—'} ha` },
     { key: 'pais', header: t('common:fields.country') },
     { key: 'parcelas', header: t('common:nav.parcels'), align: 'right', mono: true },
     { key: 'actions', header: '', align: 'right', render: (r) => (
-      <div className="flex gap-1">
-        <Button
-          variant="ghost"
-          className="px-2 py-1 text-xs"
-          title="Editar finca"
-          onClick={() => {
-            setErrorKey(null);
-            setEditing(r);
-            resetEditar({ nombre: r.nombre, pais: '', areaHa: r.areaHa ?? 0 });
-          }}>
-          <PencilSimpleIcon size={14} />
-        </Button>
-        <Button
-          variant="ghost"
-          className="px-2 py-1 text-xs"
-          title="Asignar agricultor"
-          onClick={() => {
-            setErrorKey(null);
-            setAssignOpen(r);
-            resetAsignar({ agricultorId: '' });
-          }}>
-          {t('topology.farmer')}
-        </Button>
-      </div>
+      <Button
+        variant="ghost"
+        className="px-2 py-1 text-xs"
+        title="Editar finca"
+        onClick={() => {
+          setErrorKey(null);
+          setEditing(r);
+          resetEditar({ nombre: r.nombre, pais: r.pais, areaHa: r.areaHa ?? 0 });
+        }}>
+        <PencilSimpleIcon size={14} />
+      </Button>
     ) },
   ];
 
@@ -156,12 +108,11 @@ export default function FarmsPage() {
 
       {errorKey && <AlertBanner messageKey={errorKey} />}
 
-      {isLoading ? (
+      {loadingFincas ? (
         <SkeletonRows rows={4} />
       ) : (
         <Table columns={columns} rows={fincas} emptyTitle={t('topology.no_farms')} />
       )}
-
 
       {/* Diálogo editar finca */}
       <Dialog open={!!editing} onClose={() => setEditing(null)} title={`Editar finca: ${editing?.nombre}`}>
@@ -186,31 +137,6 @@ export default function FarmsPage() {
           />
           <div className="flex justify-end gap-2">
             <Button variant="secondary" type="button" onClick={() => setEditing(null)}>
-              {t('common:actions.cancel')}
-            </Button>
-            <Button type="submit" disabled={busy}>
-              {busy ? t('common:loading') : t('common:actions.save')}
-            </Button>
-          </div>
-        </form>
-      </Dialog>
-
-      {/* Diálogo asignar agricultor */}
-      <Dialog open={!!assignOpen} onClose={() => setAssignOpen(null)} title={t('topology.assign_farmer')}>
-        <form onSubmit={handleSubmitAsignar(onAssignAgricultor)} className="flex flex-col gap-4">
-          {errorKey && <AlertBanner messageKey={errorKey} />}
-          <p className="text-sm text-graphite">
-            Asignar un agricultor a la finca <strong>{assignOpen?.nombre}</strong>
-          </p>
-          <Select
-            label={t('topology.farmer')}
-            placeholder={t('topology.select_farmer')}
-            options={agricultores.map((a) => ({ value: a.id, label: a.nombre }))}
-            errorKey={errorsAsignar.agricultorId?.message}
-            {...registerAsignar('agricultorId')}
-          />
-          <div className="flex justify-end gap-2">
-            <Button variant="secondary" type="button" onClick={() => setAssignOpen(null)}>
               {t('common:actions.cancel')}
             </Button>
             <Button type="submit" disabled={busy}>

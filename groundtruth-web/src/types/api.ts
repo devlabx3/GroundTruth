@@ -141,6 +141,8 @@ export interface Finca {
   id: string;
   nombre: string;
   agricultor: string | null;
+  agricultorEmail: string | null;
+  pais: string;
   areaHa?: number;
   parcelas: number;
 }

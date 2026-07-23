@@ -52,13 +52,13 @@ export class TopologiaService {
   async listFincas(operadorId: string) {
     const rows = await this.db.query<any>(
       `
-      select f.id, f.nombre, u.nombre as agricultor, f.area_ha,
+      select f.id, f.nombre, u.nombre as agricultor, u.email as agricultor_email, f.pais, f.area_ha,
              count(p.id) as parcelas
       from fincas f
       left join usuarios u on u.id = f.agricultor_id
       left join parcelas p on p.finca_id = f.id
       where f.operador_id = $1
-      group by f.id, f.nombre, u.nombre, f.area_ha
+      group by f.id, f.nombre, u.nombre, u.email, f.pais, f.area_ha
       order by f.nombre
       `,
       [operadorId],
@@ -67,6 +67,8 @@ export class TopologiaService {
       id: f.id,
       nombre: f.nombre,
       agricultor: f.agricultor ?? null,
+      agricultorEmail: f.agricultor_email ?? null,
+      pais: f.pais,
       areaHa: f.area_ha,
       parcelas: Number(f.parcelas),
     }));
