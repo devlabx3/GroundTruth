@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useForm } from 'react-hook-form';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
@@ -14,18 +15,9 @@ import { SkeletonRows } from '@/components/ui/Skeleton';
 import AlertBanner from '@/components/shared/AlertBanner';
 import { zodResolver } from '@/lib/zodResolver';
 import { COUNTRIES } from '@/lib/countries';
-import { fetchFincas, fetchAgricultores, crearFinca, asignarAgricultorFinca, editarFinca } from '../queries';
+import { fetchFincas, fetchAgricultores, asignarAgricultorFinca, editarFinca } from '../queries';
 import { errorKey as claveDeError } from '@/lib/api';
-import type { Finca, Agricultor } from '@/types/api';
-
-const crearSchema = z.object({
-  nombre: z.string().min(1, 'errors:field_required'),
-  pais: z.string().min(2, 'errors:field_required').max(2),
-  areaHa: z.number().positive('errors:field_required'),
-  agricultorId: z.string().uuid().optional().or(z.literal('')).transform(v => v || undefined),
-});
-
-type Formulario = z.infer<typeof crearSchema>;
+import type { Finca } from '@/types/api';
 
 const editarSchema = z.object({
   nombre: z.string().min(1, 'errors:field_required'),
@@ -46,8 +38,9 @@ type AsignarFormulario = z.infer<typeof asignarSchema>;
  */
 export default function FarmsPage() {
   const { t } = useTranslation(['dashboard', 'common']);
+  const { locale } = useParams();
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const [createOpen, setCreateOpen] = useState(false);
   const [editing, setEditing] = useState<Finca | null>(null);
   const [assignOpen, setAssignOpen] = useState<Finca | null>(null);
   const [busy, setBusy] = useState(false);
@@ -61,11 +54,6 @@ export default function FarmsPage() {
   const { data: agricultores = [], isLoading: loadingAgricultores } = useQuery({
     queryKey: ['dashboard', 'agricultores'],
     queryFn: fetchAgricultores,
-  });
-
-  const { register, handleSubmit, reset, formState: { errors } } = useForm({
-    resolver: zodResolver(crearSchema),
-    defaultValues: { nombre: '', pais: '', areaHa: 0, agricultorId: '' },
   });
 
   const {
@@ -89,21 +77,6 @@ export default function FarmsPage() {
   });
 
   const isLoading = loadingFincas || loadingAgricultores;
-
-  async function onCreateFinca(values: Formulario) {
-    setBusy(true);
-    setErrorKey(null);
-    try {
-      await crearFinca(values);
-      setCreateOpen(false);
-      reset();
-      queryClient.invalidateQueries({ queryKey: ['dashboard', 'fincas'] });
-    } catch (e) {
-      setErrorKey(claveDeError(e));
-    } finally {
-      setBusy(false);
-    }
-  }
 
   async function onEditarFinca(values: EditarFormulario) {
     if (!editing) return;
@@ -175,7 +148,7 @@ export default function FarmsPage() {
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl">{t('topology.farms')}</h1>
-        <Button onClick={() => { setErrorKey(null); setCreateOpen(true); }}>
+        <Button onClick={() => navigate(`/${locale}/dashboard/fincas/nueva`)}>
           <PlusIcon size={16} />
           {t('topology.new_farm')}
         </Button>
@@ -189,44 +162,6 @@ export default function FarmsPage() {
         <Table columns={columns} rows={fincas} emptyTitle={t('topology.no_farms')} />
       )}
 
-      {/* Diálogo crear finca */}
-      <Dialog open={createOpen} onClose={() => setCreateOpen(false)} title={t('topology.new_farm')}>
-        <form onSubmit={handleSubmit(onCreateFinca)} className="flex flex-col gap-4">
-          {errorKey && <AlertBanner messageKey={errorKey} />}
-          <Input label={t('common:fields.name')} errorKey={errors.nombre?.message} {...register('nombre')} />
-          <Select
-            label={t('common:fields.country')}
-            options={COUNTRIES}
-            placeholder={t('common:fields.select_country')}
-            errorKey={errors.pais?.message}
-            {...register('pais')}
-          />
-          <Input
-            label={t('topology.area')}
-            type="number"
-            step="0.01"
-            min="0"
-            placeholder="10.5"
-            errorKey={errors.areaHa?.message}
-            {...register('areaHa', { valueAsNumber: true })}
-          />
-          <Select
-            label={t('topology.farmer')}
-            placeholder={t('topology.optional')}
-            options={agricultores.map((a) => ({ value: a.id, label: a.nombre }))}
-            errorKey={errors.agricultorId?.message}
-            {...register('agricultorId')}
-          />
-          <div className="flex justify-end gap-2">
-            <Button variant="secondary" type="button" onClick={() => setCreateOpen(false)}>
-              {t('common:actions.cancel')}
-            </Button>
-            <Button type="submit" disabled={busy}>
-              {busy ? t('common:loading') : t('common:actions.save')}
-            </Button>
-          </div>
-        </form>
-      </Dialog>
 
       {/* Diálogo editar finca */}
       <Dialog open={!!editing} onClose={() => setEditing(null)} title={`Editar finca: ${editing?.nombre}`}>

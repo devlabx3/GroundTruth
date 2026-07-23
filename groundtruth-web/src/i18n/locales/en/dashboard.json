@@ -52,6 +52,15 @@
     "select_farm": "Select a farm",
     "declare_nodes": "Nodes to be installed on this plot"
   },
+  "farms": {
+    "new_with_farmer": "New farm with farmer",
+    "farm_data": "Farm data",
+    "farmer_data": "Assigned farmer data",
+    "farmer_name": "Farmer name",
+    "area": "Area (ha)",
+    "saga_create_farm": "Create farm",
+    "saga_seed_farmer": "Assign farmer"
+  },
   "telemetry": {
     "title": "Latest reading",
     "ph": "pH",

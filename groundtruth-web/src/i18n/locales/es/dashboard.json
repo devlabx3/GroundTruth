@@ -52,6 +52,15 @@
     "select_farm": "Selecciona una finca",
     "declare_nodes": "Nodos que se instalarán en la parcela"
   },
+  "farms": {
+    "new_with_farmer": "Nueva finca con agricultor",
+    "farm_data": "Datos de la finca",
+    "farmer_data": "Datos del agricultor encargado",
+    "farmer_name": "Nombre del agricultor",
+    "area": "Área (ha)",
+    "saga_create_farm": "Crear finca",
+    "saga_seed_farmer": "Asignar agricultor"
+  },
   "telemetry": {
     "title": "Última lectura",
     "simulated_source": "Fuente: datos simulados",

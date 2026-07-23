@@ -88,6 +88,7 @@ export const router = createBrowserRouter([
                 },
                 { path: 'dashboard/agricultores', element: gated(PRIVILEGES.FARMERS_MANAGE, page(() => import('@/features/dashboard/pages/FarmersPage'))) },
                 { path: 'dashboard/fincas', element: gated(PRIVILEGES.TOPOLOGY_MANAGE, page(() => import('@/features/dashboard/pages/FarmsPage'))) },
+                { path: 'dashboard/fincas/nueva', element: gated(PRIVILEGES.TOPOLOGY_MANAGE, page(() => import('@/features/dashboard/pages/FarmsNewPage'))) },
                 { path: 'dashboard/embarques', element: gated(PRIVILEGES.SHIPMENTS_PREPARE, page(() => import('@/features/dashboard/pages/ShipmentsPage'))) },
                 { path: 'dashboard/embarques/nuevo', element: gated(PRIVILEGES.SHIPMENTS_PREPARE, page(() => import('@/features/dashboard/pages/ShipmentNewPage'))) },
                 { path: 'dashboard/embarques/:id', element: gated(PRIVILEGES.SHIPMENTS_PREPARE, page(() => import('@/features/dashboard/pages/ShipmentDetailPage'))) },

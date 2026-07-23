@@ -21,6 +21,13 @@ export class TopologiaController {
     return this.topologia.crearFinca(req.operadorId, req.usuarioId, body);
   }
 
+  /** Alta de finca con agricultor encargado (flujo unificado con saga onchain). */
+  @Post('fincas-con-agricultor')
+  @NeedsPrivilege('topologia.gestionar')
+  crearFincaConAgricultor(@Req() req: OperadorRequest, @Body() body: unknown) {
+    return this.topologia.crearFincaConAgricultor(req.operadorId, req.usuarioId, body);
+  }
+
   /** Editar finca: actualizar nombre, país y área. */
   @Patch('fincas/:id')
   @NeedsPrivilege('topologia.gestionar')

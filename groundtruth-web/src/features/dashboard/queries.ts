@@ -393,6 +393,18 @@ export async function crearFinca(payload: { nombre: string; pais: string; areaHa
   return data;
 }
 
+export async function crearFincaConAgricultor(payload: { nombreFinca: string; paisFinca: string; areaHa: number; nombreAgricultor: string; emailAgricultor: string }): Promise<{ fincaId: string; agricultorId: string; esAgricultorNuevo: boolean }> {
+  if (isDemo()) {
+    return {
+      fincaId: `fin-${Date.now()}`,
+      agricultorId: `agr-${Date.now()}`,
+      esAgricultorNuevo: true,
+    };
+  }
+  const { data } = await api.post<{ fincaId: string; agricultorId: string; esAgricultorNuevo: boolean }>('/topologia/fincas-con-agricultor', payload);
+  return data;
+}
+
 export async function asignarAgricultorFinca(fincaId: string, agricultorId: string): Promise<{ id: string; agricultorId: string }> {
   if (isDemo()) {
     return { id: fincaId, agricultorId };

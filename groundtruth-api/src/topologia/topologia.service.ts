@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { z } from 'zod';
-import { DbService } from '@/db/db.service';
+import { DbService, Tx } from '@/db/db.service';
 import { DomainError, DomainErrors } from '@/common/domain-error';
+import { SupabaseAuthService } from '@/auth/supabase-auth.service';
 import { poligonoAGeoJson } from './geo';
 
 const M2_POR_HA = 10_000;
@@ -31,10 +32,21 @@ const crearParcelaSchema = z.object({
   nodos: z.array(z.string().trim().min(1)).default([]),
 });
 
+const crearFincaConAgricultorSchema = z.object({
+  nombreFinca: z.string().trim().min(1),
+  paisFinca: z.string().trim().length(2),
+  areaHa: z.number().positive(),
+  nombreAgricultor: z.string().trim().min(1),
+  emailAgricultor: z.string().trim().email(),
+});
+
 /** Fincas y parcelas de la unidad (O4/O6). Primer módulo de dominio real. */
 @Injectable()
 export class TopologiaService {
-  constructor(private readonly db: DbService) {}
+  constructor(
+    private readonly db: DbService,
+    private readonly supabaseAuth: SupabaseAuthService,
+  ) {}
 
   /** Fincas de la unidad — el selector del alta de parcela. */
   async listFincas(operadorId: string) {
@@ -143,6 +155,91 @@ export class TopologiaService {
 
       return { id: fincaId, nombre, pais, areaHa };
     });
+  }
+
+  /**
+   * Crear una finca con su agricultor encargado en un flujo único (O4 + agricultor).
+   * Similar a `AdminUnidadesService.create()`: transacción atómica + post-commit email.
+   *
+   * Patrón:
+   * 1. Valida entrada (finca + agricultor)
+   * 2. Transacción: crea finca, reutiliza/crea agricultor, asigna membresía
+   * 3. Post-commit: si agricultor es nuevo, dispara email de reset password
+   * 4. Retorna IDs creados + flag si agricultor es nuevo (para UI saga)
+   */
+  async crearFincaConAgricultor(operadorId: string, actorId: string, body: unknown) {
+    const { nombreFinca, paisFinca, areaHa, nombreAgricultor, emailAgricultor } = crearFincaConAgricultorSchema.parse(body);
+
+    let agricultorEsNuevo = false;
+    const resultado = await this.db.transaction(async (tx) => {
+      // Crear la finca
+      const finca = await tx.queryOne<{ id: string }>(
+        `insert into fincas (operador_id, nombre, pais, area_ha)
+         values ($1, $2, $3, $4) returning id`,
+        [operadorId, nombreFinca, paisFinca.toUpperCase(), areaHa],
+      );
+      const fincaId = finca!.id;
+
+      // Crear o reutilizar usuario agricultor
+      const { id: usuarioId, esNuevo } = await this.upsertUsuario(tx, nombreAgricultor, emailAgricultor);
+      agricultorEsNuevo = esNuevo;
+
+      // Asignar agricultor a la finca
+      await tx.query(
+        `update fincas set agricultor_id = $1 where id = $2`,
+        [usuarioId, fincaId],
+      );
+
+      // Asegurar membresía Agricultor (may existir si reutiliza usuario)
+      const subRolAgricultor = await tx.queryOne<{ id: string }>(
+        `select id from sub_roles where operador_id = $1 and nombre = 'Agricultor' and es_autogenerado`,
+        [operadorId],
+      );
+      if (subRolAgricultor) {
+        await tx.query(
+          `insert into membresias (usuario_id, operador_id, sub_rol_id, aceptado_en)
+           values ($1, $2, $3, now())
+           on conflict (usuario_id, operador_id) do nothing`,
+          [usuarioId, operadorId, subRolAgricultor.id],
+        );
+      }
+
+      // Auditar
+      await tx.query(
+        `insert into auditoria (actor_id, operador_id, accion, entidad, entidad_id, valor_nuevo)
+         values ($1, $2, 'finca.crear_con_agricultor', 'fincas', $3, $4)`,
+        [actorId, operadorId, fincaId, JSON.stringify({ nombreFinca, paisFinca, areaHa, emailAgricultor })],
+      );
+
+      return { fincaId, agricultorId: usuarioId, esAgricultorNuevo: agricultorEsNuevo };
+    });
+
+    // Post-commit: enviar email de reset si agricultor es nuevo
+    if (agricultorEsNuevo) {
+      await this.supabaseAuth.enviarResetPassword(emailAgricultor);
+    }
+
+    return resultado;
+  }
+
+  /** Reutiliza el usuario si el email ya existe (patrón de `AdminUnidadesService`). */
+  private async upsertUsuario(tx: Tx, nombre: string, email: string): Promise<{ id: string; esNuevo: boolean }> {
+    const existente = await tx.queryOne<{ id: string; activo: boolean }>(
+      'select id, activo from usuarios where email = $1',
+      [email.toLowerCase()],
+    );
+    if (existente) {
+      if (!existente.activo) throw DomainErrors.accountInactive();
+      return { id: existente.id, esNuevo: false };
+    }
+    const authResult = await this.supabaseAuth.invitar(email, nombre);
+    const authUserId = authResult?.authUserId ?? crypto.randomUUID();
+    const nuevo = await tx.queryOne<{ id: string }>(
+      `insert into usuarios (auth_user_id, nombre, email)
+       values ($1, $2, $3) returning id`,
+      [authUserId, nombre, email.toLowerCase()],
+    );
+    return { id: nuevo!.id, esNuevo: true };
   }
 
   /**
