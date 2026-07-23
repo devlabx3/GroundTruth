@@ -48,7 +48,7 @@ export class TopologiaService {
     private readonly supabaseAuth: SupabaseAuthService,
   ) {}
 
-  /** Fincas de la unidad — el selector del alta de parcela. */
+  /** Fincas de la unidad — el selector del alta de parcela (sin paginar). */
   async listFincas(operadorId: string) {
     const rows = await this.db.query<any>(
       `
@@ -72,6 +72,85 @@ export class TopologiaService {
       areaHa: f.area_ha,
       parcelas: Number(f.parcelas),
     }));
+  }
+
+  /** Fincas de la unidad, paginadas y filtrables — el listado de gestión (O4). */
+  async buscarFincas(
+    operadorId: string,
+    filters?: { nombre?: string; agricultor?: string; pais?: string },
+    page: number = 1,
+    pageSize: number = 25,
+    sortBy: 'nombre' | 'agricultor' | 'pais' | 'areaHa' = 'nombre',
+    sortDir: 'asc' | 'desc' = 'asc',
+  ) {
+    const offset = (page - 1) * pageSize;
+
+    const whereClauses: string[] = ['f.operador_id = $1'];
+    const params: any[] = [operadorId];
+
+    if (filters?.nombre) {
+      params.push(`%${filters.nombre}%`);
+      whereClauses.push(`lower(f.nombre) like lower($${params.length})`);
+    }
+    if (filters?.agricultor) {
+      params.push(`%${filters.agricultor}%`);
+      whereClauses.push(`lower(u.nombre) like lower($${params.length})`);
+    }
+    if (filters?.pais) {
+      params.push(`%${filters.pais}%`);
+      whereClauses.push(`lower(f.pais) like lower($${params.length})`);
+    }
+
+    const where = whereClauses.join(' and ');
+    const dir = sortDir === 'desc' ? 'desc' : 'asc';
+    const orderColumn =
+      sortBy === 'agricultor' ? 'u.nombre' : sortBy === 'pais' ? 'f.pais' : sortBy === 'areaHa' ? 'f.area_ha' : 'f.nombre';
+
+    const countResult = await this.db.queryOne<{ total: string }>(
+      `
+      select count(distinct f.id) as total
+      from fincas f
+      left join usuarios u on u.id = f.agricultor_id
+      where ${where}
+      `,
+      params,
+    );
+
+    const total = Number(countResult?.total ?? 0);
+    const totalPages = Math.ceil(total / pageSize);
+
+    const limitParamIndex = params.length + 1;
+    const offsetParamIndex = params.length + 2;
+    const rows = await this.db.query<any>(
+      `
+      select f.id, f.nombre, u.nombre as agricultor, u.email as agricultor_email, f.pais, f.area_ha,
+             count(p.id) as parcelas
+      from fincas f
+      left join usuarios u on u.id = f.agricultor_id
+      left join parcelas p on p.finca_id = f.id
+      where ${where}
+      group by f.id, f.nombre, u.nombre, u.email, f.pais, f.area_ha
+      order by ${orderColumn} ${dir}
+      limit $${limitParamIndex} offset $${offsetParamIndex}
+      `,
+      [...params, pageSize, offset],
+    );
+
+    return {
+      items: rows.map((f) => ({
+        id: f.id,
+        nombre: f.nombre,
+        agricultor: f.agricultor ?? null,
+        agricultorEmail: f.agricultor_email ?? null,
+        pais: f.pais,
+        areaHa: f.area_ha,
+        parcelas: Number(f.parcelas),
+      })),
+      total,
+      page,
+      pageSize,
+      totalPages,
+    };
   }
 
   /**

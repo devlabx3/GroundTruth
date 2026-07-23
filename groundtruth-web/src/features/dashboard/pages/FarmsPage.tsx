@@ -4,18 +4,20 @@ import { useTranslation } from 'react-i18next';
 import { useForm } from 'react-hook-form';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { z } from 'zod';
-import { PlusIcon, PencilSimpleIcon } from '@phosphor-icons/react';
+import { PlusIcon, PencilSimpleIcon, CaretUpIcon, CaretDownIcon } from '@phosphor-icons/react';
 import Button from '@/components/ui/Button';
 import Table from '@/components/ui/Table';
 import type { Column } from '@/components/ui/Table';
 import Dialog from '@/components/ui/Dialog';
 import Input from '@/components/ui/Input';
 import Select from '@/components/ui/Select';
+import TableFilters, { type FilterConfig } from '@/components/ui/TableFilters';
+import TablePagination from '@/components/ui/TablePagination';
 import { SkeletonRows } from '@/components/ui/Skeleton';
 import AlertBanner from '@/components/shared/AlertBanner';
 import { zodResolver } from '@/lib/zodResolver';
 import { COUNTRIES } from '@/lib/countries';
-import { fetchFincas, editarFinca } from '../queries';
+import { buscarFincas, editarFinca } from '../queries';
 import { errorKey as claveDeError } from '@/lib/api';
 import type { Finca } from '@/types/api';
 
@@ -38,10 +40,21 @@ export default function FarmsPage() {
   const [editing, setEditing] = useState<Finca | null>(null);
   const [busy, setBusy] = useState(false);
   const [errorKey, setErrorKey] = useState<string | null>(null);
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(25);
+  const [filters, setFilters] = useState<Record<string, string>>({});
+  const [sortBy, setSortBy] = useState<'nombre' | 'agricultor' | 'pais' | 'areaHa'>('nombre');
+  const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc');
 
-  const { data: fincas = [], isLoading: loadingFincas } = useQuery({
-    queryKey: ['dashboard', 'fincas'],
-    queryFn: fetchFincas,
+  const { data: result, isLoading: loadingFincas } = useQuery({
+    queryKey: ['dashboard', 'fincas', filters, page, pageSize, sortBy, sortDir],
+    queryFn: () => buscarFincas(
+      { nombre: filters.nombre, agricultor: filters.agricultor, pais: filters.pais },
+      page,
+      pageSize,
+      sortBy,
+      sortDir,
+    ),
   });
 
   const {
@@ -70,16 +83,54 @@ export default function FarmsPage() {
     }
   }
 
+  const handleFiltersChange = (newFilters: Record<string, string>) => {
+    setFilters(newFilters);
+    setPage(1);
+  };
+
+  function handleSort(column: 'nombre' | 'agricultor' | 'pais' | 'areaHa') {
+    if (sortBy === column) {
+      setSortDir((d) => (d === 'asc' ? 'desc' : 'asc'));
+    } else {
+      setSortBy(column);
+      setSortDir('asc');
+    }
+    setPage(1);
+  }
+
+  function sortableHeader(column: 'nombre' | 'agricultor' | 'pais' | 'areaHa', label: string) {
+    const isActive = sortBy === column;
+    return (
+      <button
+        type="button"
+        onClick={() => handleSort(column)}
+        className="flex items-center gap-1 font-medium hover:text-graphite-dark">
+        {label}
+        {isActive ? (
+          sortDir === 'asc' ? <CaretUpIcon size={12} /> : <CaretDownIcon size={12} />
+        ) : (
+          <CaretUpIcon size={12} className="opacity-20" />
+        )}
+      </button>
+    );
+  }
+
+  const filterConfig: FilterConfig[] = [
+    { key: 'nombre', label: t('common:fields.name'), placeholder: 'Buscar por nombre...' },
+    { key: 'agricultor', label: t('topology.farmer'), placeholder: 'Buscar por agricultor...' },
+    { key: 'pais', label: t('common:fields.country'), placeholder: 'Buscar por país...' },
+  ];
+
   const columns: Column<Finca>[] = [
-    { key: 'nombre', header: t('common:fields.name') },
-    { key: 'agricultor', header: t('topology.farmer'), render: (r) => r.agricultor ? (
+    { key: 'nombre', header: sortableHeader('nombre', t('common:fields.name')) },
+    { key: 'agricultor', header: sortableHeader('agricultor', t('topology.farmer')), render: (r) => r.agricultor ? (
       <div className="flex flex-col">
         <span>{r.agricultor}</span>
         {r.agricultorEmail && <span className="text-xs text-graphite">{r.agricultorEmail}</span>}
       </div>
     ) : <span className="text-graphite">{t('topology.unassigned')}</span> },
-    { key: 'areaHa', header: t('topology.area'), align: 'right', mono: true, render: (r) => `${r.areaHa ? Number(r.areaHa).toFixed(2) : '—'} ha` },
-    { key: 'pais', header: t('common:fields.country') },
+    { key: 'areaHa', header: sortableHeader('areaHa', t('topology.area')), align: 'right', mono: true, render: (r) => `${r.areaHa ? Number(r.areaHa).toFixed(2) : '—'} ha` },
+    { key: 'pais', header: sortableHeader('pais', t('common:fields.country')) },
     { key: 'parcelas', header: t('common:nav.parcels'), align: 'right', mono: true },
     { key: 'actions', header: '', align: 'right', render: (r) => (
       <Button
@@ -108,10 +159,27 @@ export default function FarmsPage() {
 
       {errorKey && <AlertBanner messageKey={errorKey} />}
 
+      <TableFilters filters={filterConfig} onFiltersChange={handleFiltersChange} activeFilters={filters} />
+
       {loadingFincas ? (
         <SkeletonRows rows={4} />
       ) : (
-        <Table columns={columns} rows={fincas} emptyTitle={t('topology.no_farms')} />
+        <>
+          <Table columns={columns} rows={result?.items ?? []} emptyTitle={t('topology.no_farms')} />
+          {result && result.totalPages > 1 && (
+            <TablePagination
+              currentPage={page}
+              totalPages={result.totalPages}
+              pageSize={pageSize}
+              total={result.total}
+              onPageChange={setPage}
+              onPageSizeChange={(size) => {
+                setPageSize(size);
+                setPage(1);
+              }}
+            />
+          )}
+        </>
       )}
 
       {/* Diálogo editar finca */}

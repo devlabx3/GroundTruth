@@ -141,6 +141,68 @@ export async function fetchFincas(): Promise<Finca[]> {
   return data;
 }
 
+export interface PaginatedFincas {
+  items: Finca[];
+  total: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
+}
+
+/** Fincas de la unidad, paginadas/filtrables/ordenables — listado de gestión (O4). */
+export async function buscarFincas(
+  filters?: { nombre?: string; agricultor?: string; pais?: string },
+  page: number = 1,
+  pageSize: number = 25,
+  sortBy: 'nombre' | 'agricultor' | 'pais' | 'areaHa' = 'nombre',
+  sortDir: 'asc' | 'desc' = 'asc',
+): Promise<PaginatedFincas> {
+  if (isDemo()) {
+    const nombres = [...new Set(PARCELS.map((p) => p.finca))];
+    const all: Finca[] = nombres.map((nombre, i) => ({
+      id: `finca-${i}`,
+      nombre,
+      agricultor: '—',
+      agricultorEmail: null,
+      pais: 'CR',
+      parcelas: 0,
+    }));
+
+    const filtered = all.filter((f) => {
+      if (filters?.nombre && !f.nombre.toLowerCase().includes(filters.nombre.toLowerCase())) return false;
+      if (filters?.agricultor && !(f.agricultor ?? '').toLowerCase().includes(filters.agricultor.toLowerCase())) return false;
+      if (filters?.pais && !f.pais.toLowerCase().includes(filters.pais.toLowerCase())) return false;
+      return true;
+    });
+
+    const sorted = [...filtered].sort((a, b) => {
+      const av = sortBy === 'areaHa' ? (a.areaHa ?? 0) : (a[sortBy] ?? '');
+      const bv = sortBy === 'areaHa' ? (b.areaHa ?? 0) : (b[sortBy] ?? '');
+      const cmp = typeof av === 'number' && typeof bv === 'number' ? av - bv : String(av).localeCompare(String(bv));
+      return sortDir === 'desc' ? -cmp : cmp;
+    });
+
+    const total = sorted.length;
+    const totalPages = Math.ceil(total / pageSize);
+    const offset = (page - 1) * pageSize;
+    const items = sorted.slice(offset, offset + pageSize);
+
+    return { items, total, page, pageSize, totalPages };
+  }
+
+  const params = new URLSearchParams();
+  if (filters?.nombre) params.append('nombre', filters.nombre);
+  if (filters?.agricultor) params.append('agricultor', filters.agricultor);
+  if (filters?.pais) params.append('pais', filters.pais);
+  params.append('page', String(page));
+  params.append('pageSize', String(pageSize));
+  params.append('sortBy', sortBy);
+  params.append('sortDir', sortDir);
+
+  const { data } = await api.get<PaginatedFincas>(`/topologia/fincas/buscar?${params}`);
+  return data;
+}
+
 /**
  * Alta de parcela. El área y el gate de cobertura los decide el SERVIDOR con
  * PostGIS: aquí solo se manda el polígono dibujado y los nodos declarados.

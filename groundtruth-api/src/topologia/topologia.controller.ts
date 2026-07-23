@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, ParseUUIDPipe, Post, Patch, Req } from '@nestjs/common';
+import { Body, Controller, Get, Param, ParseUUIDPipe, Post, Patch, Query, Req } from '@nestjs/common';
 import { NeedsPrivilege } from '@/auth/needs-privilege.decorator';
 import type { OperadorRequest } from '@/auth/privileges.guard';
 import { TopologiaService } from './topologia.service';
@@ -7,11 +7,34 @@ import { TopologiaService } from './topologia.service';
 export class TopologiaController {
   constructor(private readonly topologia: TopologiaService) {}
 
-  /** Fincas de la unidad (selector del alta de parcela). */
+  /** Fincas de la unidad (selector del alta de parcela, sin paginar). */
   @Get('fincas')
   @NeedsPrivilege('topologia.gestionar')
   listFincas(@Req() req: OperadorRequest) {
     return this.topologia.listFincas(req.operadorId);
+  }
+
+  /** Fincas de la unidad, paginadas/filtrables/ordenables — listado de gestión. */
+  @Get('fincas/buscar')
+  @NeedsPrivilege('topologia.gestionar')
+  buscarFincas(
+    @Req() req: OperadorRequest,
+    @Query('nombre') nombre?: string,
+    @Query('agricultor') agricultor?: string,
+    @Query('pais') pais?: string,
+    @Query('page') page: string = '1',
+    @Query('pageSize') pageSize: string = '25',
+    @Query('sortBy') sortBy: 'nombre' | 'agricultor' | 'pais' | 'areaHa' = 'nombre',
+    @Query('sortDir') sortDir: 'asc' | 'desc' = 'asc',
+  ) {
+    return this.topologia.buscarFincas(
+      req.operadorId,
+      { nombre, agricultor, pais },
+      Number(page),
+      Number(pageSize),
+      sortBy,
+      sortDir,
+    );
   }
 
   /** Alta de finca: crear una nueva finca en la unidad (opcionalmente con agricultor). */
