@@ -52,8 +52,9 @@ export class SupabaseAuthService {
     try {
       // `/auth/v1/admin/invite` da 404 en algunas versiones de GoTrue.
       // Usamos `/auth/v1/admin/users` en su lugar, que crea el usuario sin enviar email.
-      // El usuario debe fijar su contraseña via el link de reset que se envía desde
-      // otra parte (o via el reset-password flow si Supabase SMTP está configurado).
+      // El caller (unidades.service, equipo.service, identidad.service) SIEMPRE dispara
+      // `enviarResetPassword()` tras el commit de la transacción de BD, para que el usuario
+      // reciba el email de recuperación de contraseña y pueda elegir su contraseña inicial.
       const response = await fetch(`${this.supabaseUrl}/auth/v1/admin/users`, {
         method: 'POST',
         headers: this.headers(),

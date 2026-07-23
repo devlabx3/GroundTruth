@@ -139,7 +139,7 @@ export class EquipoService {
   async invitarMiembro(operadorId: string, actorId: string, body: unknown) {
     const { nombre, email, subRolId } = invitarSchema.parse(body);
 
-    return this.db.transaction(async (tx) => {
+    const resultado = await this.db.transaction(async (tx) => {
       const sr = await tx.queryOne<{ id: string }>(
         'select id from sub_roles where id = $1 and operador_id = $2',
         [subRolId, operadorId],
@@ -175,6 +175,10 @@ export class EquipoService {
         email,
       };
     });
+
+    await this.supabaseAuth.enviarResetPassword(email);
+
+    return resultado;
   }
 
   private generatePlaceholderId(): string {

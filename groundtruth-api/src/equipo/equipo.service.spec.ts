@@ -12,6 +12,7 @@ describe('EquipoService', () => {
 
       const mockSupabaseAuth = {
         invitar: vi.fn(),
+        enviarResetPassword: vi.fn().mockResolvedValue(true),
       } as unknown as SupabaseAuthService;
 
       const service = new EquipoService(mockDb, mockSupabaseAuth);
@@ -179,6 +180,30 @@ describe('EquipoService', () => {
           subRolId: 'not-a-uuid',
         }),
       ).rejects.toThrow();
+    });
+
+    it('dispara enviarResetPassword tras invitar exitosamente', async () => {
+      const { service, mockDb, mockSupabaseAuth } = createService();
+
+      const tx = {
+        queryOne: vi
+          .fn()
+          .mockResolvedValueOnce({ id: 'subrol-123' })
+          .mockResolvedValueOnce({ id: 'user-123' })
+          .mockResolvedValueOnce({ id: 'membr-123' }),
+        query: vi.fn().mockResolvedValue(undefined),
+      };
+      (mockDb.transaction as any).mockImplementation((cb: any) => cb(tx));
+
+      (mockSupabaseAuth.invitar as any).mockResolvedValue({ authUserId: 'auth-123' });
+
+      await service.invitarMiembro('operador-123', 'actor-123', {
+        nombre: 'Juan',
+        email: 'juan@example.com',
+        subRolId: '550e8400-e29b-41d4-a716-446655440000',
+      });
+
+      expect(mockSupabaseAuth.enviarResetPassword).toHaveBeenCalledWith('juan@example.com');
     });
   });
 });

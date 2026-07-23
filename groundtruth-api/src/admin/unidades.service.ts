@@ -109,11 +109,15 @@ export class AdminUnidadesService {
    * (`init_operator_treasury`) y ese programa Anchor todavía no existe. Mientras
    * no exista, la unidad no puede certificar (lo impide `embarques.certificar`).
    * Preferimos ese estado honesto a fabricar una Treasury PDA falsa.
+   *
+   * Tras el commit: si el admin es nuevo, dispara un email de recuperación de
+   * contraseña para que pueda darse de alta y elegir su contraseña inicial.
    */
   async create(actorId: string, body: unknown) {
     const { nombre, pais, adminNombre, adminEmail } = crearSchema.parse(body);
 
-    return this.db.transaction(async (tx) => {
+    let adminEsNuevo = false;
+    const resultado = await this.db.transaction(async (tx) => {
       const op = await tx.queryOne<{ id: string }>(
         `insert into operadores (nombre, pais, estado)
          values ($1, $2, 'PENDIENTE_ONCHAIN') returning id`,
@@ -132,7 +136,8 @@ export class AdminUnidadesService {
         [subRol!.id],
       );
 
-      const usuarioId = await this.upsertUsuario(tx, adminNombre, adminEmail);
+      const { id: usuarioId, esNuevo } = await this.upsertUsuario(tx, adminNombre, adminEmail);
+      adminEsNuevo = esNuevo;
       await tx.query(
         `insert into membresias (usuario_id, operador_id, sub_rol_id, aceptado_en)
          values ($1, $2, $3, now())`,
@@ -147,6 +152,12 @@ export class AdminUnidadesService {
 
       return { id: operadorId, estado: 'pendiente', treasuryPendiente: true };
     });
+
+    if (adminEsNuevo) {
+      await this.supabaseAuth.enviarResetPassword(adminEmail);
+    }
+
+    return resultado;
   }
 
   /** Suspender / reactivar (auditado). Una unidad PENDIENTE_ONCHAIN no se toca. */
@@ -178,14 +189,14 @@ export class AdminUnidadesService {
   }
 
   /** Reutiliza el usuario si el email ya existe; si no, lo crea e invita de verdad. */
-  private async upsertUsuario(tx: Tx, nombre: string, email: string): Promise<string> {
+  private async upsertUsuario(tx: Tx, nombre: string, email: string): Promise<{ id: string; esNuevo: boolean }> {
     const existente = await tx.queryOne<{ id: string; activo: boolean }>(
       'select id, activo from usuarios where email = $1',
       [email.toLowerCase()],
     );
     if (existente) {
       if (!existente.activo) throw DomainErrors.accountInactive();
-      return existente.id;
+      return { id: existente.id, esNuevo: false };
     }
     const authResult = await this.supabaseAuth.invitar(email, nombre);
     const authUserId = authResult?.authUserId ?? crypto.randomUUID();
@@ -194,6 +205,6 @@ export class AdminUnidadesService {
        values ($1, $2, $3) returning id`,
       [authUserId, nombre, email.toLowerCase()],
     );
-    return nuevo!.id;
+    return { id: nuevo!.id, esNuevo: true };
   }
 }

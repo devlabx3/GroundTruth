@@ -146,7 +146,7 @@ export class AdminIdentidadService {
 
   async crearUsuario(actorId: string, body: unknown) {
     const { nombre, email } = crearUsuarioSchema.parse(body);
-    return this.db.transaction(async (tx) => {
+    const resultado = await this.db.transaction(async (tx) => {
       const existe = await tx.queryOne<{ id: string }>(
         'select id from usuarios where email = $1',
         [email.toLowerCase()],
@@ -170,6 +170,10 @@ export class AdminIdentidadService {
       );
       return { id: u!.id, nombre, email, membresias: '', rol: '', estado: 'activa' };
     });
+
+    await this.supabaseAuth.enviarResetPassword(email);
+
+    return resultado;
   }
 
   /**
