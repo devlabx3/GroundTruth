@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useForm } from 'react-hook-form';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { z } from 'zod';
-import { PlusIcon } from '@phosphor-icons/react';
+import { PlusIcon, CaretUpIcon, CaretDownIcon } from '@phosphor-icons/react';
 import Button from '@/components/ui/Button';
 import Table from '@/components/ui/Table';
 import type { Column } from '@/components/ui/Table';
@@ -38,16 +38,20 @@ export default function FarmersPage() {
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(25);
   const [filters, setFilters] = useState<Record<string, string>>({});
+  const [sortBy, setSortBy] = useState<'nombre' | 'email' | 'finca'>('nombre');
+  const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc');
   const [dialogOpen, setDialogOpen] = useState(false);
   const [busy, setBusy] = useState(false);
   const [errorKey, setErrorKey] = useState<string | null>(null);
 
   const { data: result, isLoading } = useQuery({
-    queryKey: ['dashboard', 'agricultores', filters, page, pageSize],
+    queryKey: ['dashboard', 'agricultores', filters, page, pageSize, sortBy, sortDir],
     queryFn: () => fetchAgricultores(
       { nombre: filters.nombre, email: filters.email, finca: filters.finca },
       page,
       pageSize,
+      sortBy,
+      sortDir,
     ),
   });
 
@@ -65,10 +69,37 @@ export default function FarmersPage() {
     { key: 'finca', label: t('topology.farm'), placeholder: 'Buscar por finca...' },
   ];
 
+  function handleSort(column: 'nombre' | 'email' | 'finca') {
+    if (sortBy === column) {
+      setSortDir((d) => (d === 'asc' ? 'desc' : 'asc'));
+    } else {
+      setSortBy(column);
+      setSortDir('asc');
+    }
+    setPage(1);
+  }
+
+  function sortableHeader(column: 'nombre' | 'email' | 'finca', label: string) {
+    const isActive = sortBy === column;
+    return (
+      <button
+        type="button"
+        onClick={() => handleSort(column)}
+        className="flex items-center gap-1 font-medium hover:text-graphite-dark">
+        {label}
+        {isActive ? (
+          sortDir === 'asc' ? <CaretUpIcon size={12} /> : <CaretDownIcon size={12} />
+        ) : (
+          <CaretUpIcon size={12} className="opacity-20" />
+        )}
+      </button>
+    );
+  }
+
   const columns: Column<Agricultor>[] = [
-    { key: 'nombre', header: t('common:fields.name') },
-    { key: 'email', header: t('common:fields.email') },
-    { key: 'finca', header: t('topology.farm') },
+    { key: 'nombre', header: sortableHeader('nombre', t('common:fields.name')) },
+    { key: 'email', header: sortableHeader('email', t('common:fields.email')) },
+    { key: 'finca', header: sortableHeader('finca', t('topology.farm')) },
     { key: 'parcelas', header: t('common:nav.parcels'), align: 'right', mono: true },
   ];
 

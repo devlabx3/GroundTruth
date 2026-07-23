@@ -26,9 +26,50 @@ export class AgricultoresService {
     filters?: { nombre?: string; email?: string; finca?: string },
     page: number = 1,
     pageSize: number = 25,
+    sortBy: 'nombre' | 'email' | 'finca' = 'nombre',
+    sortDir: 'asc' | 'desc' = 'asc',
   ) {
     const offset = (page - 1) * pageSize;
-    let query = `
+
+    const whereClauses: string[] = [
+      `exists (select 1 from fincas f2 where f2.agricultor_id = u.id and f2.operador_id = $1)`,
+    ];
+    const params: any[] = [operadorId];
+
+    if (filters?.nombre) {
+      params.push(`%${filters.nombre}%`);
+      whereClauses.push(`lower(u.nombre) like lower($${params.length})`);
+    }
+    if (filters?.email) {
+      params.push(`%${filters.email}%`);
+      whereClauses.push(`lower(u.email) like lower($${params.length})`);
+    }
+    if (filters?.finca) {
+      params.push(`%${filters.finca}%`);
+      whereClauses.push(`lower(f.nombre) like lower($${params.length})`);
+    }
+
+    const where = whereClauses.join(' and ');
+    const dir = sortDir === 'desc' ? 'desc' : 'asc';
+    const orderColumn = sortBy === 'email' ? 'u.email' : sortBy === 'finca' ? 'finca_nombres' : 'u.nombre';
+
+    const countResult = await this.db.queryOne<{ total: string }>(
+      `
+      select count(distinct u.id) as total
+      from usuarios u
+      left join fincas f on f.agricultor_id = u.id and f.operador_id = $1
+      where ${where}
+      `,
+      params,
+    );
+
+    const total = Number(countResult?.total ?? 0);
+    const totalPages = Math.ceil(total / pageSize);
+
+    const limitParamIndex = params.length + 1;
+    const offsetParamIndex = params.length + 2;
+    const rows = await this.db.query<any>(
+      `
       select u.id, u.nombre, u.email,
              count(distinct f.id) as fincas,
              count(distinct p.id) as parcelas,
@@ -36,47 +77,13 @@ export class AgricultoresService {
       from usuarios u
       left join fincas f on f.agricultor_id = u.id and f.operador_id = $1
       left join parcelas p on p.finca_id = f.id
-      where exists (
-        select 1 from fincas f2
-        where f2.agricultor_id = u.id and f2.operador_id = $1
-      )
-    `;
-
-    const params: any[] = [operadorId];
-    let paramIndex = 2;
-
-    if (filters?.nombre) {
-      query += ` and lower(u.nombre) like lower($${paramIndex})`;
-      params.push(`%${filters.nombre}%`);
-      paramIndex++;
-    }
-
-    if (filters?.email) {
-      query += ` and lower(u.email) like lower($${paramIndex})`;
-      params.push(`%${filters.email}%`);
-      paramIndex++;
-    }
-
-    if (filters?.finca) {
-      query += ` and lower(f.nombre) like lower($${paramIndex})`;
-      params.push(`%${filters.finca}%`);
-      paramIndex++;
-    }
-
-    query += ` group by u.id order by u.nombre`;
-
-    const countResult = await this.db.queryOne<{ total: string }>(
-      `select count(distinct u.id) as total from (${query.replace('select u.id, u.nombre, u.email, count(distinct f.id) as fincas, count(distinct p.id) as parcelas, string_agg(distinct f.nombre, \', \') as finca_nombres', 'select distinct u.id')}) subq`,
-      params,
+      where ${where}
+      group by u.id
+      order by ${orderColumn} ${dir}
+      limit $${limitParamIndex} offset $${offsetParamIndex}
+      `,
+      [...params, pageSize, offset],
     );
-
-    const total = Number(countResult?.total ?? 0);
-    const totalPages = Math.ceil(total / pageSize);
-
-    query += ` limit $${paramIndex} offset $${paramIndex + 1}`;
-    params.push(pageSize, offset);
-
-    const rows = await this.db.query<any>(query, params);
 
     return {
       items: rows.map((r) => ({

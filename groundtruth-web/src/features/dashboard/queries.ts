@@ -371,6 +371,8 @@ export async function fetchAgricultores(
   filters?: { nombre?: string; email?: string; finca?: string },
   page: number = 1,
   pageSize: number = 25,
+  sortBy: 'nombre' | 'email' | 'finca' = 'nombre',
+  sortDir: 'asc' | 'desc' = 'asc',
 ): Promise<PaginatedAgricultores> {
   if (isDemo()) {
     const filtered = FARMERS.filter((a) => {
@@ -380,10 +382,15 @@ export async function fetchAgricultores(
       return true;
     });
 
-    const total = filtered.length;
+    const sorted = [...filtered].sort((a, b) => {
+      const cmp = a[sortBy].localeCompare(b[sortBy]);
+      return sortDir === 'desc' ? -cmp : cmp;
+    });
+
+    const total = sorted.length;
     const totalPages = Math.ceil(total / pageSize);
     const offset = (page - 1) * pageSize;
-    const items = filtered.slice(offset, offset + pageSize);
+    const items = sorted.slice(offset, offset + pageSize);
 
     return { items, total, page, pageSize, totalPages };
   }
@@ -394,6 +401,8 @@ export async function fetchAgricultores(
   if (filters?.finca) params.append('finca', filters.finca);
   params.append('page', String(page));
   params.append('pageSize', String(pageSize));
+  params.append('sortBy', sortBy);
+  params.append('sortDir', sortDir);
 
   const { data } = await api.get<PaginatedAgricultores>(`/agricultores?${params}`);
   return data;

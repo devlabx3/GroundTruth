@@ -16,12 +16,16 @@ export class AgricultoresController {
     @Query('finca') finca?: string,
     @Query('page') page: string = '1',
     @Query('pageSize') pageSize: string = '25',
+    @Query('sortBy') sortBy: 'nombre' | 'email' | 'finca' = 'nombre',
+    @Query('sortDir') sortDir: 'asc' | 'desc' = 'asc',
   ) {
     return this.agricultores.list(
       req.operadorId,
       { nombre, email, finca },
       Number(page),
       Number(pageSize),
+      sortBy,
+      sortDir,
     );
   }
 
