@@ -87,7 +87,7 @@ export class AdminUnidadesService {
       where
         ($1::text is null or nombre ilike $1)
         and ($2::text is null or pais ilike $2)
-        and ($3::text is null or estado = $3)
+        and ($3::text is null or estado::text = $3)
       order by ${sortCol} ${orderDir}
       limit $4 offset $5
     `;
