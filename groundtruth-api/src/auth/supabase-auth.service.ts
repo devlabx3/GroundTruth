@@ -50,13 +50,17 @@ export class SupabaseAuthService {
     if (!this.enabled) return null;
 
     try {
-      const response = await fetch(`${this.supabaseUrl}/auth/v1/admin/invite`, {
+      // `/auth/v1/admin/invite` da 404 en algunas versiones de GoTrue.
+      // Usamos `/auth/v1/admin/users` en su lugar, que crea el usuario sin enviar email.
+      // El usuario debe fijar su contraseña via el link de reset que se envía desde
+      // otra parte (o via el reset-password flow si Supabase SMTP está configurado).
+      const response = await fetch(`${this.supabaseUrl}/auth/v1/admin/users`, {
         method: 'POST',
         headers: this.headers(),
         body: JSON.stringify({
           email,
-          data: nombre ? { name: nombre } : {},
-          // No password: el usuario lo elige al aceptar el email.
+          user_metadata: nombre ? { name: nombre } : {},
+          email_confirm: false, // Sin confirmar: espera que el usuario resuelva su email
         }),
         signal: AbortSignal.timeout(10_000),
       });
@@ -64,24 +68,23 @@ export class SupabaseAuthService {
       if (!response.ok) {
         const error = await response.json().catch(() => ({}));
         this.logger.error(
-          `Supabase invite failed for ${email}: ${response.status}`,
+          `Supabase user creation failed for ${email}: ${response.status}`,
           error,
         );
         return null;
       }
 
-      const data = (await response.json()) as { id?: string; user?: { id?: string } };
-      // Supabase retorna { id, user: {...} } — el id de la tabla auth.users
-      const userId = data.id || data.user?.id;
+      const data = (await response.json()) as { id?: string };
+      const userId = data.id;
       if (!userId) {
-        this.logger.error(`Supabase invite response missing user ID for ${email}`);
+        this.logger.error(`Supabase user creation response missing user ID for ${email}`);
         return null;
       }
 
-      this.logger.log(`Invited ${email} → auth.users.id = ${userId}`);
+      this.logger.log(`Created Supabase user for ${email} → auth.users.id = ${userId}`);
       return { authUserId: userId };
     } catch (error) {
-      this.logger.error(`Supabase invite error for ${email}:`, error);
+      this.logger.error(`Supabase user creation error for ${email}:`, error);
       return null;
     }
   }
