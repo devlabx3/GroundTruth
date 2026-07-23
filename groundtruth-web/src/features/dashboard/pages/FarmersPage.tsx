@@ -12,6 +12,7 @@ import Input from '@/components/ui/Input';
 import { SkeletonRows } from '@/components/ui/Skeleton';
 import AlertBanner from '@/components/shared/AlertBanner';
 import { zodResolver } from '@/lib/zodResolver';
+import { useSession } from '@/stores/session';
 import { fetchAgricultores, crearAgricultor } from '../queries';
 import { errorKey as claveDeError } from '@/lib/api';
 import type { Agricultor } from '@/types/api';
@@ -36,6 +37,9 @@ export default function FarmersPage() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [busy, setBusy] = useState(false);
   const [errorKey, setErrorKey] = useState<string | null>(null);
+
+  const activeMembership = useSession((s) => s.activeMembership());
+  const isDireccion = activeMembership?.subRolNombre === 'Dirección';
 
   const { register, handleSubmit, reset, formState: { errors } } = useForm({
     resolver: zodResolver(schema),
@@ -68,10 +72,12 @@ export default function FarmersPage() {
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl">{t('farmers.title')}</h1>
-        <Button onClick={() => { setErrorKey(null); setDialogOpen(true); }}>
-          <PlusIcon size={16} />
-          {t('farmers.create')}
-        </Button>
+        {!isDireccion && (
+          <Button onClick={() => { setErrorKey(null); setDialogOpen(true); }}>
+            <PlusIcon size={16} />
+            {t('farmers.create')}
+          </Button>
+        )}
       </div>
 
       {isLoading ? (
