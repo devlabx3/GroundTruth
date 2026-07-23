@@ -24,6 +24,7 @@ import type {
   SagaEntry,
   UnidadDetalle,
   UnidadResumen,
+  UnidadesPaginadas,
   UsuarioAdmin,
   UsuariosPaginados,
 } from '@/types/api';
@@ -64,9 +65,65 @@ export async function fetchFinanzas(): Promise<Finanzas> {
 
 // ---- Unidades (A1) ----
 
-export async function fetchUnidades(): Promise<UnidadResumen[]> {
-  if (isDemo()) return demoQueryFn(UNITS)();
-  const { data } = await api.get<UnidadResumen[]>('/admin/unidades');
+export interface FetchUnidadesParams {
+  page?: number;
+  pageSize?: number;
+  sortBy?: 'nombre' | 'pais' | 'parcelas' | 'saldoUsdc' | 'estado';
+  sortDir?: 'asc' | 'desc';
+  nombre?: string;
+  pais?: string;
+  estado?: EstadoUnidad;
+}
+
+export async function fetchUnidades(
+  params: FetchUnidadesParams = {},
+): Promise<UnidadesPaginadas> {
+  if (isDemo()) {
+    const {
+      page = 1,
+      pageSize = 25,
+      sortBy = 'nombre',
+      sortDir = 'asc',
+      nombre,
+      pais,
+      estado,
+    } = params;
+
+    const filtered = UNITS.filter((u) => {
+      if (nombre && !u.nombre.toLowerCase().includes(nombre.toLowerCase())) return false;
+      if (pais && !u.pais.toLowerCase().includes(pais.toLowerCase())) return false;
+      if (estado && u.estado !== estado) return false;
+      return true;
+    });
+
+    const sortMap: Record<string, (a: UnidadResumen, b: UnidadResumen) => number> = {
+      nombre: (a, b) => a.nombre.localeCompare(b.nombre),
+      pais: (a, b) => a.pais.localeCompare(b.pais),
+      parcelas: (a, b) => a.parcelas - b.parcelas,
+      saldoUsdc: (a, b) => a.saldoUsdc - b.saldoUsdc,
+      estado: (a, b) => a.estado.localeCompare(b.estado),
+    };
+
+    filtered.sort(sortMap[sortBy]);
+    if (sortDir === 'desc') filtered.reverse();
+
+    const total = filtered.length;
+    const offset = (page - 1) * pageSize;
+    const items = filtered.slice(offset, offset + pageSize);
+
+    return { items, total, page, pageSize };
+  }
+
+  const query = new URLSearchParams();
+  if (params.page !== undefined) query.set('page', String(params.page));
+  if (params.pageSize !== undefined) query.set('pageSize', String(params.pageSize));
+  if (params.sortBy !== undefined) query.set('sortBy', params.sortBy);
+  if (params.sortDir !== undefined) query.set('sortDir', params.sortDir);
+  if (params.nombre !== undefined) query.set('nombre', params.nombre);
+  if (params.pais !== undefined) query.set('pais', params.pais);
+  if (params.estado !== undefined) query.set('estado', params.estado);
+
+  const { data } = await api.get<UnidadesPaginadas>(`/admin/unidades?${query.toString()}`);
   return data;
 }
 

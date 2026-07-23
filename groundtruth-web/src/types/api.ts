@@ -318,6 +318,13 @@ export interface UnidadResumen {
   estado: EstadoUnidad;
 }
 
+export interface UnidadesPaginadas {
+  items: UnidadResumen[];
+  total: number;
+  page: number;
+  pageSize: number;
+}
+
 export interface UnidadDetalle {
   id: string;
   nombre: string;

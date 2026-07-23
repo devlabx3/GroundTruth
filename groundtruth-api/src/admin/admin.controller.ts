@@ -48,8 +48,8 @@ export class AdminUnidadesController {
   constructor(private readonly unidades: AdminUnidadesService) {}
 
   @Get()
-  list() {
-    return this.unidades.list();
+  list(@Query() query: Record<string, any>) {
+    return this.unidades.list(query);
   }
 
   @Get(':id')

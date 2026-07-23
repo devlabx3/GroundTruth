@@ -24,6 +24,23 @@ const estadoSchema = z.object({
   estado: z.enum(['activa', 'suspendida']),
 });
 
+/** estado UI → operador_estado (DB). Inverso de ESTADO_UI, para filtrar. */
+const ESTADO_DB: Record<string, string> = {
+  activa: 'ACTIVO',
+  suspendida: 'SUSPENDIDO',
+  pendiente: 'PENDIENTE_ONCHAIN',
+};
+
+const listQuerySchema = z.object({
+  page: z.coerce.number().int().min(1).default(1),
+  pageSize: z.coerce.number().int().min(1).max(100).default(25),
+  sortBy: z.enum(['nombre', 'pais', 'parcelas', 'saldoUsdc', 'estado']).default('nombre'),
+  sortDir: z.enum(['asc', 'desc']).default('asc'),
+  nombre: z.string().trim().optional(),
+  pais: z.string().trim().optional(),
+  estado: z.enum(['activa', 'suspendida', 'pendiente']).optional(),
+});
+
 /**
  * Unidades de negocio (A1). El admin las ve todas; ninguna consulta filtra por
  * `x-operador-id` — es la superficie transversal de la plataforma.
@@ -35,27 +52,63 @@ export class AdminUnidadesService {
     private readonly supabaseAuth: SupabaseAuthService,
   ) {}
 
-  async list() {
-    const rows = await this.db.query<any>(
-      `
-      select o.id, o.nombre, o.pais, o.estado,
-             coalesce(t.saldo_cache, 0) as saldo_cache,
-             (select count(*) from parcelas p
-                join fincas f on f.id = p.finca_id
-               where f.operador_id = o.id) as parcelas
-      from operadores o
-      left join tesorerias t on t.operador_id = o.id
-      order by o.nombre
-      `,
-    );
-    return rows.map((o) => ({
-      id: o.id,
-      nombre: o.nombre,
-      pais: o.pais,
-      parcelas: Number(o.parcelas),
-      saldoUsdc: Number(o.saldo_cache) / MICRO,
-      estado: ESTADO_UI[o.estado] ?? 'pendiente',
-    }));
+  async list(params: unknown) {
+    const { page, pageSize, sortBy, sortDir, nombre, pais, estado } = listQuerySchema.parse(params);
+    const offset = (page - 1) * pageSize;
+
+    // Mapeo seguro de columnas de sort (validado por schema Zod, nunca interpolado del usuario).
+    const sortColMap: Record<string, string> = {
+      nombre: 'nombre',
+      pais: 'pais',
+      parcelas: 'parcelas',
+      saldoUsdc: 'saldo_cache',
+      estado: 'estado',
+    };
+    const sortCol = sortColMap[sortBy];
+    const orderDir = sortDir.toUpperCase();
+
+    const nombreFilter = nombre ? `%${nombre}%` : null;
+    const paisFilter = pais ? `%${pais}%` : null;
+    const estadoFilter = estado ? ESTADO_DB[estado] : null;
+
+    const sql = `
+      with operadores_agg as (
+        select o.id, o.nombre, o.pais, o.estado,
+               coalesce(t.saldo_cache, 0) as saldo_cache,
+               (select count(*) from parcelas p
+                  join fincas f on f.id = p.finca_id
+                 where f.operador_id = o.id) as parcelas
+        from operadores o
+        left join tesorerias t on t.operador_id = o.id
+      )
+      select id, nombre, pais, estado, saldo_cache, parcelas,
+             count(*) over() as total
+      from operadores_agg
+      where
+        ($1::text is null or nombre ilike $1)
+        and ($2::text is null or pais ilike $2)
+        and ($3::text is null or estado = $3)
+      order by ${sortCol} ${orderDir}
+      limit $4 offset $5
+    `;
+
+    const rows = await this.db.query<any>(sql, [nombreFilter, paisFilter, estadoFilter, pageSize, offset]);
+    const total = rows.length > 0 ? Number(rows[0].total) : 0;
+
+    return {
+      items: rows.map((o) => ({
+        id: o.id,
+        nombre: o.nombre,
+        pais: o.pais,
+        parcelas: Number(o.parcelas),
+        saldoUsdc: Number(o.saldo_cache) / MICRO,
+        estado: ESTADO_UI[o.estado] ?? 'pendiente',
+      })),
+      total,
+      page,
+      pageSize,
+      totalPages: Math.ceil(total / pageSize),
+    };
   }
 
   async detail(id: string) {
