@@ -45,7 +45,9 @@
     "amount": "Valor",
     "type": "Tipo",
     "state": "Estado",
-    "crop": "Cultivo"
+    "crop": "Cultivo",
+    "country": "País",
+    "select_country": "Selecione um país"
   },
   "crops": {
     "cafe": "Café",

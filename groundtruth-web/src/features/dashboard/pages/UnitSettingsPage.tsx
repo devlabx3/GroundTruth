@@ -11,6 +11,7 @@ import { SkeletonRows } from '@/components/ui/Skeleton';
 import AlertBanner from '@/components/shared/AlertBanner';
 import { zodResolver } from '@/lib/zodResolver';
 import { SUPPORTED_LOCALES } from '@/i18n';
+import { COUNTRIES } from '@/lib/countries';
 import { fetchUnidad, actualizarUnidad } from '../queries';
 
 const schema = z.object({
@@ -58,7 +59,13 @@ export default function UnitSettingsPage() {
       <form onSubmit={handleSubmit(onSubmit)}>
         <Card className="flex flex-col gap-4">
           <Input label={t('common:fields.name')} errorKey={errors.nombre?.message} {...register('nombre')} />
-          <Input label={t('settings.country')} maxLength={2} errorKey={errors.pais?.message} {...register('pais')} />
+          <Select
+            label={t('settings.country')}
+            options={COUNTRIES}
+            placeholder={t('common:fields.select_country')}
+            errorKey={errors.pais?.message}
+            {...register('pais')}
+          />
           <Select
             label={t('settings.default_language')}
             options={SUPPORTED_LOCALES.map((l) => ({ value: l, label: l.toUpperCase() }))}

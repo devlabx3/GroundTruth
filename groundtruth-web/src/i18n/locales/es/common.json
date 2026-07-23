@@ -47,7 +47,8 @@
     "type": "Tipo",
     "state": "Estado",
     "crop": "Cultivo",
-    "country": "País"
+    "country": "País",
+    "select_country": "Selecciona un país"
   },
   "crops": {
     "cafe": "Café",

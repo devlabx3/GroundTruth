@@ -45,7 +45,9 @@
     "amount": "Betrag",
     "type": "Typ",
     "state": "Status",
-    "crop": "Kultur"
+    "crop": "Kultur",
+    "country": "Land",
+    "select_country": "Wähle ein Land"
   },
   "crops": {
     "cafe": "Kaffee",

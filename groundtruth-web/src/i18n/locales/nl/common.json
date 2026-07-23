@@ -45,7 +45,9 @@
     "amount": "Bedrag",
     "type": "Type",
     "state": "Status",
-    "crop": "Gewas"
+    "crop": "Gewas",
+    "country": "Land",
+    "select_country": "Selecteer een land"
   },
   "crops": {
     "cafe": "Koffie",

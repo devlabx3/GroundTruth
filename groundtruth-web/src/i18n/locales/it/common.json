@@ -45,7 +45,9 @@
     "amount": "Importo",
     "type": "Tipo",
     "state": "Stato",
-    "crop": "Coltura"
+    "crop": "Coltura",
+    "country": "Paese",
+    "select_country": "Seleziona un paese"
   },
   "crops": {
     "cafe": "Caffè",

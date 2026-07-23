@@ -6,10 +6,12 @@ import { z } from 'zod';
 import Card from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
+import Select from '@/components/ui/Select';
 import AlertBanner from '@/components/shared/AlertBanner';
 import OnchainProgressModal from '@/components/shared/OnchainProgressModal';
 import { zodResolver } from '@/lib/zodResolver';
 import { useRealSaga } from '@/lib/useRealSaga';
+import { COUNTRIES } from '@/lib/countries';
 import { crearUnidad } from '../queries';
 
 const schema = z.object({
@@ -74,9 +76,10 @@ export default function AdminUnitNewPage() {
       <form onSubmit={handleSubmit(onSubmit)}>
         <Card className="flex flex-col gap-4">
           <Input label={t('common:fields.name')} errorKey={errors.nombre?.message} {...register('nombre')} />
-          <Input
+          <Select
             label={t('units.country')}
-            maxLength={2}
+            options={COUNTRIES}
+            placeholder={t('common:fields.select_country')}
             errorKey={errors.pais?.message}
             {...register('pais')}
           />

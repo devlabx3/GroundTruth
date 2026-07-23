@@ -13,6 +13,7 @@ import Select from '@/components/ui/Select';
 import { SkeletonRows } from '@/components/ui/Skeleton';
 import AlertBanner from '@/components/shared/AlertBanner';
 import { zodResolver } from '@/lib/zodResolver';
+import { COUNTRIES } from '@/lib/countries';
 import { fetchFincas, fetchAgricultores, crearFinca, asignarAgricultorFinca, editarFinca } from '../queries';
 import { errorKey as claveDeError } from '@/lib/api';
 import type { Finca, Agricultor } from '@/types/api';
@@ -193,7 +194,13 @@ export default function FarmsPage() {
         <form onSubmit={handleSubmit(onCreateFinca)} className="flex flex-col gap-4">
           {errorKey && <AlertBanner messageKey={errorKey} />}
           <Input label={t('common:fields.name')} errorKey={errors.nombre?.message} {...register('nombre')} />
-          <Input label={t('common:fields.country')} placeholder="CR" errorKey={errors.pais?.message} {...register('pais')} />
+          <Select
+            label={t('common:fields.country')}
+            options={COUNTRIES}
+            placeholder={t('common:fields.select_country')}
+            errorKey={errors.pais?.message}
+            {...register('pais')}
+          />
           <Input
             label={t('topology.area')}
             type="number"
@@ -226,7 +233,13 @@ export default function FarmsPage() {
         <form onSubmit={handleSubmitEditar(onEditarFinca)} className="flex flex-col gap-4">
           {errorKey && <AlertBanner messageKey={errorKey} />}
           <Input label={t('common:fields.name')} errorKey={errorsEditar.nombre?.message} {...registerEditar('nombre')} />
-          <Input label={t('common:fields.country')} placeholder="CR" errorKey={errorsEditar.pais?.message} {...registerEditar('pais')} />
+          <Select
+            label={t('common:fields.country')}
+            options={COUNTRIES}
+            placeholder={t('common:fields.select_country')}
+            errorKey={errorsEditar.pais?.message}
+            {...registerEditar('pais')}
+          />
           <Input
             label={t('topology.area')}
             type="number"
