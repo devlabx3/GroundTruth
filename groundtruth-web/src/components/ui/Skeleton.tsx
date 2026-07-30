@@ -1,6 +1,6 @@
 /** Carga con skeleton, no spinner infinito (Gestion-de-Errores §7.1). */
 export default function Skeleton({ className = '' }: { className?: string }) {
-  return <div className={`animate-pulse rounded-card bg-porcelain-border/60 ${className}`} />;
+  return <div className={`animate-pulse rounded-card bg-gradient-to-r from-porcelain-border/40 via-porcelain-border/60 to-porcelain-border/40 ${className}`} />;
 }
 
 export function SkeletonRows({ rows = 3 }: { rows?: number }) {

@@ -27,7 +27,7 @@ export default function Dialog({ open, onClose, title, children, footer }: Dialo
   if (!open) return null;
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-in fade-in duration-200"
       style={{ background: 'rgba(16,19,18,0.55)' }}
       onMouseDown={(e) => e.target === e.currentTarget && onClose?.()}
     >
@@ -36,7 +36,7 @@ export default function Dialog({ open, onClose, title, children, footer }: Dialo
         role="dialog"
         aria-modal="true"
         tabIndex={-1}
-        className="w-full max-w-md rounded-2xl border border-porcelain-border bg-white outline-none"
+        className="w-full max-w-md rounded-2xl border border-porcelain-border bg-white outline-none animate-in zoom-in-95 duration-200"
       >
         {title && (
           <div className="border-b border-porcelain-border px-5 py-4 text-[15px] font-medium text-ink">

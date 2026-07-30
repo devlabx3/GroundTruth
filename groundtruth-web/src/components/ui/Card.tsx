@@ -15,7 +15,7 @@ const VARIANTS: Record<CardVariant, string> = {
 export default function Card({ className = '', variant = 'default', ...props }: CardProps) {
   return (
     <div
-      className={`rounded-card border p-5 ${VARIANTS[variant]} ${className}`}
+      className={`rounded-card border p-5 transition-all duration-200 ${VARIANTS[variant]} ${className}`}
       {...props}
     />
   );

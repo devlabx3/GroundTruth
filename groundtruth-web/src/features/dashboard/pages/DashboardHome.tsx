@@ -73,8 +73,8 @@ export default function DashboardHome() {
         <div className="flex flex-col gap-4">
           {treasury && (
             <PrivilegeGate privilege={PRIVILEGES.TREASURY_VIEW}>
-              <Link to={`/${locale}/dashboard/tesoreria`}>
-                <TreasuryBalanceCard saldoUsdc={treasury.saldoUsdc} className="transition-colors hover:border-emerald" />
+              <Link to={`/${locale}/dashboard/tesoreria`} className="transition-transform duration-200 hover:scale-105 active:scale-95 block">
+                <TreasuryBalanceCard saldoUsdc={treasury.saldoUsdc} className="transition-all duration-200 hover:border-emerald hover:shadow-md" />
               </Link>
             </PrivilegeGate>
           )}
@@ -82,7 +82,7 @@ export default function DashboardHome() {
             <div className="mb-3 text-xs text-graphite">{t('map.recent')}</div>
             <div className="flex flex-col gap-3">
               {parcels.slice(0, 4).map((p) => (
-                <Link key={p.id} to={`/${locale}/dashboard/topologia/${p.id}`} className="flex items-center gap-3">
+                <Link key={p.id} to={`/${locale}/dashboard/topologia/${p.id}`} className="flex items-center gap-3 rounded-card p-2 transition-all duration-150 hover:bg-azure-light/20">
                   <SoilCoreIndicator filled={p.filled} certified={p.certificada} size="sm" />
                   <span className="flex-1 text-sm text-ink">{p.nombre}</span>
                   <StatusBadge status={p.estado} />

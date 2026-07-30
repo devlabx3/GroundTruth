@@ -24,7 +24,7 @@ export default function StatusBadge({ status }: { status: Status | string }) {
   const { t } = useTranslation();
   const cls = STYLES[status as Status] ?? STYLES.pendiente;
   return (
-    <span className={`inline-flex items-center rounded-pill px-3 py-1 text-xs font-medium ${cls}`}>
+    <span className={`inline-flex items-center rounded-pill px-3 py-1 text-xs font-medium transition-all duration-200 ${cls}`}>
       {t(`status.${status}`)}
     </span>
   );

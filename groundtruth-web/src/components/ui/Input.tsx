@@ -28,7 +28,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
       {label && <span className="text-graphite">{label}</span>}
       <input
         ref={ref}
-        className={`mt-1 w-full rounded-card border bg-white px-3 py-2 text-ink outline-none focus:border-emerald ${
+        className={`mt-1 w-full rounded-card border bg-white px-3 py-2 text-ink outline-none transition-colors duration-200 focus:border-emerald ${
           errorKey ? 'border-sealwax' : 'border-porcelain-border'
         } ${mono ? 'font-mono text-xs' : ''}`}
         aria-invalid={!!errorKey}

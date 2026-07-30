@@ -63,7 +63,7 @@ export default function Table<T extends object>({
             <tr
               key={String(cell(row, rowKey))}
               onClick={onRowClick ? () => onRowClick(row) : undefined}
-              className={`border-b last:border-0 ${rowBorderColor} ${
+              className={`border-b last:border-0 transition-colors duration-150 ${rowBorderColor} ${
                 onRowClick ? 'cursor-pointer hover:bg-porcelain' : ''
               }`}
             >
