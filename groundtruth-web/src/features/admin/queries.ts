@@ -309,6 +309,7 @@ export async function reactivarUsuario(
   }
   const { data } = await api.post<{ id: string; estado: EstadoCuenta }>(
     `/admin/usuarios/${id}/reactivar`,
+    {},
   );
   return data;
 }
@@ -319,6 +320,7 @@ export async function enviarResetPassword(
   if (isDemo()) return { id, enviado: true };
   const { data } = await api.post<{ id: string; enviado: boolean }>(
     `/admin/usuarios/${id}/reset-password`,
+    {},
   );
   return data;
 }
