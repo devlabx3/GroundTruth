@@ -139,7 +139,7 @@ function StepIcon({ status, index }: { status: StepStatus; index: number }) {
       </span>
     );
   if (status === 'active')
-    return <CircleNotchIcon size={22} className="shrink-0 animate-spin" color="#C69B3C" />;
+    return <CircleNotchIcon size={22} className="shrink-0 animate-spin" color="#0066B2" />;
   if (status === 'failed')
     return <XCircleIcon size={22} weight="fill" className="shrink-0" color="#6E1423" />;
   return (

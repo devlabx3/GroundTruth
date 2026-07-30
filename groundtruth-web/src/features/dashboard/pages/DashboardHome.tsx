@@ -50,7 +50,7 @@ export default function DashboardHome() {
       </div>
       <div className="grid gap-4 md:grid-cols-3">
         {metrics.map((m) => (
-          <Card key={m.key}>
+          <Card key={m.key} variant="telemetry">
             <div className="text-xs text-graphite">{t(`metrics.${m.key}`)}</div>
             <div className={`mt-1 text-3xl ${m.alert && m.value > 0 ? 'text-sealwax' : 'text-ink'}`}>
               {m.value}
@@ -78,7 +78,7 @@ export default function DashboardHome() {
               </Link>
             </PrivilegeGate>
           )}
-          <Card>
+          <Card variant="telemetry">
             <div className="mb-3 text-xs text-graphite">{t('map.recent')}</div>
             <div className="flex flex-col gap-3">
               {parcels.slice(0, 4).map((p) => (

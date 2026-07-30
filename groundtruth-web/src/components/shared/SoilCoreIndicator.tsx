@@ -43,11 +43,18 @@ export default function SoilCoreIndicator({
       {STAGE_KEYS.map((key, i) => {
         const active = i < filled;
         const isCertifiedSegment = i === 3 && certified;
+        const isTelemetrySegment = i === 0;
         let bg = 'var(--gt-graphite, #6B6F6B)';
         let opacity = 0.35;
         if (active) {
           opacity = 1;
-          bg = isCertifiedSegment ? '#C69B3C' : '#0C3C2D';
+          if (isCertifiedSegment) {
+            bg = '#C69B3C'; // Oro (certificado)
+          } else if (isTelemetrySegment) {
+            bg = '#0066B2'; // Azul (telemetría/datos)
+          } else {
+            bg = '#0C3C2D'; // Esmeralda (otros segmentos)
+          }
         }
         return (
           <span

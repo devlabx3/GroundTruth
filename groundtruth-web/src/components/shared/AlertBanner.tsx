@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 const TONES = {
   error: 'bg-sealwax-100 text-sealwax',
   info: 'bg-emerald-100 text-emerald',
+  data: 'bg-azure-light text-azure-dark',
 } as const;
 
 export interface AlertBannerProps {
