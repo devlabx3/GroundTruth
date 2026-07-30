@@ -16,6 +16,8 @@ const VARIANTS = {
   secondary: 'border-porcelain-border bg-white text-ink hover:bg-porcelain',
   ghost: 'border-transparent text-ink hover:bg-emerald-100',
   danger: 'border-transparent bg-sealwax text-sealwax-100 hover:bg-[#5a0f1d]',
+  // Para contextos de datos/telemetría (azure):
+  data: 'border-azure-dark bg-azure text-white hover:bg-azure-dark',
   // Para superficies esmeralda/tinta (hero, cabeceras oscuras):
   inverted: 'border-transparent bg-porcelain text-emerald hover:bg-white',
   // Secundario sobre oscuro: contorno porcelana visible (el ghost se perdía contra el fondo).

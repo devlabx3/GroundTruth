@@ -1,9 +1,21 @@
 import type { HTMLAttributes } from 'react';
 
-export default function Card({ className = '', ...props }: HTMLAttributes<HTMLDivElement>) {
+export type CardVariant = 'default' | 'telemetry' | 'farms';
+
+interface CardProps extends HTMLAttributes<HTMLDivElement> {
+  variant?: CardVariant;
+}
+
+const VARIANTS: Record<CardVariant, string> = {
+  default: 'border-porcelain-border bg-white',
+  telemetry: 'border-azure-light bg-azure-light/20',
+  farms: 'border-earthbrown bg-white',
+};
+
+export default function Card({ className = '', variant = 'default', ...props }: CardProps) {
   return (
     <div
-      className={`rounded-card border border-porcelain-border bg-white p-5 ${className}`}
+      className={`rounded-card border p-5 ${VARIANTS[variant]} ${className}`}
       {...props}
     />
   );

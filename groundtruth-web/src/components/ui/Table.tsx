@@ -21,6 +21,7 @@ export interface TableProps<T> {
   onRowClick?: (row: T) => void;
   emptyTitle?: ReactNode;
   emptyAction?: ReactNode;
+  variant?: 'default' | 'data';
 }
 
 export default function Table<T extends object>({
@@ -30,15 +31,21 @@ export default function Table<T extends object>({
   onRowClick,
   emptyTitle,
   emptyAction,
+  variant = 'default',
 }: TableProps<T>) {
   if (!rows?.length) return <EmptyState title={emptyTitle} action={emptyAction} />;
   // Acceso por clave dinámica: el camino con tipos es `render`, que sí conoce T.
   const cell = (row: T, key: string) => (row as Record<string, unknown>)[key] as ReactNode;
+
+  const borderColor = variant === 'data' ? 'border-azure-dark' : 'border-porcelain-border';
+  const headerBorderColor = variant === 'data' ? 'border-azure-dark' : 'border-porcelain-border';
+  const rowBorderColor = variant === 'data' ? 'border-azure-light' : 'border-porcelain-border/60';
+
   return (
-    <div className="overflow-x-auto rounded-card border border-porcelain-border bg-white">
+    <div className={`overflow-x-auto rounded-card border bg-white ${borderColor}`}>
       <table className="w-full text-sm">
         <thead>
-          <tr className="border-b border-porcelain-border text-left">
+          <tr className={`border-b text-left ${headerBorderColor}`}>
             {columns.map((c) => (
               <th
                 key={c.key}
@@ -56,7 +63,7 @@ export default function Table<T extends object>({
             <tr
               key={String(cell(row, rowKey))}
               onClick={onRowClick ? () => onRowClick(row) : undefined}
-              className={`border-b border-porcelain-border/60 last:border-0 ${
+              className={`border-b last:border-0 ${rowBorderColor} ${
                 onRowClick ? 'cursor-pointer hover:bg-porcelain' : ''
               }`}
             >

@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 /**
  * Pill de estado. Mapea estados de dominio a la paleta:
  * conforme/vigente → esmeralda · alerta/revocado → lacre · pendiente → neutro.
+ * pending-data → azure (para datos/sensores/telemetría pendientes).
  * El oro se reserva para "verificado"/certificado emitido.
  */
 const STYLES = {
@@ -11,6 +12,7 @@ const STYLES = {
   alerta: 'bg-sealwax-100 text-sealwax',
   revocado: 'bg-sealwax-100 text-sealwax',
   pendiente: 'bg-porcelain text-graphite border border-porcelain-border',
+  'pending-data': 'bg-azure-light text-azure-dark border border-azure-dark',
   sustituido: 'bg-porcelain text-graphite border border-porcelain-border',
   expirado: 'bg-porcelain text-graphite border border-porcelain-border',
   verificado: 'border border-gold text-gold',
