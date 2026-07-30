@@ -165,7 +165,7 @@ export default function FarmsPage() {
         <SkeletonRows rows={4} />
       ) : (
         <>
-          <Table columns={columns} rows={result?.items ?? []} emptyTitle={t('topology.no_farms')} />
+          <Table variant="data" columns={columns} rows={result?.items ?? []} emptyTitle={t('topology.no_farms')} />
           {result && result.totalPages > 1 && (
             <TablePagination
               currentPage={page}

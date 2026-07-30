@@ -143,7 +143,7 @@ export default function FarmersPage() {
         <SkeletonRows rows={3} />
       ) : (
         <>
-          <Table columns={columns} rows={result?.items ?? []} emptyTitle={t('farmers.empty')} />
+          <Table variant="data" columns={columns} rows={result?.items ?? []} emptyTitle={t('farmers.empty')} />
           {result && result.totalPages > 1 && (
             <TablePagination
               currentPage={page}

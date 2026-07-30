@@ -35,7 +35,7 @@ export default function CertificatesPage() {
       {isLoading ? (
         <SkeletonRows rows={3} />
       ) : (
-        <Table
+        <Table variant="data"
           columns={columns}
           rows={certs}
           onRowClick={(r) => navigate(`/${locale}/dashboard/certificados/${r.id}`)}

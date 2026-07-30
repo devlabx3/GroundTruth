@@ -43,7 +43,7 @@ export default function ShipmentsPage() {
       {isLoading ? (
         <SkeletonRows rows={3} />
       ) : (
-        <Table
+        <Table variant="data"
           columns={columns}
           rows={shipments}
           onRowClick={(r) => navigate(`/${locale}/dashboard/embarques/${r.id}`)}

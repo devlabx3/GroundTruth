@@ -128,7 +128,7 @@ export default function AdminUnitsPage() {
         <SkeletonRows rows={3} />
       ) : (
         <>
-          <Table
+          <Table variant="data"
             columns={columns}
             rows={result?.items ?? []}
             onRowClick={(r) => navigate(`/${locale}/admin/unidades/${r.id}`)}

@@ -133,6 +133,7 @@ export default function TopologyPage() {
       ) : (
         <>
           <Table
+            variant="data"
             columns={columns}
             rows={result?.items ?? []}
             onRowClick={(r) => navigate(`/${locale}/dashboard/topologia/${r.id}`)}

@@ -112,7 +112,7 @@ export default function TreasuryPage() {
 
       <section>
         <h2 className="mb-2 text-sm font-medium text-ink">{t('treasury.history')}</h2>
-        <Table
+        <Table variant="data"
           columns={columns}
           rows={treasury.movimientos}
           emptyTitle={t('treasury.empty')}
