@@ -10,6 +10,7 @@ import Dialog from '@/components/ui/Dialog';
 import ConfirmDialog from '@/components/ui/ConfirmDialog';
 import Input from '@/components/ui/Input';
 import { SkeletonRows } from '@/components/ui/Skeleton';
+import PermissionsChecklist from '@/components/ui/PermissionsChecklist';
 import { PRIVILEGES, SENSITIVE_PRIVILEGES } from '@/lib/privileges';
 import { fetchEquipo, crearSubrol, eliminarSubrol } from '../queries';
 import { errorKey } from '@/lib/api';
@@ -119,21 +120,7 @@ export default function TeamPage() {
                   <TrashIcon size={16} />
                 </button>
               </div>
-              <div className="mt-2 flex flex-wrap gap-1.5">
-                {sr.privileges.map((p: Privilege) => (
-                  <span
-                    key={p}
-                    className={`inline-flex items-center gap-1 rounded-pill px-2 py-0.5 font-mono text-[11px] ${
-                      SENSITIVE_PRIVILEGES.has(p)
-                        ? 'bg-sealwax-100 text-sealwax'
-                        : 'bg-porcelain text-graphite'
-                    }`}
-                  >
-                    {SENSITIVE_PRIVILEGES.has(p) && <WarningIcon size={11} weight="fill" />}
-                    {t(`common:privileges.${p}`)}
-                  </span>
-                ))}
-              </div>
+              <PermissionsChecklist enabledPrivileges={sr.privileges} />
               <div className="mt-2 font-mono text-xs text-graphite">
                 {t('team.in_use', { n: sr.enUso })}
               </div>
