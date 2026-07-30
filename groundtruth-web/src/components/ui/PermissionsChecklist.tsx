@@ -38,11 +38,11 @@ export default function PermissionsChecklist({
 
       {/* Columna derecha: Deshabilitados */}
       <div>
-        <div className="mb-1.5 text-xs font-semibold text-red-500">Deshabilitados</div>
+        <div className="mb-1.5 text-xs font-semibold text-sealwax">Deshabilitados</div>
         <div className="flex flex-col gap-1.5">
           {disabled.map((p) => (
             <div key={p} className="flex items-center gap-2 text-sm">
-              <XCircleIcon size={16} className="text-red-500" weight="fill" />
+              <XCircleIcon size={16} className="text-sealwax" weight="fill" />
               <span className="text-graphite">{t(`common:privileges.${p}`)}</span>
             </div>
           ))}
