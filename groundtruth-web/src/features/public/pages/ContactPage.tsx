@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Card from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
@@ -29,7 +29,7 @@ export default function ContactPage() {
       });
 
       if (!response.ok) {
-        const error = await response.json().catch(() => ({}));
+        await response.json().catch(() => ({}));
         if (response.status === 429) {
           setErrorKey('errors:rate_limited');
         } else {

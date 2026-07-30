@@ -113,7 +113,7 @@ export default function TeamPage() {
               <div className="flex items-center justify-between">
                 <div className="text-sm font-medium text-ink">{sr.nombre}</div>
                 <button
-                  onClick={() => deleteSubrole(sr)}
+                  onClick={() => sr.enUso === 0 && deleteSubrole(sr)}
                   disabled={sr.enUso > 0}
                   className={`rounded-card p-1.5 ${
                     sr.enUso > 0

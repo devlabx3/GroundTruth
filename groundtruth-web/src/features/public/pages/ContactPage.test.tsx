@@ -9,6 +9,9 @@ vi.mock('@/lib/supabase', () => ({
   getSupabase: () => null,
 }));
 
+// Mock global.fetch
+const mockFetch = vi.fn();
+
 describe('ContactPage', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -26,10 +29,11 @@ describe('ContactPage', () => {
   });
 
   it('completa el formulario y lo envía', async () => {
-    global.fetch = vi.fn().mockResolvedValue({
+    mockFetch.mockResolvedValue({
       ok: true,
       json: async () => ({ id: 'contacto-123' }),
     });
+    vi.stubGlobal('fetch', mockFetch);
 
     render(
       <I18nextProvider i18n={i18n}>
@@ -37,10 +41,10 @@ describe('ContactPage', () => {
       </I18nextProvider>,
     );
 
-    const inputs = screen.getAllByRole('textbox') as HTMLInputElement[];
+    const inputs = screen.getAllByRole('textbox') as HTMLElement[];
     const nombreInput = inputs[0];
     const emailInput = inputs[1];
-    const mensajeInput = inputs[2] as HTMLTextAreaElement;
+    const mensajeInput = inputs[2];
     const submitBtn = screen.getByRole('button', { name: /submit/i });
 
     fireEvent.change(nombreInput, { target: { value: 'Juan Pérez' } });
@@ -50,7 +54,7 @@ describe('ContactPage', () => {
     fireEvent.click(submitBtn);
 
     await waitFor(() => {
-      expect(global.fetch).toHaveBeenCalledWith(
+      expect(mockFetch).toHaveBeenCalledWith(
         'http://localhost:3000/public/contacto',
         expect.objectContaining({
           method: 'POST',
@@ -60,11 +64,12 @@ describe('ContactPage', () => {
   });
 
   it('muestra error rate limit cuando la respuesta es 429', async () => {
-    global.fetch = vi.fn().mockResolvedValue({
+    mockFetch.mockResolvedValue({
       ok: false,
       status: 429,
       json: async () => ({}),
     });
+    vi.stubGlobal('fetch', mockFetch);
 
     render(
       <I18nextProvider i18n={i18n}>
@@ -72,10 +77,10 @@ describe('ContactPage', () => {
       </I18nextProvider>,
     );
 
-    const inputs = screen.getAllByRole('textbox') as HTMLInputElement[];
+    const inputs = screen.getAllByRole('textbox') as HTMLElement[];
     const nombreInput = inputs[0];
     const emailInput = inputs[1];
-    const mensajeInput = inputs[2] as HTMLTextAreaElement;
+    const mensajeInput = inputs[2];
     const submitBtn = screen.getByRole('button', { name: /submit/i });
 
     fireEvent.change(nombreInput, { target: { value: 'Juan' } });
@@ -85,7 +90,7 @@ describe('ContactPage', () => {
     fireEvent.click(submitBtn);
 
     await waitFor(() => {
-      expect(global.fetch).toHaveBeenCalled();
+      expect(mockFetch).toHaveBeenCalled();
     });
   });
 

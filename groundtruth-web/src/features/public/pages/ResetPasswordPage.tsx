@@ -45,14 +45,14 @@ export default function ResetPasswordPage() {
 
   // Verificar que hay una sesión de recovery válida
   useEffect(() => {
-    if (!supabase) {
-      // Modo maqueta: no hay reset en demo
-      setError('public:reset_password.not_configured');
-      setLoading(false);
-      return;
-    }
-
     async function checkSession() {
+      if (!supabase) {
+        // Modo maqueta: no hay reset en demo
+        setError('public:reset_password.not_configured');
+        setLoading(false);
+        return;
+      }
+
       try {
         const { data, error: sessionError } = await supabase!.auth.getSession();
         // getSession devuelve la sesión actual (si la hay). Si el hash tiene
