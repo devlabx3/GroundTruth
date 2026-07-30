@@ -1,3 +1,4 @@
+// Admin Users Page: Gestión de usuarios y membresías (A3)
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useForm } from 'react-hook-form';
