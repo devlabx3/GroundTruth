@@ -112,6 +112,7 @@
     "already_member": "Diese Person gehört bereits zur Einheit. Ändere ihre Unterrolle.",
     "last_admin": "Die Einheit darf nicht ohne Verwaltung bleiben. Weise das Privileg zuerst einem anderen Mitglied zu.",
     "subrole_in_use": "Diese Unterrolle ist Mitgliedern zugewiesen. Weise sie neu zu, bevor du sie löschst.",
+    "cannot_delete_in_use": "Kann nicht gelöscht werden: Diese Unterrolle ist Mitgliedern zugewiesen",
     "applies_next_session": "Die Änderung gilt ab der nächsten Sitzung des Mitglieds."
   },
   "settings": {

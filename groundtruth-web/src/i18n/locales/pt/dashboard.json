@@ -112,6 +112,7 @@
     "already_member": "Esta pessoa já pertence à unidade. Mude sua subfunção.",
     "last_admin": "A unidade não pode ficar sem administração. Atribua o privilégio a outro membro primeiro.",
     "subrole_in_use": "Esta subfunção está atribuída a membros. Reatribua-os antes de excluí-la.",
+    "cannot_delete_in_use": "Não pode ser excluída: esta subfunção está atribuída a membros",
     "applies_next_session": "A mudança vale a partir da próxima sessão do membro."
   },
   "settings": {

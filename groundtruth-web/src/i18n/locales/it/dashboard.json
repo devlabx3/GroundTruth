@@ -112,6 +112,7 @@
     "already_member": "Questa persona appartiene già all'unità. Cambia il suo sotto-ruolo.",
     "last_admin": "L'unità non può restare senza amministrazione. Assegna prima il privilegio a un altro membro.",
     "subrole_in_use": "Questo sotto-ruolo è assegnato a dei membri. Riassegnali prima di eliminarlo.",
+    "cannot_delete_in_use": "Impossibile eliminare: questo sotto-ruolo è assegnato a dei membri",
     "applies_next_session": "La modifica si applica alla prossima sessione del membro."
   },
   "settings": {

@@ -130,6 +130,7 @@
     "already_member": "This person already belongs to the unit. Change their sub-role.",
     "last_admin": "The unit cannot be left without administration. Assign the privilege to another member first.",
     "subrole_in_use": "This sub-role is assigned to members. Reassign them before deleting it.",
+    "cannot_delete_in_use": "Cannot delete: this sub-role is assigned to members",
     "applies_next_session": "The change applies on the member's next session."
   },
   "settings": {

@@ -130,6 +130,7 @@
     "already_member": "Esta persona ya pertenece a la unidad. Cambia su sub-rol.",
     "last_admin": "La unidad no puede quedarse sin administración. Asigna el privilegio a otro miembro primero.",
     "subrole_in_use": "Este sub-rol está asignado a miembros. Reasígnalos antes de eliminarlo.",
+    "cannot_delete_in_use": "No se puede eliminar: este sub-rol está asignado a miembros",
     "applies_next_session": "El cambio aplica en la siguiente sesión del miembro."
   },
   "settings": {

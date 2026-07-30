@@ -112,6 +112,7 @@
     "already_member": "Deze persoon hoort al bij de eenheid. Wijzig zijn of haar subrol.",
     "last_admin": "De eenheid kan niet zonder beheer blijven. Wijs het privilege eerst aan een ander lid toe.",
     "subrole_in_use": "Deze subrol is aan leden toegewezen. Wijs ze opnieuw toe voordat je hem verwijdert.",
+    "cannot_delete_in_use": "Kan niet verwijderd worden: deze subrol is aan leden toegewezen",
     "applies_next_session": "De wijziging geldt vanaf de volgende sessie van het lid."
   },
   "settings": {

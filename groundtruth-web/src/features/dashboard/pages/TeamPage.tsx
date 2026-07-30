@@ -114,7 +114,13 @@ export default function TeamPage() {
                 <div className="text-sm font-medium text-ink">{sr.nombre}</div>
                 <button
                   onClick={() => deleteSubrole(sr)}
-                  className="rounded-card p-1.5 text-graphite hover:bg-sealwax-100 hover:text-sealwax"
+                  disabled={sr.enUso > 0}
+                  className={`rounded-card p-1.5 ${
+                    sr.enUso > 0
+                      ? 'cursor-not-allowed text-graphite opacity-50'
+                      : 'text-graphite hover:bg-sealwax-100 hover:text-sealwax'
+                  }`}
+                  title={sr.enUso > 0 ? t('team.cannot_delete_in_use') : t('common:actions.delete')}
                   aria-label={t('common:actions.delete')}
                 >
                   <TrashIcon size={16} />
