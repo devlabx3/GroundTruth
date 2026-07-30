@@ -33,6 +33,26 @@ const passwordSchema = z.object({
 
 type PasswordFormulario = z.infer<typeof passwordSchema>;
 
+type SortableHeaderProps = {
+  col: 'nombre' | 'email' | 'membresia' | 'rol';
+  label: string;
+  sortBy: 'nombre' | 'email' | 'membresia' | 'rol';
+  sortDir: 'asc' | 'desc';
+  onSort: (col: 'nombre' | 'email' | 'membresia' | 'rol') => void;
+};
+
+function SortableHeader({ col, label, sortBy, sortDir, onSort }: SortableHeaderProps) {
+  return (
+    <button
+      onClick={() => onSort(col)}
+      className="flex items-center gap-2 hover:text-emerald transition-colors"
+    >
+      {label}
+      {sortBy === col && (sortDir === 'asc' ? <CaretUpIcon size={12} /> : <CaretDownIcon size={12} />)}
+    </button>
+  );
+}
+
 /**
  * Soporte de usuarios y membresías (A3). Desactivar queda auditado y respeta el
  * guardarraíl "nunca sin timón": el backend rechaza (409 LAST_TEAM_ADMIN)
@@ -205,34 +225,24 @@ export default function AdminUsersPage() {
     { key: 'rol', label: t('users.role'), placeholder: t('users.role') },
   ];
 
-  const SortableHeader = ({ col, label }: { col: 'nombre' | 'email' | 'membresia' | 'rol'; label: string }) => (
-    <button
-      onClick={() => toggleSort(col)}
-      className="flex items-center gap-2 hover:text-emerald transition-colors"
-    >
-      {label}
-      {sortBy === col && (sortDir === 'asc' ? <CaretUpIcon size={12} /> : <CaretDownIcon size={12} />)}
-    </button>
-  );
-
   const columns: Column<UsuarioAdmin>[] = [
     {
       key: 'nombre',
-      header: <SortableHeader col="nombre" label={t('common:fields.name')} />,
+      header: <SortableHeader col="nombre" label={t('common:fields.name')} sortBy={sortBy} sortDir={sortDir} onSort={toggleSort} />,
     },
     {
       key: 'email',
-      header: <SortableHeader col="email" label={t('common:fields.email')} />,
+      header: <SortableHeader col="email" label={t('common:fields.email')} sortBy={sortBy} sortDir={sortDir} onSort={toggleSort} />,
     },
     {
       key: 'membresias',
-      header: <SortableHeader col="membresia" label={t('users.memberships')} />,
+      header: <SortableHeader col="membresia" label={t('users.memberships')} sortBy={sortBy} sortDir={sortDir} onSort={toggleSort} />,
       render: (r) =>
         r.membresias || <span className="text-graphite">{t('users.no_membership')}</span>,
     },
     {
       key: 'rol',
-      header: <SortableHeader col="rol" label={t('users.role')} />,
+      header: <SortableHeader col="rol" label={t('users.role')} sortBy={sortBy} sortDir={sortDir} onSort={toggleSort} />,
       render: (r) => r.rol || <span className="text-graphite">—</span>,
     },
     { key: 'estado', header: t('common:fields.state'), render: (r) => (

@@ -1,5 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import type { DbService } from '@/db/db.service';
+import type { SupabaseAuthService } from '@/auth/supabase-auth.service';
 import { DomainErrors } from '@/common/domain-error';
 import { AgricultoresService } from './agricultores.service';
 
@@ -29,7 +30,11 @@ describe('AgricultoresService', () => {
         transaction: vi.fn().mockImplementation(async (fn) => fn(tx)),
       } as unknown as DbService;
 
-      const service = new AgricultoresService(mockDb);
+      const mockSupabaseAuth = {
+        // Mock methods as needed
+      } as unknown as SupabaseAuthService;
+
+      const service = new AgricultoresService(mockDb, mockSupabaseAuth);
       return { service, mockDb, tx };
     };
 
