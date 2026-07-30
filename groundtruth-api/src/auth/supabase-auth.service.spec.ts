@@ -59,9 +59,9 @@ describe('SupabaseAuthService', () => {
       await service.invitar('user@example.com', 'User Name');
 
       const call = (global.fetch as any).mock.calls[0];
-      expect(call[0]).toBe('https://abc.supabase.co/auth/v1/admin/invite');
+      expect(call[0]).toBe('https://abc.supabase.co/auth/v1/admin/users');
       expect(call[1].headers).toEqual({
-        apikey: 'anon-key',
+        apikey: 'service-role-key',
         authorization: 'Bearer service-role-key',
         'content-type': 'application/json',
       });
@@ -85,11 +85,12 @@ describe('SupabaseAuthService', () => {
       const body = JSON.parse(call[1].body);
       expect(body).toEqual({
         email: 'user@example.com',
-        data: { name: 'User Name' },
+        user_metadata: { name: 'User Name' },
+        email_confirm: false,
       });
     });
 
-    it('omite data si no hay nombre', async () => {
+    it('omite user_metadata si no hay nombre', async () => {
       global.fetch = vi.fn().mockResolvedValue({
         ok: true,
         json: async () => ({ id: 'auth-123' }),
@@ -107,7 +108,8 @@ describe('SupabaseAuthService', () => {
       const body = JSON.parse(call[1].body);
       expect(body).toEqual({
         email: 'user@example.com',
-        data: {},
+        user_metadata: {},
+        email_confirm: false,
       });
     });
 
@@ -127,7 +129,7 @@ describe('SupabaseAuthService', () => {
       expect(result).toEqual({ authUserId: 'auth-user-123' });
     });
 
-    it('retorna authUserId del response.user.id si id no existe', async () => {
+    it('retorna null si response no tiene id', async () => {
       global.fetch = vi.fn().mockResolvedValue({
         ok: true,
         json: async () => ({ user: { id: 'auth-user-456' } }),
@@ -140,7 +142,7 @@ describe('SupabaseAuthService', () => {
       });
 
       const result = await service.invitar('user@example.com');
-      expect(result).toEqual({ authUserId: 'auth-user-456' });
+      expect(result).toBeNull();
     });
 
     it('retorna null si response no es ok', async () => {

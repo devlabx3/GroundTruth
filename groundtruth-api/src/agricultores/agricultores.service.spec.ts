@@ -75,7 +75,7 @@ describe('AgricultoresService', () => {
         call[0].includes('insert into auditoria'),
       );
       expect(auditCall).toBeDefined();
-      expect(auditCall[0]).toContain("'finca.reasignar'");
+      expect(auditCall[0]).toContain("'finca.asignar'");
     });
 
     it('valida que agricultorId sea un UUID válido', async () => {
