@@ -7,7 +7,8 @@
 export default {
   content: ['./index.html', './src/**/*.{js,jsx,ts,tsx}'],
   theme: {
-    // Paleta cerrada: 3 núcleo + neutros. No se agregan colores fuera de esta lista.
+    // Paleta cerrada: 10 colores core + neutros. No se agregan colores fuera de esta lista.
+    // Expansión 2026-07-30: Agregado azure (datos/telemetría) + earthbrown (acentos agro)
     colors: {
       transparent: 'transparent',
       current: 'currentColor',
@@ -34,6 +35,16 @@ export default {
       },
       graphite: {
         DEFAULT: '#6B6F6B', // texto secundario, bordes, metadatos
+      },
+      azure: {
+        DEFAULT: '#0066B2', // datos, telemetría, información confiable (agua/cielo)
+        light: '#E6F2FF',   // fondos telemetría, superficies azul suave
+        dark: '#004A8B',    // bordes, acentos oscuros, texto en fondos azul claro
+      },
+      earthbrown: {
+        DEFAULT: '#7B5B3F', // acentos agro, fincas, naturaleza (café tierra)
+        light: '#E8D4C0',   // fondos agricultura suave
+        dark: '#4A3520',    // bordes oscuros, acentos tierra
       },
       white: '#FFFFFF',
     },
