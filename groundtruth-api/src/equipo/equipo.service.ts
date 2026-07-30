@@ -44,7 +44,7 @@ export class EquipoService {
       from sub_roles sr
       left join sub_rol_privilegios srp on srp.sub_rol_id = sr.id
       left join catalogo_privilegios cp on cp.id = srp.privilegio_id
-      where sr.operador_id = $1
+      where sr.operador_id = $1 and not sr.es_autogenerado
       group by sr.id
       order by sr.nombre
       `,
