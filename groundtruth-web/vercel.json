@@ -1,0 +1,21 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+
+  "//": [
+    "SPA con createBrowserRouter: las rutas (/es/login, /es/dashboard…) solo existen en",
+    "el cliente. Sin este rewrite, Vercel busca un fichero en esa ruta y devuelve 404 al",
+    "recargar o al entrar por enlace directo — la navegación interna sí funcionaba, que",
+    "es lo que hace el fallo tan fácil de pasar por alto.",
+    "",
+    "La negación excluye cualquier ruta con extensión (.js, .css, .svg, .png…), que son",
+    "ficheros reales de dist/: si cayeran en el rewrite, un <img> recibiría el index.html",
+    "y la imagen saldría rota. Se filtra por extensión y no por carpeta para que añadir",
+    "assets nuevos (hoy assets/ y brand/) no obligue a tocar este fichero."
+  ],
+  "rewrites": [
+    {
+      "source": "/((?!.*\\.[a-zA-Z0-9]+$).*)",
+      "destination": "/index.html"
+    }
+  ]
+}
