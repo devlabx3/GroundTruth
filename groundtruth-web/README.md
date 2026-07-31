@@ -22,6 +22,31 @@ npm run dev
 Sin credenciales de Supabase la app corre en modo maqueta (sin auth real); las rutas
 públicas (`/es/`, `/es/verificar`) funcionan de inmediato.
 
+## Despliegue (Vercel)
+
+Vite se autodetecta; no hace falta configurar comandos. Variables de entorno mínimas:
+`VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY` y `VITE_API_BASE_URL` (la URL del backend
+en Render, **no** `localhost`).
+
+> Vite **incrusta** las `VITE_*` en el bundle al compilar; no se leen en tiempo de
+> ejecución. Cambiar una exige **redesplegar**, y si el valor no altera el código
+> resultante Vercel puede devolver un bundle con el mismo hash.
+
+### `vercel.json` — por qué existe
+
+El router es `createBrowserRouter`: las rutas (`/es/login`, `/es/dashboard`…) viven solo
+en el cliente. Sin un rewrite, Vercel busca un fichero en esa ruta y devuelve **404 al
+recargar o al entrar por enlace directo** — la navegación interna sí funciona, que es lo
+que hace el fallo fácil de pasar por alto.
+
+La regla reescribe todo a `index.html` **salvo las rutas con extensión** (`.js`, `.css`,
+`.svg`…), que son ficheros reales de `dist/`: si cayeran en el rewrite, un `<img>`
+recibiría el HTML y la imagen saldría rota. Se filtra por extensión y no por carpeta para
+que añadir assets nuevos (hoy `assets/` y `brand/`) no obligue a tocar el fichero.
+
+Nota: `vercel.json` **no admite claves de comentario** como `//` — su schema rechaza
+propiedades desconocidas. De ahí que esta explicación viva aquí.
+
 ## Estructura
 
 ```
