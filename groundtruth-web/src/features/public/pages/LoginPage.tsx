@@ -187,9 +187,9 @@ export default function LoginPage() {
         </Card>
       </form>
 
-      {/* Accesos rápidos por rol — depuración. No existen en un build de producción:
-          `accesosRapidos()` devuelve [] y Vite elimina la rama entera. Las credenciales
-          salen del .env, nunca del código. */}
+      {/* Accesos rápidos por rol. En `dev` salen solos; en producción solo si se pide con
+          VITE_DEV_LOGINS=true, y entonces las credenciales viajan en claro en el bundle
+          (ver la advertencia en `lib/devLogins.ts`). Salen del .env, nunca del código. */}
       {!demoMode && rapidos.length > 0 && (
         <div className="mt-8 flex flex-col gap-2">
           <div className="flex items-center gap-2 text-xs text-graphite">

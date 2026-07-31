@@ -3,8 +3,9 @@ import { accesosRapidos } from './devLogins';
 
 /**
  * Los accesos rápidos son un arma de doble filo: comodísimos para depurar roles, y una
- * fuga de credenciales si alguien los deja encendidos. Estos tests fijan las dos mitades:
- * que aparecen los CUATRO roles en desarrollo, y que NO existen en producción.
+ * fuga de credenciales si alguien los deja encendidos. Estos tests fijan las tres mitades:
+ * que aparecen los CUATRO roles en desarrollo, que en producción NO existen por defecto,
+ * y que solo aparecen allí si alguien lo pide explícitamente con `VITE_DEV_LOGINS=true`.
  */
 afterEach(() => {
   vi.unstubAllEnvs();
@@ -32,12 +33,33 @@ describe('accesos rápidos del login', () => {
     expect(cuentas).toHaveLength(4);
   });
 
-  it('en PRODUCCIÓN no existe ninguno, aunque las variables estén definidas', () => {
+  it('en PRODUCCIÓN no existe ninguno por defecto, aunque las variables estén definidas', () => {
+    vi.stubEnv('DEV', false);
+    vi.stubEnv('VITE_DEV_LOGINS', '');
+    conCuentas();
+
+    // Esta es la línea que impide que unas credenciales acaben en el bundle público
+    // por descuido: en producción hay que pedirlo, no basta con definir las cuentas.
+    expect(accesosRapidos()).toEqual([]);
+  });
+
+  it('en PRODUCCIÓN aparecen si se pide con VITE_DEV_LOGINS=true', () => {
+    vi.stubEnv('DEV', false);
+    vi.stubEnv('VITE_DEV_LOGINS', 'true');
+    conCuentas();
+
+    // Decisión deliberada de quien despliega: las credenciales viajan en el bundle.
+    expect(accesosRapidos()).toHaveLength(4);
+  });
+
+  it('solo el literal "true" habilita en producción (un typo no abre la puerta)', () => {
     vi.stubEnv('DEV', false);
     conCuentas();
 
-    // Esta es la línea que impide que unas credenciales acaben en el bundle público.
-    expect(accesosRapidos()).toEqual([]);
+    for (const valor of ['1', 'yes', 'TRUE', 'si', 'false']) {
+      vi.stubEnv('VITE_DEV_LOGINS', valor);
+      expect(accesosRapidos(), `VITE_DEV_LOGINS=${valor}`).toEqual([]);
+    }
   });
 
   it('omite el rol cuya cuenta no esté completa', () => {

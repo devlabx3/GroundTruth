@@ -14,9 +14,13 @@ interface ImportMetaEnv {
   readonly VITE_SOLANA_CLUSTER?: string;
 
   /**
-   * Accesos rápidos por rol en el login (SOLO desarrollo — ver `lib/devLogins.ts`).
-   * Si no se definen, los botones no aparecen.
+   * Accesos rápidos por rol en el login (ver `lib/devLogins.ts`).
+   *
+   * En `dev` salen solos. Para un build de producción hace falta además
+   * `VITE_DEV_LOGINS=true` — y entonces las credenciales viajan EN CLARO en el bundle,
+   * legibles por cualquiera que abra el código fuente de la página.
    */
+  readonly VITE_DEV_LOGINS?: string;
   readonly VITE_DEV_OPERADOR_EMAIL?: string;
   readonly VITE_DEV_OPERADOR_PASSWORD?: string;
   readonly VITE_DEV_LOGISTICA_EMAIL?: string;
