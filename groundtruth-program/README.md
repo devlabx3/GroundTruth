@@ -6,6 +6,7 @@ manejaba tesorería, cobro ni cNFTs; se reutilizan sus conceptos (PDAs determin�
 identidad `Farm`/`Parcel`) y el núcleo se parte limpio.
 
 **Program ID (local/devnet):** `GQ7rQxCBvpfHMPkApAjQ2TjMxpGMhifK72tpi5ChnzMH`
+— **desplegado en devnet** el 2026-07-30 ([DEPLOY-DEVNET.md](DEPLOY-DEVNET.md)).
 
 ## Qué vive aquí y qué no
 
@@ -142,5 +143,8 @@ para construir las transacciones con `@coral-xyz/anchor`.
 2. **Subida a Arweave** del GeoJSON (Irys) para tener el `uri` real, y del PDF/imagen a
    Supabase Storage para calcular sus hashes.
 3. **Custodia de la keypair del backend** en KMS/HSM, nunca en `.env` plano (F5).
-4. **Devnet:** el faucet público está limitado; el despliegue queda pendiente de fondear la
-   wallet (~5,5 SOL). Todo lo verificado corre en un validador local, que es el mismo runtime.
+   La keypair del backend ya está **separada** de la del programa (era la misma; al
+   desplegar dejó de poder pagar fees, porque Solana lo prohíbe a cuentas ejecutables).
+   Falta el último tramo: sacarla del disco.
+4. **Devnet: desplegado y funcionando** (2026-07-30) — ver [DEPLOY-DEVNET.md](DEPLOY-DEVNET.md)
+   para direcciones, wallets y cómo reproducirlo.

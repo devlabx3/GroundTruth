@@ -20,7 +20,7 @@ url = "https://api.apr.dev"
 
 [provider]
 cluster = "localnet"
-# Keypair DEDICADA para deploys/pruebas (pubkey 4WP66ApkXER77Joe4i5Zyiow3ZRbid2MD4E2RdrZZHtg),
+# Keypair DEDICADA para deploys/pruebas (pubkey B3fx5yAmMYkJyNh4pR2BZrSEtG2tsjF434VUEHBbfqWX),
 # NO la wallet personal por defecto de la CLI (~/.config/solana/id.json, que tiene fondos
 # reales en mainnet). Esta solo lleva SOL de devnet/localnet, que no vale nada.
 wallet = "~/deploy-devnet.json"
