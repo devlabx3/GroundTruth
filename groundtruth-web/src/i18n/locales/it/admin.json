@@ -88,7 +88,11 @@
       "activa": "Attiva",
       "inactiva": "Inattiva"
     },
-    "no_membership": "Senza appartenenza"
+    "no_membership": "Senza appartenenza",
+    "role": "Ruolo",
+    "showing_page": "{{start}}–{{end}} di {{count}} utenti (pagina {{current}} di {{total}})",
+    "prev_page": "Precedente",
+    "next_page": "Successivo"
   },
   "params": {
     "title": "Parametri di sistema",

@@ -13,7 +13,8 @@
     "verify": "Vérifier",
     "login": "Se connecter",
     "logout": "Se déconnecter",
-    "demo": "Demander une démo"
+    "demo": "Demander une démo",
+    "farms": "Exploitations"
   },
   "actions": {
     "cancel": "Annuler",

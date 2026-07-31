@@ -13,7 +13,8 @@
     "verify": "Prüfen",
     "login": "Anmelden",
     "logout": "Abmelden",
-    "demo": "Demo anfragen"
+    "demo": "Demo anfragen",
+    "farms": "Betriebe"
   },
   "actions": {
     "cancel": "Abbrechen",

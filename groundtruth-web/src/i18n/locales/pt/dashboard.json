@@ -41,7 +41,16 @@
     "invalid_polygon": "O polígono não é válido. Revise os vértices.",
     "clear_polygon": "Apagar polígono",
     "select_farm": "Seleciona uma quinta",
-    "declare_nodes": "Nós a instalar na parcela"
+    "declare_nodes": "Nós a instalar na parcela",
+    "new_farm": "Nova fazenda",
+    "farms": "Fazendas",
+    "no_farms": "Ainda não há fazendas. Crie a primeira.",
+    "farmer": "Agricultor",
+    "unassigned": "Não atribuído",
+    "optional": "Opcional",
+    "assign_farmer": "Atribuir agricultor",
+    "assign_farmer_to": "Atribuir um agricultor à fazenda {{finca}}",
+    "select_farmer": "Selecione o agricultor"
   },
   "telemetry": {
     "title": "Última leitura",
@@ -138,5 +147,14 @@
     "success": "Certificado emitido",
     "insufficient_funds": "Fundos insuficientes na tesouraria.",
     "go_treasury": "Ir à Tesouraria"
+  },
+  "farms": {
+    "new_with_farmer": "Nova fazenda com agricultor",
+    "farm_data": "Dados da fazenda",
+    "farmer_data": "Dados do agricultor responsável",
+    "farmer_name": "Nome do agricultor",
+    "area": "Área (ha)",
+    "saga_create_farm": "Criar fazenda",
+    "saga_seed_farmer": "Atribuir agricultor"
   }
 }

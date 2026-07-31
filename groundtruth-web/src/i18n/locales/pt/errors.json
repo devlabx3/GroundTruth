@@ -39,5 +39,7 @@
   "timeout": "A operação demorou demais. Tente novamente.",
   "unit_not_active": "A unidade está suspensa ou pendente on-chain: não pode emitir certificados.",
   "user_exists": "Já existe uma conta com este e-mail.",
-  "wrong_surface": "Esta conta usa o aplicativo do agricultor."
+  "wrong_surface": "Esta conta usa o aplicativo do agricultor.",
+  "password_min": "A senha deve ter pelo menos 8 caracteres.",
+  "password_mismatch": "As senhas não coincidem."
 }

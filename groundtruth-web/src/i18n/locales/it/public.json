@@ -53,5 +53,17 @@
   "footer": {
     "rights": "GroundTruth",
     "eudr_note": "Conformità al Regolamento (UE) 2023/1115 (EUDR)."
+  },
+  "reset_password": {
+    "title": "Imposta una nuova password",
+    "new_password": "Nuova password",
+    "confirm_password": "Conferma password",
+    "submit": "Imposta password",
+    "success_title": "Password aggiornata",
+    "success_message": "La tua password è stata aggiornata. Reindirizzamento al login…",
+    "invalid_link": "Il link di recupero non è valido o è scaduto. Richiedine uno nuovo.",
+    "error": "Si è verificato un errore durante l'aggiornamento della password. Riprova.",
+    "not_configured": "Il recupero della password non è configurato in questo ambiente.",
+    "back_to_login": "Torna al login"
   }
 }

@@ -53,5 +53,17 @@
   "footer": {
     "rights": "GroundTruth",
     "eudr_note": "Conformité au Règlement (UE) 2023/1115 (EUDR)."
+  },
+  "reset_password": {
+    "title": "Définir un nouveau mot de passe",
+    "new_password": "Nouveau mot de passe",
+    "confirm_password": "Confirmer le mot de passe",
+    "submit": "Définir le mot de passe",
+    "success_title": "Mot de passe mis à jour",
+    "success_message": "Ton mot de passe a été mis à jour. Redirection vers la connexion…",
+    "invalid_link": "Le lien de récupération est invalide ou expiré. Demandes-en un nouveau.",
+    "error": "Une erreur est survenue lors de la mise à jour de ton mot de passe. Réessaie.",
+    "not_configured": "La récupération de mot de passe n'est pas configurée dans cet environnement.",
+    "back_to_login": "Retour à la connexion"
   }
 }

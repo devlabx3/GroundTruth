@@ -13,7 +13,8 @@
     "verify": "Verifica",
     "login": "Accedi",
     "logout": "Esci",
-    "demo": "Richiedi una demo"
+    "demo": "Richiedi una demo",
+    "farms": "Aziende"
   },
   "actions": {
     "cancel": "Annulla",

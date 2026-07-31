@@ -53,5 +53,17 @@
   "footer": {
     "rights": "GroundTruth",
     "eudr_note": "Conformidade com o Regulamento (UE) 2023/1115 (EUDR)."
+  },
+  "reset_password": {
+    "title": "Definir nova senha",
+    "new_password": "Nova senha",
+    "confirm_password": "Confirmar senha",
+    "submit": "Definir senha",
+    "success_title": "Senha atualizada",
+    "success_message": "Sua senha foi atualizada com sucesso. Redirecionando para o login…",
+    "invalid_link": "O link de recuperação é inválido ou expirou. Solicite um novo.",
+    "error": "Ocorreu um erro ao atualizar sua senha. Tente novamente.",
+    "not_configured": "A recuperação de senha não está configurada neste ambiente.",
+    "back_to_login": "Voltar ao login"
   }
 }

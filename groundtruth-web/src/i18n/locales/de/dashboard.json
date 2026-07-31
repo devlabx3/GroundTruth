@@ -41,7 +41,16 @@
     "invalid_polygon": "Das Polygon ist ungültig. Prüfe die Eckpunkte.",
     "clear_polygon": "Polygon löschen",
     "select_farm": "Betrieb auswählen",
-    "declare_nodes": "Knoten, die auf der Parzelle installiert werden"
+    "declare_nodes": "Knoten, die auf der Parzelle installiert werden",
+    "new_farm": "Neuer Betrieb",
+    "farms": "Betriebe",
+    "no_farms": "Noch keine Betriebe. Lege den ersten an.",
+    "farmer": "Landwirt",
+    "unassigned": "Nicht zugewiesen",
+    "optional": "Optional",
+    "assign_farmer": "Landwirt zuweisen",
+    "assign_farmer_to": "Dem Betrieb {{finca}} einen Landwirt zuweisen",
+    "select_farmer": "Landwirt auswählen"
   },
   "telemetry": {
     "title": "Letzte Messung",
@@ -138,5 +147,14 @@
     "success": "Zertifikat ausgestellt",
     "insufficient_funds": "Unzureichendes Guthaben in der Treasury.",
     "go_treasury": "Zur Treasury"
+  },
+  "farms": {
+    "new_with_farmer": "Neuer Betrieb mit Landwirt",
+    "farm_data": "Betriebsdaten",
+    "farmer_data": "Daten des verantwortlichen Landwirts",
+    "farmer_name": "Name des Landwirts",
+    "area": "Fläche (ha)",
+    "saga_create_farm": "Betrieb anlegen",
+    "saga_seed_farmer": "Landwirt zuweisen"
   }
 }

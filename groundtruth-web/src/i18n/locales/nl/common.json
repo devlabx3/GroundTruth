@@ -13,7 +13,8 @@
     "verify": "Verifiëren",
     "login": "Inloggen",
     "logout": "Uitloggen",
-    "demo": "Demo aanvragen"
+    "demo": "Demo aanvragen",
+    "farms": "Boerderijen"
   },
   "actions": {
     "cancel": "Annuleren",

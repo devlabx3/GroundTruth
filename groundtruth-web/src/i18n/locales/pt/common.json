@@ -13,7 +13,8 @@
     "verify": "Verificar",
     "login": "Entrar",
     "logout": "Sair",
-    "demo": "Solicitar demo"
+    "demo": "Solicitar demo",
+    "farms": "Fazendas"
   },
   "actions": {
     "cancel": "Cancelar",

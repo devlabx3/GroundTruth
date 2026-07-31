@@ -28,7 +28,6 @@ import type {
   CertificadoDetalle,
   CertificadoResumen,
   Ciclo,
-  CrearAgricultorPayload,
   CrearParcelaPayload,
   EmbarqueDetalle,
   EmbarqueResumen,
@@ -88,7 +87,10 @@ interface ApiCiclo {
   certificado: boolean;
 }
 
-interface ApiParcelaDetalle extends ApiParcela {
+// Exportada (a diferencia del resto de `Api*`, que son internas) porque
+// `queries.parcela.test.ts` construye fixtures con esta forma para probar
+// `mapParcelaDetalle`: el test necesita el tipo de la ENTRADA, no solo el de la salida.
+export interface ApiParcelaDetalle extends ApiParcela {
   telemetria: ApiTelemetria | null;
   ciclos?: ApiCiclo[];
   fuente_simulada?: boolean | null;

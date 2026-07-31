@@ -41,7 +41,16 @@
     "invalid_polygon": "Le polygone n'est pas valide. Vérifie les sommets.",
     "clear_polygon": "Effacer le polygone",
     "select_farm": "Sélectionne une ferme",
-    "declare_nodes": "Nœuds à installer sur la parcelle"
+    "declare_nodes": "Nœuds à installer sur la parcelle",
+    "new_farm": "Nouvelle exploitation",
+    "farms": "Exploitations",
+    "no_farms": "Pas encore d'exploitations. Crée la première.",
+    "farmer": "Agriculteur",
+    "unassigned": "Non assigné",
+    "optional": "Facultatif",
+    "assign_farmer": "Assigner un agriculteur",
+    "assign_farmer_to": "Assigner un agriculteur à l'exploitation {{finca}}",
+    "select_farmer": "Sélectionne l'agriculteur"
   },
   "telemetry": {
     "title": "Dernière lecture",
@@ -138,5 +147,14 @@
     "success": "Certificat émis",
     "insufficient_funds": "Fonds insuffisants dans la trésorerie.",
     "go_treasury": "Aller à la Trésorerie"
+  },
+  "farms": {
+    "new_with_farmer": "Nouvelle exploitation avec agriculteur",
+    "farm_data": "Données de l'exploitation",
+    "farmer_data": "Données de l'agriculteur responsable",
+    "farmer_name": "Nom de l'agriculteur",
+    "area": "Surface (ha)",
+    "saga_create_farm": "Créer l'exploitation",
+    "saga_seed_farmer": "Assigner l'agriculteur"
   }
 }

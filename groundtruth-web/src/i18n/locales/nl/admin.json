@@ -88,7 +88,11 @@
       "activa": "Actief",
       "inactiva": "Inactief"
     },
-    "no_membership": "Geen lidmaatschap"
+    "no_membership": "Geen lidmaatschap",
+    "role": "Rol",
+    "showing_page": "{{start}}–{{end}} van {{count}} gebruikers (pagina {{current}} van {{total}})",
+    "prev_page": "Vorige",
+    "next_page": "Volgende"
   },
   "params": {
     "title": "Systeemparameters",

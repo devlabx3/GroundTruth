@@ -39,5 +39,7 @@
   "timeout": "De bewerking duurde te lang. Probeer opnieuw.",
   "unit_not_active": "De eenheid is geschorst of in afwachting on-chain: ze kan geen certificaten uitgeven.",
   "user_exists": "Er bestaat al een account met dit e-mailadres.",
-  "wrong_surface": "Dit account gebruikt de boeren-app."
+  "wrong_surface": "Dit account gebruikt de boeren-app.",
+  "password_min": "Het wachtwoord moet minstens 8 tekens lang zijn.",
+  "password_mismatch": "De wachtwoorden komen niet overeen."
 }

@@ -39,5 +39,7 @@
   "timeout": "L'opération a pris trop de temps. Réessaie.",
   "unit_not_active": "L'unité est suspendue ou en attente on-chain : elle ne peut pas émettre de certificats.",
   "user_exists": "Un compte existe déjà avec cet e-mail.",
-  "wrong_surface": "Ce compte utilise l'application de l'agriculteur."
+  "wrong_surface": "Ce compte utilise l'application de l'agriculteur.",
+  "password_min": "Le mot de passe doit contenir au moins 8 caractères.",
+  "password_mismatch": "Les mots de passe ne correspondent pas."
 }

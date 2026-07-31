@@ -41,7 +41,16 @@
     "invalid_polygon": "Il poligono non è valido. Controlla i vertici.",
     "clear_polygon": "Cancella poligono",
     "select_farm": "Seleziona un’azienda",
-    "declare_nodes": "Nodi da installare sulla particella"
+    "declare_nodes": "Nodi da installare sulla particella",
+    "new_farm": "Nuova azienda",
+    "farms": "Aziende",
+    "no_farms": "Ancora nessuna azienda. Crea la prima.",
+    "farmer": "Agricoltore",
+    "unassigned": "Non assegnato",
+    "optional": "Facoltativo",
+    "assign_farmer": "Assegna agricoltore",
+    "assign_farmer_to": "Assegnare un agricoltore all'azienda {{finca}}",
+    "select_farmer": "Seleziona l'agricoltore"
   },
   "telemetry": {
     "title": "Ultima lettura",
@@ -138,5 +147,14 @@
     "success": "Certificato emesso",
     "insufficient_funds": "Fondi insufficienti nella treasury.",
     "go_treasury": "Vai alla Treasury"
+  },
+  "farms": {
+    "new_with_farmer": "Nuova azienda con agricoltore",
+    "farm_data": "Dati dell'azienda",
+    "farmer_data": "Dati dell'agricoltore responsabile",
+    "farmer_name": "Nome dell'agricoltore",
+    "area": "Superficie (ha)",
+    "saga_create_farm": "Crea azienda",
+    "saga_seed_farmer": "Assegna agricoltore"
   }
 }

@@ -3,6 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "description": "GroundTruth — orquestador NestJS: REST de comandos, webhook Helius, saga de certificación.",
+  "packageManager": "pnpm@11.9.0",
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
     "build": "nest build",
     "start": "nest start",

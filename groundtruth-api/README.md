@@ -28,6 +28,43 @@ pnpm typecheck
 pnpm dev               # http://localhost:3000 — el frontend ya apunta aquí
 ```
 
+## Despliegue (Render)
+
+Este paquete es **autocontenido**: tiene su propio `pnpm-lock.yaml` y `pnpm-workspace.yaml`,
+así que no hace falta construir el monorepo entero.
+
+| Campo | Valor |
+| --- | --- |
+| Root Directory | `groundtruth-api` |
+| Build Command | `corepack enable && pnpm install --frozen-lockfile && pnpm build` |
+| Start Command | `pnpm start:prod` |
+
+`packageManager` y `engines` están fijados en `package.json`, así que Render usa la misma
+versión de pnpm que el CI y el lockfile v9 se lee sin sorpresas.
+
+**`PORT` la inyecta Render: no la definas a mano.** `main.ts` la lee con `getOrThrow` y el
+schema tiene `default(3000)`, así que un valor propio no rompería el arranque — pero el
+servicio escucharía en un puerto distinto del que Render sondea y el health check fallaría.
+El binding ya es a todas las interfaces (`app.listen(PORT)` sin host), que es lo que Render
+necesita.
+
+Variables mínimas para que arranque:
+
+| Variable | Nota |
+| --- | --- |
+| `SUPABASE_URL` | obligatoria |
+| `DATABASE_URL` | obligatoria — usar el **pooler** (`:6543`), no la directa `:5432`: esa resuelve solo por IPv6 y falla con `ENETUNREACH` |
+| `CORS_ORIGIN` | dominio del frontend; su default es `localhost:5173` y el navegador bloquearía las llamadas |
+| `FRONTEND_URL` | dominio del frontend — base de los links de recuperación de contraseña |
+| `SUPABASE_SERVICE_ROLE_KEY` | sin ella no hay PDF ni imagen en Storage, y sus hashes van en ceros |
+
+Las `SOLANA_*` son opcionales: sin ellas la certificación cae a la ruta pre-Solana. Para
+activarlas, ver [Cluster: devnet o localnet](#cluster-devnet-o-localnet).
+
+> ⚠️ `SOLANA_BACKEND_SECRET_KEY` es la llave que firma las acuñaciones (riesgo **F5**).
+> En Render va como *secret*, nunca en un `.env` versionado — y sigue siendo custodia en
+> texto plano hasta que se mueva a KMS/HSM.
+
 ## Estado
 
 | Módulo | Estado |

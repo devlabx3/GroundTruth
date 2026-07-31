@@ -53,5 +53,17 @@
   "footer": {
     "rights": "GroundTruth",
     "eudr_note": "Naleving van Verordening (EU) 2023/1115 (EUDR)."
+  },
+  "reset_password": {
+    "title": "Nieuw wachtwoord instellen",
+    "new_password": "Nieuw wachtwoord",
+    "confirm_password": "Wachtwoord bevestigen",
+    "submit": "Wachtwoord instellen",
+    "success_title": "Wachtwoord bijgewerkt",
+    "success_message": "Je wachtwoord is bijgewerkt. Je wordt doorgestuurd naar het inloggen…",
+    "invalid_link": "De herstellink is ongeldig of verlopen. Vraag een nieuwe aan.",
+    "error": "Er is iets misgegaan bij het bijwerken van je wachtwoord. Probeer het opnieuw.",
+    "not_configured": "Wachtwoordherstel is niet geconfigureerd in deze omgeving.",
+    "back_to_login": "Terug naar inloggen"
   }
 }

@@ -41,7 +41,16 @@
     "invalid_polygon": "De polygoon is ongeldig. Controleer de hoekpunten.",
     "clear_polygon": "Polygoon wissen",
     "select_farm": "Kies een boerderij",
-    "declare_nodes": "Knooppunten die op het perceel komen"
+    "declare_nodes": "Knooppunten die op het perceel komen",
+    "new_farm": "Nieuwe boerderij",
+    "farms": "Boerderijen",
+    "no_farms": "Nog geen boerderijen. Maak de eerste aan.",
+    "farmer": "Boer",
+    "unassigned": "Niet toegewezen",
+    "optional": "Optioneel",
+    "assign_farmer": "Boer toewijzen",
+    "assign_farmer_to": "Een boer toewijzen aan boerderij {{finca}}",
+    "select_farmer": "Selecteer de boer"
   },
   "telemetry": {
     "title": "Laatste meting",
@@ -138,5 +147,14 @@
     "success": "Certificaat uitgegeven",
     "insufficient_funds": "Onvoldoende saldo in de treasury.",
     "go_treasury": "Naar Treasury"
+  },
+  "farms": {
+    "new_with_farmer": "Nieuwe boerderij met boer",
+    "farm_data": "Gegevens van de boerderij",
+    "farmer_data": "Gegevens van de verantwoordelijke boer",
+    "farmer_name": "Naam van de boer",
+    "area": "Oppervlakte (ha)",
+    "saga_create_farm": "Boerderij aanmaken",
+    "saga_seed_farmer": "Boer toewijzen"
   }
 }

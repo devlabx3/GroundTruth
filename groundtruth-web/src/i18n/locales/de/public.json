@@ -53,5 +53,17 @@
   "footer": {
     "rights": "GroundTruth",
     "eudr_note": "Konformität mit der Verordnung (EU) 2023/1115 (EUDR)."
+  },
+  "reset_password": {
+    "title": "Neues Passwort festlegen",
+    "new_password": "Neues Passwort",
+    "confirm_password": "Passwort bestätigen",
+    "submit": "Passwort festlegen",
+    "success_title": "Passwort aktualisiert",
+    "success_message": "Dein Passwort wurde erfolgreich aktualisiert. Weiterleitung zur Anmeldung…",
+    "invalid_link": "Der Wiederherstellungslink ist ungültig oder abgelaufen. Fordere einen neuen an.",
+    "error": "Beim Aktualisieren deines Passworts ist ein Fehler aufgetreten. Versuche es erneut.",
+    "not_configured": "Die Passwortwiederherstellung ist in dieser Umgebung nicht konfiguriert.",
+    "back_to_login": "Zurück zur Anmeldung"
   }
 }
