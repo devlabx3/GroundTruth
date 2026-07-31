@@ -36,11 +36,15 @@ así que no hace falta construir el monorepo entero.
 | Campo | Valor |
 | --- | --- |
 | Root Directory | `groundtruth-api` |
-| Build Command | `corepack enable && pnpm install --frozen-lockfile && pnpm build` |
+| Build Command | `pnpm install --frozen-lockfile && pnpm build` |
 | Start Command | `pnpm start:prod` |
 
 `packageManager` y `engines` están fijados en `package.json`, así que Render usa la misma
 versión de pnpm que el CI y el lockfile v9 se lee sin sorpresas.
+
+> **No añadas `corepack enable` al build.** Render ya trae pnpm y resuelve la versión desde
+> `packageManager`; corepack intenta reescribir `/usr/bin/pnpm`, que está montado de solo
+> lectura, y el build muere con `EROFS: read-only file system, unlink '/usr/bin/pnpm'`.
 
 **`PORT` la inyecta Render: no la definas a mano.** `main.ts` la lee con `getOrThrow` y el
 schema tiene `default(3000)`, así que un valor propio no rompería el arranque — pero el
