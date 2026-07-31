@@ -117,6 +117,13 @@ pnpm install && pnpm dev                      # http://localhost:5173
 Para levantar la capa on-chain completa en un validador local (USDC de prueba, árbol de
 certificados y tesorería fondeada), ver [`groundtruth-api/README.md`](groundtruth-api/README.md).
 
+**El programa ya está desplegado en devnet:**
+`GQ7rQxCBvpfHMPkApAjQ2TjMxpGMhifK72tpi5ChnzMH`
+([Solana Explorer](https://explorer.solana.com/address/GQ7rQxCBvpfHMPkApAjQ2TjMxpGMhifK72tpi5ChnzMH?cluster=devnet)).
+Apuntar el backend ahí es cambiar `SOLANA_CLUSTER=devnet` y reiniciar — el `.env` mantiene
+un bloque por cluster. Direcciones, wallets y runbook en
+[`groundtruth-program/DEPLOY-DEVNET.md`](groundtruth-program/DEPLOY-DEVNET.md).
+
 ---
 
 ## Estado real
@@ -140,6 +147,10 @@ certificados y tesorería fondeada), ver [`groundtruth-api/README.md`](groundtru
 > **puede emitir certificados GroundTruth falsos**. Es el riesgo **F5** de los propios documentos
 > de arquitectura. En producción va a **KMS/HSM**, y la Fase B (atestación TEE) lo reduce
 > estructuralmente: una llave robada dejaría de bastar.
+>
+> Ya no da, al menos, control sobre el programa: al desplegar en devnet hubo que **separarla
+> de la keypair del programa** (eran la misma), y la *upgrade authority* quedó en otra wallet.
+> Una llave robada firma certificados falsos, pero no reescribe el código on-chain.
 
 > [!CAUTION]
 > **Arweave está en `devnet` (efímero, ~60 días). Pasar a `mainnet` es irreversible.**
@@ -152,7 +163,7 @@ certificados y tesorería fondeada), ver [`groundtruth-api/README.md`](groundtru
 | **Imagen satelital** | El pipeline de Sentinel Hub está **cableado pero apagado**: faltan credenciales. Hasta entonces su hash va **en ceros** — *no se inventa*. |
 | **Invitación de usuarios** | Los usuarios que crea el Admin nacen con un `auth_user_id` de relleno: **existen en el dominio pero no pueden iniciar sesión**. |
 | **Realtime** | El diseño lo especifica; hoy la interfaz se actualiza por *refetch*. |
-| **Despliegue** | Solana corre en un **validador local**. Devnet está pendiente de fondear la wallet. |
+| **Despliegue** | El programa está en **devnet** ([detalle](groundtruth-program/DEPLOY-DEVNET.md)); falta mainnet. |
 
 El cuaderno completo de estado y pendientes vive en `docs/ROADMAP.md` (no versionado).
 

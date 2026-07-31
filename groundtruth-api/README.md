@@ -69,8 +69,9 @@ crea el Admin existen en el dominio pero todavía no pueden iniciar sesión.
 - **Alta de unidad:** nace `PENDIENTE_ONCHAIN` y **sin** Treasury PDA. Esa cuenta es on-chain
   (`init_operator_treasury`) y se crea aparte; hasta entonces la unidad puede configurarse
   (equipo, fincas), pero **no certificar**.
-- **Integraciones:** solo se sondean Supabase y, si se configura `SOLANA_RPC_URL`, el RPC. Sentinel,
-  Helius e Irys se reportan `no_configurado` en vez de fingir un "ok".
+- **Integraciones:** solo se sondean Supabase y, si el cluster activo tiene RPC configurado
+  (`SOLANA_<CLUSTER>_RPC_URL`), la cadena. Sentinel, Helius e Irys se reportan `no_configurado`
+  en vez de fingir un "ok".
 
 ## La certificación es on-chain
 
@@ -101,6 +102,34 @@ Para levantar el estado on-chain en un validador local:
 `node scripts/bootstrap-solana.mjs <operador_id>` — crea el USDC de prueba, la `Config`, el
 árbol de certificados y la tesorería de la unidad, la fondea, y apunta la fila de
 `tesorerias` a las direcciones reales.
+
+### Cluster: devnet o localnet
+
+El programa está desplegado en **devnet** como
+`GQ7rQxCBvpfHMPkApAjQ2TjMxpGMhifK72tpi5ChnzMH`. El `.env` guarda un bloque de variables por
+cluster y `SOLANA_CLUSTER` elige cuál se lee:
+
+```dotenv
+SOLANA_CLUSTER=devnet          # o localnet
+
+SOLANA_DEVNET_RPC_URL=https://api.devnet.solana.com
+SOLANA_DEVNET_USDC_MINT=3Dxj1sP3QkZK3MUxa2yAQjnrNuJsbkcQ4C3vqR5jeDex
+SOLANA_DEVNET_MERKLE_TREE=2mtAKSPXkAMt3pgfdqGJuBWTDvTk76B85GDVKewDLFF3
+SOLANA_DEVNET_PLATAFORMA_ATA=5bFHRaG6TFfe9NWq4Qhsiv3udDsCY1VvMEC7qhWpX24P
+```
+
+Alternar es cambiar esa línea y reiniciar; el bloque inactivo se ignora. En el arranque debe
+aparecer `Solana activa [devnet] — programa GQ7rQx…`.
+
+Dos avisos:
+
+- **`SOLANA_BACKEND_SECRET_KEY` es compartida entre clusters.** La keypair de devnet no tiene
+  saldo en localnet: hay que airdropearla o re-bootstrapear en local.
+- **Debe ser distinta de la keypair del programa.** Una cuenta ejecutable no puede pagar fees
+  en Solana, así que si coinciden el bootstrap falla con `This account may not be used to pay
+  transaction fees`.
+
+Direcciones completas y runbook: [`../groundtruth-program/DEPLOY-DEVNET.md`](../groundtruth-program/DEPLOY-DEVNET.md).
 
 ## Alta de parcela (O4)
 

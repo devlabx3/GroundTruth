@@ -474,10 +474,13 @@ tarifa.
   ingesta la hace un **reconciliador que lee la cadena**. Un webhook es best-effort: si se
   pierde, el sistema cuadra igual. `saldo_cache` es un espejo y **nunca se calcula sumando
   movimientos**: se toma el saldo real del ATA.
-- ⚠️ **Red actual: validador local.** El despliegue a **devnet** está pendiente (el faucet
-  público está limitado; hacen falta ~5,5 SOL). Mainnet queda para producción, y **no es un
-  switch**: hay que redesplegar el programa y recrear config, árbol, ATA de ingresos y
-  tesorerías, además de cambiar el mint de USDC. Solo la Treasury PDA conserva su dirección.
+- ✅ **Red actual: devnet.** El programa vive en
+  `GQ7rQxCBvpfHMPkApAjQ2TjMxpGMhifK72tpi5ChnzMH` desde el 2026-07-30; el backend alterna
+  devnet ↔ validador local con `SOLANA_CLUSTER` (un bloque de variables por cluster).
+  Direcciones y runbook en `groundtruth-program/DEPLOY-DEVNET.md`.
+  Mainnet queda para producción, y **no es un switch**: hay que redesplegar el programa y
+  recrear config, árbol, ATA de ingresos y tesorerías, además de cambiar el mint de USDC.
+  Solo la Treasury PDA conserva su dirección.
 
 ### 7.5 Firmante custodial (F5) ⚠️ **RIESGO VIVO**
 
@@ -498,6 +501,14 @@ El riesgo **se reduce estructuralmente en Fase B**: cuando el programa exija ate
 
 Mitigación parcial ya implementada: los **techos de cobro on-chain** (§7.3) acotan cuánto puede
 sacar una llamada.
+
+**Separación de la keypair del programa (2026-07-30).** Hasta el despliegue en devnet, el
+firmante custodial y el programa **compartían keypair**: comprometer el backend daba también la
+*upgrade authority*, es decir, la capacidad de reescribir el código on-chain. Ya no. Resultó
+que ni siquiera era opcional: al desplegar, esa cuenta pasa a `executable: true` y Solana
+**prohíbe que una cuenta ejecutable pague fees**, así que hubo que separarlas para que el
+bootstrap funcionara. La *upgrade authority* quedó en la wallet de despliegue. Una llave de
+backend robada firma certificados falsos —el riesgo F5 sigue vivo—, pero no toca el programa.
 
 ---
 
